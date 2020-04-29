@@ -1,4 +1,13 @@
+<a href="LICENSE.md">
+<img src="https://unlicense.org/pd-icon.png" alt="Public Domain" align="right"/>
+</a>
+
 # Kotlin Dice Parser
+
+[![build](https://github.com/binkley/kotlin-dice/workflows/build/badge.svg)](https://github.com/binkley/kotlin-dice/actions)
+[![issues](https://img.shields.io/github/issues/binkley/kotlin-dice.svg)](https://github.com/binkley/kotlin-dice/issues/)
+[![Public Domain](https://img.shields.io/badge/license-Public%20Domain-blue.svg)](http://unlicense.org/)
+[![made with kotlin](https://img.shields.io/badge/made%20with-Kotlin-1f425f.svg)](https://kotlinlang.org/)
 
 A dice expression has these parts:
 
@@ -7,6 +16,34 @@ A dice expression has these parts:
 
 The smallest roll expression is just a die type, eg, `d6` meaning roll 1
 6-sided die.  See "Examples", below.
+
+Try `./run.sh` for a demonstration.
+
+## Build
+
+* [DependencyCheck](https://github.com/jeremylong/DependencyCheck) scans
+for dependency security issues
+* [detekt](https://github.com/arturbosch/detekt) runs static code analysis
+for Kotlin
+* [JUnit](https://github.com/junit-team/junit5) runs tests
+* [JaCoCo](https://github.com/jacoco/jacoco) measures code coverage
+* [ktlint](https://github.com/pinterest/ktlint) keeps code tidy
+
+Use `./mvnw` (Maven) or `./batect build` (Batect) to build, run tests, and
+create a demo program.  Use `./run.sh` or `./batect run` to run the demo.
+
+[Batect](https://batect.dev/) works "out of the box", however, an important
+optimization is to avoid redownloading plugins and dependencies from within
+a Docker container.
+
+With Batect, link to your user Maven cache directory:
+
+```
+$ ln -s ~/.m2 .maven-cache
+```
+
+This shares Maven plugin and dependency downloads with the Docker container
+run by Batect.
 
 ## Dice expression syntax
 
