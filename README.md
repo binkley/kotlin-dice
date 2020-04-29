@@ -29,6 +29,8 @@ for Kotlin
 * [JUnit](https://github.com/junit-team/junit5) runs tests
 * [JaCoCo](https://github.com/jacoco/jacoco) measures code coverage
 * [ktlint](https://github.com/pinterest/ktlint) keeps code tidy
+* [snyk](https://snyk.io/test/github/binkley/kotlin-dice) looks for
+vulnerabilities
 
 Use `./mvnw` (Maven) or `./batect build` (Batect) to build, run tests, and
 create a demo program.  Use `./run.sh` or `./batect run` to run the demo.
