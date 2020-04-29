@@ -52,6 +52,7 @@ run by Batect.
 ```
 [N]'d'D['r'R]['h'K|'l'K][!|!Z][+EXP|-EXP...][+A|-A]
 ```
+
 - N - number of dice, default 1
 - D - sides on the die, or '%' for percentile dice
 - R - reroll dice this or lower, eg, reroll 1s
@@ -59,6 +60,8 @@ run by Batect.
 - Z - "explode" on die face or greater, default is to explode on max die face
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
+
+Whitespace in a dice expression is _not supported_.
 
 ## Examples
 
