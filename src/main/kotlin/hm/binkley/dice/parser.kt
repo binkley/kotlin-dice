@@ -3,8 +3,6 @@
 package hm.binkley.dice
 
 import hm.binkley.dice.DiceParser.Companion.roll
-import java.lang.System.err
-import kotlin.random.Random
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
 import org.parboiled.Rule
@@ -12,6 +10,8 @@ import org.parboiled.annotations.BuildParseTree
 import org.parboiled.errors.ErrorUtils.printParseError
 import org.parboiled.parserunners.ReportingParseRunner
 import org.parboiled.support.ParsingResult
+import java.lang.System.err
+import kotlin.random.Random
 
 internal var verbose = false
 
@@ -26,6 +26,13 @@ internal var verbose = false
 open class DiceParser(
     private val random: Random = Random.Default
 ) : BaseParser<Int>() {
+    private var n: Int? = null
+    private var d: Int? = null
+    private var reroll: Int? = null
+    private var keep: Int? = null
+    private var explode: Int? = null
+    private var adjustment: Int? = null
+
     open fun diceExpression(): Rule = Sequence(
         rollExpression(),
         maybeRollMore(),
@@ -43,8 +50,13 @@ open class DiceParser(
 
     internal open fun rollCount() = Sequence(
         Optional(number()),
-        push(matchRollCount())
+        recordRollCount()
     )
+
+    internal fun recordRollCount(): Boolean {
+        n = matchRollCount()
+        return true
+    }
 
     internal fun matchRollCount() = matchOrDefault("1").toInt()
 
@@ -59,8 +71,13 @@ open class DiceParser(
             number(),
             Ch('%')
         ),
-        push(matchDieType())
+        recordDieType()
     )
+
+    internal fun recordDieType(): Boolean {
+        d = matchDieType()
+        return true
+    }
 
     internal fun matchDieType() = when (val match = match()) {
         "%" -> 100
@@ -72,8 +89,13 @@ open class DiceParser(
             Ch('r'),
             number()
         ),
-        push(matchRerollLow())
+        recordRerollLow()
     )
+
+    internal fun recordRerollLow(): Boolean {
+        reroll = matchRerollLow()
+        return true
+    }
 
     internal fun matchRerollLow() = when (val match = match()) {
         "" -> 0
@@ -88,15 +110,20 @@ open class DiceParser(
             ),
             number()
         ),
-        push(matchKeepFewer())
+        recordKeepFewer()
     )
+
+    internal fun recordKeepFewer(): Boolean {
+        keep = matchKeepFewer()
+        return true
+    }
 
     internal fun matchKeepFewer(): Int {
         val match = match()
         return when {
             match.startsWith('h') -> match.substring(1).toInt()
             match.startsWith('l') -> -match.substring(1).toInt()
-            else -> peek(2) // roll count
+            else -> n!!
         }
     }
 
@@ -105,28 +132,28 @@ open class DiceParser(
             Ch('!'),
             Optional(number())
         ),
-        push(matchExplode())
+        recordExplode()
     )
 
+    internal fun recordExplode(): Boolean {
+        explode = matchExplode()
+        return true
+    }
+
     internal fun matchExplode() = when (val match = match()) {
-        "" -> peek(2) + 1 // die type; no exploding
-        "!" -> peek(2) // die type; explode on max face
+        "" -> d!! + 1
+        "!" -> d!!
         else -> match.substring(1).toInt()
     }
 
     internal fun rollTheDice(): Boolean {
-        val explode = pop()
-        val keep = pop()
-        val reroll = pop()
-        val dieType = pop()
-        val diceCount = pop()
         return push(
             rollDice(
-                diceCount,
-                dieType,
-                reroll,
-                keep,
-                explode,
+                n!!,
+                d!!,
+                reroll!!,
+                keep!!,
+                explode!!,
                 random
             )
         )
@@ -134,14 +161,14 @@ open class DiceParser(
 
     internal open fun maybeRollMore() = ZeroOrMore(
         Sequence(
-            recordAddOrSubtract(),
+            rememberAddOrSubtract(),
             rollExpression(),
             applyAddOrSubtract(),
             updateRunningTotal()
         )
     )
 
-    internal open fun recordAddOrSubtract() = Sequence(
+    internal open fun rememberAddOrSubtract() = Sequence(
         FirstOf(
             Ch('+'),
             Ch('-')
@@ -157,13 +184,19 @@ open class DiceParser(
 
     internal open fun maybeAdjust() = Optional(
         Sequence(
-            recordAddOrSubtract(),
+            rememberAddOrSubtract(),
             number(),
-            push(matchAdjustment()),
+            pushAdjustment(),
             applyAddOrSubtract(),
             updateRunningTotal()
         )
     )
+
+    internal fun pushAdjustment(): Boolean {
+        val adjustment = matchAdjustment()
+        this.adjustment = adjustment
+        return push(adjustment)
+    }
 
     internal fun matchAdjustment() = match().toInt()
 
