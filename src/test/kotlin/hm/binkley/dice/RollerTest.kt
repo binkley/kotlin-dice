@@ -26,8 +26,9 @@ internal class RollerTest {
     ) {
         val random = stableSeedForEachTest()
 
-        val result =
-            Roller(n, d, reroll, keep, explode, random, false).rollDice()
+        val result = Roller(
+            n, d, reroll, keep, explode, random, false
+        ).rollDice()
 
         expect(result).toBe(expected)
     }
