@@ -3,8 +3,6 @@
 package hm.binkley.dice
 
 import hm.binkley.dice.DiceParser.Companion.roll
-import java.lang.System.err
-import kotlin.random.Random
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
 import org.parboiled.Rule
@@ -12,6 +10,8 @@ import org.parboiled.annotations.BuildParseTree
 import org.parboiled.errors.ErrorUtils.printParseError
 import org.parboiled.parserunners.ReportingParseRunner
 import org.parboiled.support.ParsingResult
+import java.lang.System.err
+import kotlin.random.Random
 
 internal var verbose = false
 
@@ -136,14 +136,7 @@ open class DiceParser(
 
     internal fun rollTheDice(): Boolean {
         return push(
-            rollDice(
-                n!!,
-                d!!,
-                reroll!!,
-                keep!!,
-                explode!!,
-                random
-            )
+            Roller(n!!, d!!, reroll!!, keep!!, explode!!, random).rollDice()
         )
     }
 
