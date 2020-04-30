@@ -74,22 +74,23 @@ Whitespace in a dice expression is _not supported_.
 
 ## Code conventions
 
-As each top-level part of a roll expression (eg, die type) parse, a numeric
-value is pushed onto a stack provided by the parser.  By the end of the
-roll expression, the stack contains from top down:
+As each top-level part of a roll expression (eg, die type) parse, a local
+value is saved to the parser class internally.  By the end of the roll
+expression, this includes:
 
-- Adjustment, or 0 if none specified
-- Explosion limit, or "die type + 1" if none specified
-- Dice to keep, or "roll count" if none specified; a positive number is
-  keep highest, a negative number is keep lowest
+- Roll count, or 1 if none specified; ie, number of dice to roll
+- Die type, ie, number of die sides
 - Reroll value, or 0 if none specified; rolls of this value or lower are
   rerolled
-- Die type, ie, number of die sides
-- Roll count, or 1 if none specified; ie, number of dice to roll
+- Dice to keep, or "roll count" if none specified; a positive number is
+  keep highest, a negative number is keep lowest
+- Explosion limit, or "die type + 1" if none specified
+- Adjustment, or 0 if none specified
 
-Evaluating and individual roll expression clears the stack, leaving only:
+The parser still used a stack in some cases:
 
-- Running total of previous results
+- The final result of the dice expression
+- Tracking and applying `+`/`-` sign (add/subtract)
 
 ## References
 
