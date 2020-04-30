@@ -20,7 +20,7 @@ data class Roller(
             if (keep < 0) keepLowest(rolls)
             else keepHighest(rolls)
 
-        return kept.sum() + rollExplosions(kept)
+        return kept.sum() + rollExplosions(kept).sum()
     }
 
     private fun keepLowest(rolls: List<Int>): List<Int> {
@@ -47,16 +47,16 @@ data class Roller(
         return roll
     }
 
-    private fun rollExplosions(keep: List<Int>): Int {
-        var total = 0
+    private fun rollExplosions(keep: List<Int>): List<Int> {
+        val explosions = ArrayList<Int>()
         keep.forEach {
             var roll = it
             while (roll >= explode) {
                 roll = rollExplosion()
-                total += roll
+                explosions += roll
             }
         }
-        return total
+        return explosions
     }
 
     private fun rollExplosion() = rollSpecialDie("!")
