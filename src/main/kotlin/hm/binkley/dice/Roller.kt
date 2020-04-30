@@ -8,14 +8,13 @@ data class Roller(
     private var reroll: Int,
     private var keep: Int,
     private var explode: Int,
-    private val random: Random
+    private val random: Random,
+    private val verbose: Boolean
 ) {
     fun rollDice(): Int {
         val rolls = (1..n).map {
             rollSpecialDie("")
-        }.toMutableList()
-
-        rolls.sort()
+        }.sorted()
 
         val kept: List<Int> =
             if (keep < 0) keepLowest(rolls)

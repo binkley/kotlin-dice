@@ -136,7 +136,15 @@ open class DiceParser(
 
     internal fun rollTheDice(): Boolean {
         return push(
-            Roller(n!!, d!!, reroll!!, keep!!, explode!!, random).rollDice()
+            Roller(
+                n!!,
+                d!!,
+                reroll!!,
+                keep!!,
+                explode!!,
+                random,
+                verbose
+            ).rollDice()
         )
     }
 
@@ -192,99 +200,6 @@ open class DiceParser(
             ).run(expression)
     }
 }
-
-private fun rollDice(
-    n: Int,
-    d: Int,
-    reroll: Int,
-    keep: Int,
-    explode: Int,
-    random: Random
-): Int {
-    val rolls = (1..n).map {
-        rollSpecialDie(
-            "",
-            d,
-            reroll,
-            random
-        )
-    }.toMutableList()
-
-    rolls.sort()
-
-    val kept: List<Int> =
-        if (keep < 0) keepLowest(
-            rolls,
-            n,
-            keep
-        )
-        else keepHighest(rolls, n, keep)
-
-    return kept.sum() + rollExplosions(
-        kept,
-        d,
-        reroll,
-        explode,
-        random
-    )
-}
-
-private fun keepLowest(rolls: List<Int>, n: Int, keep: Int): List<Int> {
-    if (verbose) rolls.subList(-keep, n).forEach {
-        println("drop -> $it")
-    }
-    return rolls.subList(0, -keep)
-}
-
-private fun keepHighest(rolls: List<Int>, n: Int, keep: Int): List<Int> {
-    if (verbose) rolls.subList(0, n - keep).forEach {
-        println("drop -> $it")
-    }
-    return rolls.subList(n - keep, n)
-}
-
-private fun rollSpecialDie(
-    prefix: String,
-    d: Int,
-    reroll: Int,
-    random: Random
-): Int {
-    var roll = rollDie(d, random)
-    if (verbose) println("${prefix}roll(d$d) -> $roll")
-    while (roll <= reroll) {
-        roll = rollDie(d, random)
-        if (verbose) println("${prefix}reroll(d$d) -> $roll")
-    }
-    return roll
-}
-
-private fun rollExplosions(
-    keep: List<Int>,
-    d: Int,
-    reroll: Int,
-    explode: Int,
-    random: Random
-): Int {
-    var total = 0
-    keep.forEach {
-        var roll = it
-        while (roll >= explode) {
-            roll = rollExplosion(
-                d,
-                reroll,
-                random
-            )
-            total += roll
-        }
-    }
-    return total
-}
-
-private fun rollExplosion(d: Int, reroll: Int, random: Random) =
-    rollSpecialDie("!", d, reroll, random)
-
-private fun rollDie(d: Int, random: Random) =
-    random.nextInt(0, d) + 1
 
 fun main() {
     verbose = true
