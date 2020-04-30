@@ -1,6 +1,8 @@
 package hm.binkley.dice
 
 import org.parboiled.errors.ErrorUtils
+import java.lang.System.err
+import java.lang.System.out
 
 fun main() {
     verbose = true
@@ -25,8 +27,10 @@ private fun showRolls(expression: String) {
     println("Rolling $expression")
     val result = DiceParser.roll(expression)
     result.parseErrors.forEach {
-        System.err.println(ErrorUtils.printParseError(it))
+        err.println(ErrorUtils.printParseError(it))
     }
     if (!result.hasErrors())
         println("RESULT -> ${result.resultValue}")
+    err.flush()
+    out.flush()
 }
