@@ -54,11 +54,9 @@ open class DiceParser(
     )
 
     internal fun recordRollCount(): Boolean {
-        n = matchRollCount()
+        n = matchOrDefault("1").toInt()
         return true
     }
-
-    internal fun matchRollCount() = matchOrDefault("1").toInt()
 
     internal open fun number() = Sequence(
         OneOrMore(CharRange('1', '9')),
@@ -75,13 +73,11 @@ open class DiceParser(
     )
 
     internal fun recordDieType(): Boolean {
-        d = matchDieType()
+        d = when (val match = match()) {
+            "%" -> 100
+            else -> match.toInt()
+        }
         return true
-    }
-
-    internal fun matchDieType() = when (val match = match()) {
-        "%" -> 100
-        else -> match.toInt()
     }
 
     internal open fun maybeRerollLow() = Sequence(
@@ -93,13 +89,11 @@ open class DiceParser(
     )
 
     internal fun recordRerollLow(): Boolean {
-        reroll = matchRerollLow()
+        reroll = when (val match = match()) {
+            "" -> 0
+            else -> match.substring(1).toInt()
+        }
         return true
-    }
-
-    internal fun matchRerollLow() = when (val match = match()) {
-        "" -> 0
-        else -> match.substring(1).toInt()
     }
 
     internal open fun maybeKeepFewer() = Sequence(
@@ -114,17 +108,13 @@ open class DiceParser(
     )
 
     internal fun recordKeepFewer(): Boolean {
-        keep = matchKeepFewer()
-        return true
-    }
-
-    internal fun matchKeepFewer(): Int {
         val match = match()
-        return when {
+        keep = when {
             match.startsWith('h') -> match.substring(1).toInt()
             match.startsWith('l') -> -match.substring(1).toInt()
             else -> n!!
         }
+        return true
     }
 
     internal open fun maybeExplode() = Sequence(
@@ -136,14 +126,12 @@ open class DiceParser(
     )
 
     internal fun recordExplode(): Boolean {
-        explode = matchExplode()
+        explode = when (val match = match()) {
+            "" -> d!! + 1
+            "!" -> d!!
+            else -> match.substring(1).toInt()
+        }
         return true
-    }
-
-    internal fun matchExplode() = when (val match = match()) {
-        "" -> d!! + 1
-        "!" -> d!!
-        else -> match.substring(1).toInt()
     }
 
     internal fun rollTheDice(): Boolean {
@@ -186,19 +174,17 @@ open class DiceParser(
         Sequence(
             rememberAddOrSubtract(),
             number(),
-            pushAdjustment(),
+            recordAdjustment(),
             applyAddOrSubtract(),
             updateRunningTotal()
         )
     )
 
-    internal fun pushAdjustment(): Boolean {
-        val adjustment = matchAdjustment()
+    internal fun recordAdjustment(): Boolean {
+        val adjustment = match().toInt()
         this.adjustment = adjustment
         return push(adjustment)
     }
-
-    internal fun matchAdjustment() = match().toInt()
 
     companion object {
         /**
