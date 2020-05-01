@@ -1,10 +1,11 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.DiceParser.Companion.rollLoudly
+import lombok.Generated
 import org.parboiled.errors.ErrorUtils.printParseError
 import java.lang.System.err
 import java.lang.System.out
 
+@Generated // Lie to JaCoCo
 fun main() {
     showRolls("3d6")
     showRolls("3d6+1")
@@ -21,6 +22,7 @@ fun main() {
     showRolls("d6")
 }
 
+@Generated // Lie to JaCoCo
 private fun showRolls(expression: String) {
     println("---")
     println("Rolling $expression")

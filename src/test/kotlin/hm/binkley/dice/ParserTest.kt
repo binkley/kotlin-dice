@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.parboiled.Parboiled.createParser
 import org.parboiled.parserunners.ReportingParseRunner
-import org.parboiled.transform.ParserTransformer
 import java.util.stream.Stream
 import kotlin.random.Random
 
@@ -22,11 +21,6 @@ internal class ParserTest {
     @ParameterizedTest
     fun `should parse`(expression: String, expected: Int?) {
         val random = stableSeedForEachTest()
-
-        val x = ParserTransformer.transformParser(DiceParser::class.java)
-        x.constructors.forEach {
-            println(it)
-        }
 
         val result = ReportingParseRunner<Int>(
             createParser(
@@ -57,7 +51,7 @@ internal class ParserTest {
             Arguments.of("6d4l5!", 20),
             Arguments.of("3d3r1h2!", 10),
             Arguments.of("blah", null),
-            Arguments.of("d6", 4),
+            Arguments.of("d6", 4)
         )
     }
 }

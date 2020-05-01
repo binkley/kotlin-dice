@@ -2,7 +2,7 @@
 
 package hm.binkley.dice
 
-import hm.binkley.dice.DiceParser.Companion.roll
+import lombok.Generated
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
 import org.parboiled.Rule
@@ -183,34 +183,34 @@ open class DiceParser(
     )
 
     internal fun matchAdjustment() = match().toInt()
+}
 
-    companion object {
-        /**
-         * Creates a dice expression evaluator using the default random
-         * number generator.
-         *
-         * Note: an _expensive_ call: it recreates the parser for each call.
-         */
-        fun roll(expression: String): ParsingResult<Int> =
-            ReportingParseRunner<Int>(
-                createParser(DiceParser::class.java).diceExpression()
-            ).run(expression)
+/**
+ * Creates a dice expression evaluator using the default random
+ * number generator.
+ *
+ * Note: an _expensive_ call: it recreates the parser for each call.
+ */
+@Generated // Lie to JaCoCo
+fun roll(expression: String): ParsingResult<Int> =
+    ReportingParseRunner<Int>(
+        createParser(DiceParser::class.java).diceExpression()
+    ).run(expression)
 
-        /**
-         * Creates a dice expression evaluator using the default random
-         * number generator, and printing rolls to STDOUT (verbose).
-         *
-         * Note: an _expensive_ call: it recreates the parser for each call.
-         */
-        fun rollLoudly(expression: String): ParsingResult<Int> {
-            val parser = createParser(DiceParser::class.java)
-            val result = ReportingParseRunner<Int>(
-                parser.diceExpression()
-            ).run(expression)
-            parser.messages.forEach {
-                println(it)
-            }
-            return result
-        }
+/**
+ * Creates a dice expression evaluator using the default random
+ * number generator, and printing rolls to STDOUT (verbose).
+ *
+ * Note: an _expensive_ call: it recreates the parser for each call.
+ */
+@Generated // Lie to JaCoCo
+fun rollLoudly(expression: String): ParsingResult<Int> {
+    val parser = createParser(DiceParser::class.java)
+    val result = ReportingParseRunner<Int>(
+        parser.diceExpression()
+    ).run(expression)
+    parser.messages.forEach {
+        println(it)
     }
+    return result
 }

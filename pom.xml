@@ -21,6 +21,7 @@
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
         <kotlin.version>1.3.72</kotlin.version>
         <ktlint-maven-plugin.version>1.4.2</ktlint-maven-plugin.version>
+        <lombok.version>1.18.12</lombok.version>
         <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
         <maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
@@ -62,6 +63,14 @@
             <groupId>org.parboiled</groupId>
             <artifactId>parboiled-java</artifactId>
             <version>${parboiled.version}</version>
+        </dependency>
+
+        <!-- Coverage -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -179,6 +188,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Parboiled class processing confuses JaCoCo
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -207,11 +217,6 @@
                                 <rule>
                                     <element>CLASS</element>
                                     <limits>
-                                        <!-- <limit>-->
-                                        <!-- <counter>BRANCH</counter>-->
-                                        <!-- <value>COVEREDRATIO</value>-->
-                                        <!-- <minimum>100%</minimum>-->
-                                        <!-- </limit>-->
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
@@ -224,6 +229,10 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
+            <!-- Disable until
+                 https://github.com/gantsign/ktlint-maven-plugin/issues/331
+                 resolved
             <plugin>
                 <groupId>com.github.gantsign.maven</groupId>
                 <artifactId>ktlint-maven-plugin</artifactId>
@@ -240,6 +249,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>${maven-antrun-plugin.version}</version>
