@@ -9,7 +9,7 @@ data class Roller(
     private var keep: Int,
     private var explode: Int,
     private val random: Random,
-    private val verbose: Boolean
+    val messages: MutableList<String> = ArrayList()
 ) {
     fun rollDice(): Int {
         val rolls = (1..n).map {
@@ -24,25 +24,25 @@ data class Roller(
     }
 
     private fun keepLowest(rolls: List<Int>): List<Int> {
-        if (verbose) rolls.subList(-keep, n).forEach {
-            println("drop -> $it")
+        rolls.subList(-keep, n).forEach {
+            messages += "drop -> $it"
         }
         return rolls.subList(0, -keep)
     }
 
     private fun keepHighest(rolls: List<Int>): List<Int> {
-        if (verbose) rolls.subList(0, n - keep).forEach {
-            println("drop -> $it")
+        rolls.subList(0, n - keep).forEach {
+            messages += "drop -> $it"
         }
         return rolls.subList(n - keep, n)
     }
 
     private fun rollSpecialDie(prefix: String): Int {
         var roll = rollDie()
-        if (verbose) println("${prefix}roll(d$d) -> $roll")
+        messages += "${prefix}roll(d$d) -> $roll"
         while (roll <= reroll) {
             roll = rollDie()
-            if (verbose) println("${prefix}reroll(d$d) -> $roll")
+            messages += "${prefix}reroll(d$d) -> $roll"
         }
         return roll
     }

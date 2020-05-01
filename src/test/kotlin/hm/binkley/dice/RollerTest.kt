@@ -2,13 +2,13 @@ package hm.binkley.dice
 
 import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.verbs.expect
+import java.util.stream.Stream
+import kotlin.random.Random
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import java.util.stream.Stream
-import kotlin.random.Random
 
 private fun stableSeedForEachTest() = Random(1L)
 
@@ -26,9 +26,7 @@ internal class RollerTest {
     ) {
         val random = stableSeedForEachTest()
 
-        val result = Roller(
-            n, d, reroll, keep, explode, random, false
-        ).rollDice()
+        val result = Roller(n, d, reroll, keep, explode, random).rollDice()
 
         expect(result).toBe(expected)
     }

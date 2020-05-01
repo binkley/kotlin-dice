@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.parboiled.Parboiled.createParser
 import org.parboiled.parserunners.ReportingParseRunner
+import org.parboiled.transform.ParserTransformer
 import java.util.stream.Stream
 import kotlin.random.Random
 
@@ -20,10 +21,19 @@ internal class ParserTest {
     @MethodSource("args")
     @ParameterizedTest
     fun `should parse`(expression: String, expected: Int?) {
-        val random =
-            stableSeedForEachTest()
+        val random = stableSeedForEachTest()
+
+        val x = ParserTransformer.transformParser(DiceParser::class.java)
+        x.constructors.forEach {
+            println(it)
+        }
+
         val result = ReportingParseRunner<Int>(
-            createParser(DiceParser::class.java, random).diceExpression()
+            createParser(
+                DiceParser::class.java,
+                JdkArrayList<String>(),
+                random
+            ).diceExpression()
         ).run(expression)
 
         expect(result.resultValue).toBe(expected)

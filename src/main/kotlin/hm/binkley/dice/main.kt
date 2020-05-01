@@ -1,12 +1,10 @@
 package hm.binkley.dice
 
-import org.parboiled.errors.ErrorUtils
 import java.lang.System.err
 import java.lang.System.out
+import org.parboiled.errors.ErrorUtils
 
 fun main() {
-    verbose = true
-
     showRolls("3d6")
     showRolls("3d6+1")
     showRolls("3d6-1")
