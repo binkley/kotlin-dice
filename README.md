@@ -15,7 +15,7 @@ A dice expression has these parts:
 - An optional adjustment, added/subtracted at the end
 
 The smallest roll expression is just a die type, eg, `d6` meaning roll 1
-6-sided die.  See "Examples", below.
+6-sided die.  See [_Examples_](#examples), below.
 
 Try `./run.sh` for a demonstration.
 
