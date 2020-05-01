@@ -68,12 +68,12 @@ Whitespace in a dice expression is _not supported_.
 
 ## Examples
 
-- `d6` -- roll 1 6-sided die
+- `d6` -- roll 1 6-sided die; "dD" is the minimal possible expression
 - `2d%+1` -- roll percentile dice 2 times, sum, and add 1 to the result
 - `3d6r1!` -- roll 3 6-sided dice, rerolling 1s, "explode" on 6s
 - `3d6r1!5` -- roll 3 6-sided dice, rerolling 1s, "explode" on 5s or 6s
 - `2d4+2d6h1` -- roll 2 4-sided dice, sum; roll 2 6-sided dice keeping the
-  highest 1; add both results
+  highest roll; add both results
 
 ## Code conventions
 
@@ -94,9 +94,12 @@ The parser still used a stack in some cases:
 
 - The final result of the dice expression
 - Tracking and applying `+`/`-` sign (add/subtract)
+- Applying the adjustment, if any, at the end
 
 ## References
 
 * [roll](https://github.com/matteocorti/roll#examples)
 * [_Dice Syntax_](https://rollem.rocks/syntax/)
 * [_Dice notation_](https://en.wikipedia.org/wiki/Dice_notation)
+* [_Dice Reference_](https://wiki.roll20.net/Dice_Reference)
+* [_parboiled_](https://github.com/sirthias/parboiled/wiki)
