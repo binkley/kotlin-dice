@@ -10,15 +10,30 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - uses: actions/cache@master
+      - name: Restore cached Maven local
+        id: maven-cache
+        uses: actions/cache@master
         env:
-          cache-name: cache-maven-dependencies
+          cache-name: cache-maven
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-maven-${{ env.cache-name }}-
+            ${{ runner.os }}-maven-
+            ${{ runner.os }}-
+
+      - name: Restore cached Batect local
+        id: batect-cache
+        uses: actions/cache@master
+        env:
+          cache-name: cache-batect
+        with:
+          path: ~/.batect
+          key: ${{ runner.os }}-batect-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-batect-${{ env.cache-name }}
+            ${{ runner.os }}-batect-
             ${{ runner.os }}-
 
       - name: Set up JDK 11
