@@ -23,7 +23,8 @@ open class DiceParser(
     private val callback: OnRoll,
     private val random: Random
 ) : BaseParser<Int>() {
-    // Internal constructors used by Parboiled reflection
+    // Internal secondary constructors used by Parboiled reflection
+    // With pure Kotlin, these would be default values for the primary
     @Suppress("unused")
     internal constructor() : this(DoNothing, Random.Default)
 
