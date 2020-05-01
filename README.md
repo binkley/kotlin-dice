@@ -90,7 +90,7 @@ expression, this includes:
 - Explosion limit, or "die type + 1" if none specified
 - Adjustment, or 0 if none specified
 
-The parser still used a stack in some cases:
+The parser still used a stack for some cases:
 
 - The final result of the dice expression
 - Tracking and applying `+`/`-` sign (add/subtract)
