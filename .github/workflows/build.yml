@@ -31,3 +31,6 @@ jobs:
 
       - name: Validate runner
         run: ./run.sh
+
+      - name: Validate batect
+        run: ./batect run
