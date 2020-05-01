@@ -174,13 +174,13 @@ open class DiceParser(
         Sequence(
             rememberAddOrSubtract(),
             number(),
-            recordAdjustment(),
+            push(matchAdjustment()),
             applyAddOrSubtract(),
             updateRunningTotal()
         )
     )
 
-    internal fun recordAdjustment() = push(match().toInt())
+    internal fun matchAdjustment() = match().toInt()
 
     companion object {
         /**
