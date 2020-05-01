@@ -27,6 +27,9 @@ for dependency security issues
 for Kotlin
 * [JUnit](https://github.com/junit-team/junit5) runs tests
 * [JaCoCo](https://github.com/jacoco/jacoco) measures code coverage
+  **DISABLED** for now: JaCoCo is disliking Parboiled's class transformations.
+  For example, method `A` calls method `B` and no other method calls `B`;
+  JaCoCo shows full coverage for method `B`, but no coverage for method `A`
 * [ktlint](https://github.com/pinterest/ktlint) keeps code tidy
 * [snyk](https://snyk.io/test/github/binkley/kotlin-dice) looks for
 vulnerabilities
