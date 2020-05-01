@@ -230,9 +230,6 @@
                 </executions>
             </plugin>
             -->
-            <!-- Disable until
-                 https://github.com/gantsign/ktlint-maven-plugin/issues/331
-                 resolved
             <plugin>
                 <groupId>com.github.gantsign.maven</groupId>
                 <artifactId>ktlint-maven-plugin</artifactId>
@@ -249,7 +246,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>${maven-antrun-plugin.version}</version>

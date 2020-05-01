@@ -2,6 +2,7 @@
 
 package hm.binkley.dice
 
+import kotlin.random.Random
 import lombok.Generated
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
@@ -9,7 +10,6 @@ import org.parboiled.Rule
 import org.parboiled.annotations.BuildParseTree
 import org.parboiled.parserunners.ReportingParseRunner
 import org.parboiled.support.ParsingResult
-import kotlin.random.Random
 
 /**
  * A dice expression evaluator.
