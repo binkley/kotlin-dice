@@ -11,9 +11,6 @@ import org.parboiled.parserunners.ReportingParseRunner
 import org.parboiled.support.ParsingResult
 import kotlin.random.Random
 
-/** Workaround typing issues with reflective constructors via Parboiled */
-typealias JdkArrayList<T> = java.util.ArrayList<T>
-
 /**
  * A dice expression evaluator.
  *
@@ -23,9 +20,19 @@ typealias JdkArrayList<T> = java.util.ArrayList<T>
  */
 @BuildParseTree
 open class DiceParser(
-    val messages: MutableList<String> = JdkArrayList(),
-    private val random: Random = Random.Default
+    private val callback: OnRoll,
+    private val random: Random
 ) : BaseParser<Int>() {
+    // Internal constructors used by Parboiled reflection
+    @Suppress("unused")
+    internal constructor() : this(DoNothing, Random.Default)
+
+    @Suppress("unused")
+    internal constructor(callback: OnRoll) : this(callback, Random.Default)
+
+    @Suppress("unused")
+    internal constructor(random: Random) : this(DoNothing, random)
+
     // These properties define the current roll expression
     private var n: Int? = null
     private var d: Int? = null
@@ -144,7 +151,7 @@ open class DiceParser(
                 keep!!,
                 explode!!,
                 random,
-                messages as MutableList<String>
+                callback
             ).rollDice()
         )
     }
@@ -192,25 +199,10 @@ open class DiceParser(
  * Note: an _expensive_ call: it recreates the parser for each call.
  */
 @Generated // Lie to JaCoCo
-fun roll(expression: String): ParsingResult<Int> =
+fun roll(
+    expression: String,
+    callback: OnRoll = DoNothing
+): ParsingResult<Int> =
     ReportingParseRunner<Int>(
-        createParser(DiceParser::class.java).diceExpression()
+        createParser(DiceParser::class.java, callback).diceExpression()
     ).run(expression)
-
-/**
- * Creates a dice expression evaluator using the default random
- * number generator, and printing rolls to STDOUT (verbose).
- *
- * Note: an _expensive_ call: it recreates the parser for each call.
- */
-@Generated // Lie to JaCoCo
-fun rollLoudly(expression: String): ParsingResult<Int> {
-    val parser = createParser(DiceParser::class.java)
-    val result = ReportingParseRunner<Int>(
-        parser.diceExpression()
-    ).run(expression)
-    parser.messages.forEach {
-        println(it)
-    }
-    return result
-}

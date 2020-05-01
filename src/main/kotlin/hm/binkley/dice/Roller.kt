@@ -2,6 +2,14 @@ package hm.binkley.dice
 
 import kotlin.random.Random
 
+interface OnRoll {
+    fun onRoll(message: String)
+}
+
+object DoNothing : OnRoll {
+    override fun onRoll(message: String) = Unit
+}
+
 data class Roller(
     private var n: Int,
     private var d: Int,
@@ -9,7 +17,7 @@ data class Roller(
     private var keep: Int,
     private var explode: Int,
     private val random: Random,
-    val messages: MutableList<String> = ArrayList()
+    private val callback: OnRoll = DoNothing
 ) {
     fun rollDice(): Int {
         val rolls = (1..n).map {
@@ -25,24 +33,24 @@ data class Roller(
 
     private fun keepLowest(rolls: List<Int>): List<Int> {
         rolls.subList(-keep, n).forEach {
-            messages += "drop -> $it"
+            callback.onRoll("drop -> $it")
         }
         return rolls.subList(0, -keep)
     }
 
     private fun keepHighest(rolls: List<Int>): List<Int> {
         rolls.subList(0, n - keep).forEach {
-            messages += "drop -> $it"
+            callback.onRoll("drop -> $it")
         }
         return rolls.subList(n - keep, n)
     }
 
     private fun rollSpecialDie(prefix: String): Int {
         var roll = rollDie()
-        messages += "${prefix}roll(d$d) -> $roll"
+        callback.onRoll("${prefix}roll(d$d) -> $roll")
         while (roll <= reroll) {
             roll = rollDie()
-            messages += "${prefix}reroll(d$d) -> $roll"
+            callback.onRoll("${prefix}reroll(d$d) -> $roll")
         }
         return roll
     }

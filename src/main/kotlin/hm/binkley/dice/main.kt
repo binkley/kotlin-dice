@@ -22,11 +22,15 @@ fun main() {
     showRolls("d6")
 }
 
+private object ShowRolls : OnRoll {
+    override fun onRoll(message: String) = println(message)
+}
+
 @Generated // Lie to JaCoCo
 private fun showRolls(expression: String) {
     println("---")
     println("Rolling $expression")
-    val result = rollLoudly(expression)
+    val result = roll(expression, ShowRolls)
     result.parseErrors.forEach {
         err.println(printParseError(it))
     }

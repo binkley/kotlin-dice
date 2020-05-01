@@ -25,7 +25,6 @@ internal class ParserTest {
         val result = ReportingParseRunner<Int>(
             createParser(
                 DiceParser::class.java,
-                JdkArrayList<String>(),
                 random
             ).diceExpression()
         ).run(expression)
