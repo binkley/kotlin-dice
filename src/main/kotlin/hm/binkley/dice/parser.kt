@@ -3,13 +3,13 @@
 package hm.binkley.dice
 
 import hm.binkley.dice.DiceParser.Companion.roll
-import kotlin.random.Random
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
 import org.parboiled.Rule
 import org.parboiled.annotations.BuildParseTree
 import org.parboiled.parserunners.ReportingParseRunner
 import org.parboiled.support.ParsingResult
+import kotlin.random.Random
 
 /** Workaround typing issues with reflective constructors via Parboiled */
 typealias JdkArrayList<T> = java.util.ArrayList<T>
@@ -23,7 +23,7 @@ typealias JdkArrayList<T> = java.util.ArrayList<T>
  */
 @BuildParseTree
 open class DiceParser(
-    private val messages: MutableList<String> = JdkArrayList(),
+    val messages: MutableList<String> = JdkArrayList(),
     private val random: Random = Random.Default
 ) : BaseParser<Int>() {
     // These properties define the current roll expression
@@ -195,5 +195,22 @@ open class DiceParser(
             ReportingParseRunner<Int>(
                 createParser(DiceParser::class.java).diceExpression()
             ).run(expression)
+
+        /**
+         * Creates a dice expression evaluator using the default random
+         * number generator, and printing rolls to STDOUT (verbose).
+         *
+         * Note: an _expensive_ call: it recreates the parser for each call.
+         */
+        fun rollLoudly(expression: String): ParsingResult<Int> {
+            val parser = createParser(DiceParser::class.java)
+            val result = ReportingParseRunner<Int>(
+                parser.diceExpression()
+            ).run(expression)
+            parser.messages.forEach {
+                println(it)
+            }
+            return result
+        }
     }
 }
