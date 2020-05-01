@@ -3,13 +3,13 @@
 package hm.binkley.dice
 
 import hm.binkley.dice.DiceParser.Companion.roll
+import kotlin.random.Random
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
 import org.parboiled.Rule
 import org.parboiled.annotations.BuildParseTree
 import org.parboiled.parserunners.ReportingParseRunner
 import org.parboiled.support.ParsingResult
-import kotlin.random.Random
 
 internal var verbose = false
 
@@ -29,7 +29,6 @@ open class DiceParser(
     private var reroll: Int? = null
     private var keep: Int? = null
     private var explode: Int? = null
-    private var adjustment: Int? = null
 
     open fun diceExpression(): Rule = Sequence(
         rollExpression(),
@@ -179,11 +178,7 @@ open class DiceParser(
         )
     )
 
-    internal fun recordAdjustment(): Boolean {
-        val adjustment = match().toInt()
-        this.adjustment = adjustment
-        return push(adjustment)
-    }
+    internal fun recordAdjustment() = push(match().toInt())
 
     companion object {
         /**
