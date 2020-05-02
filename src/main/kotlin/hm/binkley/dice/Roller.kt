@@ -11,11 +11,11 @@ object DoNothing : OnRoll {
 }
 
 data class Roller(
-    private var n: Int,
-    private var d: Int,
-    private var reroll: Int,
-    private var keep: Int,
-    private var explode: Int,
+    private val n: Int,
+    private val d: Int,
+    private val reroll: Int,
+    private val keep: Int,
+    private val explode: Int,
     private val random: Random,
     private val callback: OnRoll = DoNothing
 ) {
