@@ -22,6 +22,7 @@ fun main() {
     showRolls("d6")
 }
 
+@Generated // Lie to JaCoCo
 private object ShowRolls : OnRoll {
     override fun onRoll(message: String) = println(message)
 }

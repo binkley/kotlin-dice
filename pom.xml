@@ -188,7 +188,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Parboiled class processing confuses JaCoCo
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -215,11 +214,8 @@
                         <configuration>
                             <rules>
                                 <rule>
-                                    <element>CLASS</element>
                                     <limits>
                                         <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
                                             <minimum>100%</minimum>
                                         </limit>
                                     </limits>
@@ -229,7 +225,7 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
+            <!-- -->
             <plugin>
                 <groupId>com.github.gantsign.maven</groupId>
                 <artifactId>ktlint-maven-plugin</artifactId>
