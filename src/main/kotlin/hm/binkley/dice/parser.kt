@@ -2,6 +2,7 @@
 
 package hm.binkley.dice
 
+import kotlin.random.Random
 import lombok.Generated
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
@@ -9,7 +10,6 @@ import org.parboiled.Rule
 import org.parboiled.annotations.BuildParseTree
 import org.parboiled.parserunners.ReportingParseRunner
 import org.parboiled.support.ParsingResult
-import kotlin.random.Random
 
 /**
  * A dice expression evaluator.
@@ -76,7 +76,10 @@ open class DiceParser(
 
     @Generated // Lie to JaCoCo
     internal open fun dieType() = Sequence(
-        Ch('d'),
+        FirstOf(
+            Ch('d'),
+            Ch('D')
+        ),
         FirstOf(
             number(),
             Ch('%')
@@ -95,7 +98,10 @@ open class DiceParser(
     @Generated // Lie to JaCoCo
     internal open fun maybeRerollLow() = Sequence(
         Optional(
-            Ch('r'),
+            FirstOf(
+                Ch('r'),
+                Ch('R')
+            ),
             number()
         ),
         recordRerollLow()
@@ -114,7 +120,9 @@ open class DiceParser(
         Optional(
             FirstOf(
                 Ch('h'),
-                Ch('l')
+                Ch('H'),
+                Ch('l'),
+                Ch('L')
             ),
             number()
         ),
@@ -124,8 +132,10 @@ open class DiceParser(
     internal fun recordKeepFewer(): Boolean {
         val match = match()
         keep = when {
-            match.startsWith('h') -> match.substring(1).toInt()
-            match.startsWith('l') -> -match.substring(1).toInt()
+            match.startsWith('h') || match.startsWith('H') ->
+                match.substring(1).toInt()
+            match.startsWith('l') || match.startsWith('L') ->
+                -match.substring(1).toInt()
             else -> n!!
         }
         return true

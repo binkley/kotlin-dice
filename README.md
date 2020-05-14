@@ -61,7 +61,10 @@ run by Batect.
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
 
-Whitespace in a dice expression is _not supported_.
+Single-character prefixes are _case-insensitive_, eg, `d6` and `D6` are the
+same roll.
+
+Whitespace in a dice expression is **not supported**.
 
 ## Examples
 

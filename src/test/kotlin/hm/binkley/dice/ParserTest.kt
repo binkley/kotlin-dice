@@ -55,16 +55,20 @@ internal class ParserTest {
         @Suppress("unused")
         fun args(): Stream<Arguments> = Stream.of(
             Arguments.of("3d6", 10),
+            Arguments.of("3D6", 10),
             Arguments.of("3d6+1", 11),
             Arguments.of("3d6-1", 9),
             Arguments.of("10d3!", 20),
             Arguments.of("10d3!2", 49),
             Arguments.of("4d6h3", 10),
+            Arguments.of("4d6H3", 10),
             Arguments.of("4d6l3", 6),
+            Arguments.of("4d6L3", 6),
             Arguments.of("3d6+2d4", 17),
             Arguments.of("d%", 66),
             Arguments.of("6d4l5!", 20),
             Arguments.of("3d3r1h2!", 10),
+            Arguments.of("3d3R1h2!", 10),
             Arguments.of("blah", null),
             Arguments.of("d6", 4)
         )
