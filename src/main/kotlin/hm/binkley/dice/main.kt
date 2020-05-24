@@ -1,12 +1,13 @@
 package hm.binkley.dice
 
-import java.lang.System.err
-import java.lang.System.out
 import lombok.Generated
 import org.parboiled.errors.ErrorUtils.printParseError
+import java.lang.System.err
+import java.lang.System.out
 
 @Generated // Lie to JaCoCo
 fun main() {
+    showRolls("D6")
     showRolls("3d6")
     showRolls("3d6+1")
     showRolls("3d6-1")
@@ -17,9 +18,9 @@ fun main() {
     showRolls("3d6+2d4")
     showRolls("d%")
     showRolls("6d4l5!")
-    showRolls("3d3r1h2!")
+    showRolls("3d12r1h2!11")
     showRolls("blah")
-    showRolls("d6")
+    println("DONE") // So that bad expression did not throw
 }
 
 @Generated // Lie to JaCoCo
