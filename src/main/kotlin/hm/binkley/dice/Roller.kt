@@ -56,7 +56,7 @@ data class Roller(
     }
 
     private fun rollExplosions(keep: List<Int>): List<Int> {
-        val explosions = ArrayList<Int>()
+        val explosions = mutableListOf<Int>()
         keep.forEach {
             var roll = it
             while (roll >= explode) {

@@ -1,9 +1,9 @@
 package hm.binkley.dice
 
-import lombok.Generated
-import org.parboiled.errors.ErrorUtils.printParseError
 import java.lang.System.err
 import java.lang.System.out
+import lombok.Generated
+import org.parboiled.errors.ErrorUtils.printParseError
 
 @Generated // Lie to JaCoCo
 fun main() {
@@ -20,7 +20,7 @@ fun main() {
     showRolls("6d4l5!")
     showRolls("3d12r1h2!11")
     showRolls("blah")
-    println("DONE") // So that bad expression did not throw
+    println("DONE") // Show that bad expression did not throw
 }
 
 @Generated // Lie to JaCoCo
