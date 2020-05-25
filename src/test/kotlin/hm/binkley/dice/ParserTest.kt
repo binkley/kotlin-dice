@@ -54,6 +54,7 @@ internal class ParserTest {
         @JvmStatic
         @Suppress("unused")
         fun args(): Stream<Arguments> = Stream.of(
+            Arguments.of("D6", 4),
             Arguments.of("3d6", 10),
             Arguments.of("3D6", 10),
             Arguments.of("3d6+1", 11),
@@ -69,8 +70,7 @@ internal class ParserTest {
             Arguments.of("6d4l5!", 20),
             Arguments.of("3d3r1h2!", 10),
             Arguments.of("3d3R1h2!", 10),
-            Arguments.of("blah", null),
-            Arguments.of("d6", 4)
+            Arguments.of("blah", null)
         )
     }
 }
