@@ -1,9 +1,9 @@
 package hm.binkley.dice
 
-import java.lang.System.err
-import java.lang.System.out
 import lombok.Generated
 import org.parboiled.errors.ErrorUtils.printParseError
+import java.lang.System.err
+import java.lang.System.out
 
 @Generated // Lie to JaCoCo
 fun main() {
