@@ -2,7 +2,7 @@ package hm.binkley.dice
 
 import kotlin.random.Random
 
-interface OnRoll {
+fun interface OnRoll {
     fun onRoll(message: String)
 }
 
