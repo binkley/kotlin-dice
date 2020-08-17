@@ -24,7 +24,7 @@ internal class StandAloneTest {
     }
 
     @Test
-    fun `should default construct`() {
+    fun `should default construct with the RNG`() {
         ReportingParseRunner<Int>(
             createParser(DiceParser::class.java).diceExpression()
         ).run("3d6")
