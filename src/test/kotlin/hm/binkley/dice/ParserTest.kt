@@ -27,7 +27,7 @@ internal class StandAloneTest {
     fun `should default construct`() {
         ReportingParseRunner<Int>(
             createParser(DiceParser::class.java).diceExpression()
-        ).run("100d3r1h99!+100d3r1l99!3-17")
+        ).run("3d6")
     }
 }
 
@@ -70,7 +70,8 @@ internal class ParserTest {
             Arguments.of("6d4l5!", 20),
             Arguments.of("3d3r1h2!", 10),
             Arguments.of("3d3R1h2!", 10),
-            Arguments.of("blah", null)
+            Arguments.of("100d3r1h99!+100d3r1l99!3-17", 919),
+            Arguments.of("blah", null),
         )
     }
 }
