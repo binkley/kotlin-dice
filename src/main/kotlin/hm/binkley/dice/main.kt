@@ -7,19 +7,19 @@ import java.lang.System.out
 
 @Generated // Lie to JaCoCo
 fun main() {
-    showRolls("D6")
-    showRolls("3d6")
-    showRolls("3d6+1")
-    showRolls("3d6-1")
-    showRolls("10d3!")
-    showRolls("10d3!2")
-    showRolls("4d6h3")
-    showRolls("4d6l3")
-    showRolls("3d6+2d4")
-    showRolls("d%")
-    showRolls("6d4l5!")
-    showRolls("3d12r1h2!11")
-    showRolls("blah")
+    rollNoisily("D6")
+    rollNoisily("3d6")
+    rollNoisily("3d6+1")
+    rollNoisily("3d6-1")
+    rollNoisily("10d3!")
+    rollNoisily("10d3!2")
+    rollNoisily("4d6h3")
+    rollNoisily("4d6l3")
+    rollNoisily("3d6+2d4")
+    rollNoisily("d%")
+    rollNoisily("6d4l5!")
+    rollNoisily("3d12r1h2!11")
+    rollNoisily("blah")
     println("DONE") // Show that bad expression did not throw
 }
 
@@ -29,7 +29,7 @@ private object ShowRolls : OnRoll {
 }
 
 @Generated // Lie to JaCoCo
-private fun showRolls(expression: String) {
+private fun rollNoisily(expression: String) {
     println("---")
     println("Rolling $expression")
     val result = roll(expression, ShowRolls)
