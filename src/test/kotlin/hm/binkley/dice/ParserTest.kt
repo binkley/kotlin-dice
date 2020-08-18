@@ -4,8 +4,6 @@ import ch.tutteli.atrium.api.fluent.en_GB.isNotEmpty
 import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.verbs.expect
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -16,7 +14,6 @@ import kotlin.random.Random
 
 private fun stableSeedForEachTest() = Random(1L)
 
-@TestInstance(PER_CLASS)
 internal class StandAloneTest {
     @Test
     fun `should not throw on roll`() {
@@ -31,7 +28,6 @@ internal class StandAloneTest {
     }
 }
 
-@TestInstance(PER_CLASS)
 internal class ParserTest {
     @MethodSource("args")
     @ParameterizedTest

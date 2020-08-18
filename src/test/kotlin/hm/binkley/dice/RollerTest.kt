@@ -12,7 +12,6 @@ import kotlin.random.Random
 
 private fun stableSeedForEachTest() = Random(1L)
 
-@TestInstance(PER_CLASS)
 internal class RollerTest {
     @MethodSource("args")
     @ParameterizedTest
