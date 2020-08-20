@@ -222,7 +222,7 @@
         seeing branches
   TODO: JaCoCo not seeing Kotlin 1.4 SAM (fun interface) code
                                             -->
-                                            <minimum>83%</minimum>
+                                            <minimum>96%</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -239,7 +239,7 @@
                     <avoidCallsTo>
                         <avoidCallsTo>kotlin.jvm.internal</avoidCallsTo>
                     </avoidCallsTo>
-                    <coverageThreshold>51</coverageThreshold>
+                    <coverageThreshold>53</coverageThreshold>
                     <excludedClasses>
                         <excludedClass>hm.binkley.math.MainKt
                         </excludedClass>
@@ -257,7 +257,7 @@
                         <jvmArg>-XX:TieredStopAtLevel=1</jvmArg>
                     </jvmArgs>
                     <!-- TODO: How to make mutation testing happy? -->
-                    <mutationThreshold>53</mutationThreshold>
+                    <mutationThreshold>63</mutationThreshold>
                 </configuration>
                 <executions>
                     <execution>

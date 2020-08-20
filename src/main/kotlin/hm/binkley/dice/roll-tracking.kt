@@ -16,37 +16,20 @@ sealed class RollAction(
     val reroll: Int,
     val keep: Int,
     val explode: Int,
+    val roll: Int,
 ) {
-    constructor(roller: Roller) : this(
+    constructor(roller: Roller, roll: Int) : this(
         roller.n,
         roller.d,
         roller.reroll,
         roller.keep,
         roller.explode,
+        roll,
     )
 }
 
-class PlainRoll(
-    roller: Roller,
-    val roll: Int,
-) : RollAction(roller)
-
-class ExplodedRoll(
-    roller: Roller,
-    val roll: Int,
-) : RollAction(roller)
-
-class PlainReroll(
-    roller: Roller,
-    val roll: Int,
-) : RollAction(roller)
-
-class ExplodedReroll(
-    roller: Roller,
-    val roll: Int,
-) : RollAction(roller)
-
-class DroppedRoll(
-    roller: Roller,
-    val roll: Int,
-) : RollAction(roller)
+class PlainRoll(roller: Roller, roll: Int) : RollAction(roller, roll)
+class PlainReroll(roller: Roller, roll: Int) : RollAction(roller, roll)
+class ExplodedRoll(roller: Roller, roll: Int) : RollAction(roller, roll)
+class ExplodedReroll(roller: Roller, roll: Int) : RollAction(roller, roll)
+class DroppedRoll(roller: Roller, roll: Int) : RollAction(roller, roll)

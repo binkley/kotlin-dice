@@ -24,10 +24,8 @@ fun main() {
 }
 
 @Generated // Lie to JaCoCo
-private fun rollNoisily(expression: String) {
-    println("---")
-    println("Rolling $expression")
-    val result = roll(expression) { action ->
+private object NoisyRolling : OnRoll {
+    override fun onRoll(action: RollAction) {
         val message = when (action) {
             is PlainRoll -> "roll(d${action.d}) -> ${action.roll}"
             is PlainReroll -> "reroll(d${action.d}) -> ${action.roll}"
@@ -37,6 +35,13 @@ private fun rollNoisily(expression: String) {
         }
         println(message)
     }
+}
+
+@Generated // Lie to JaCoCo
+private fun rollNoisily(expression: String) {
+    println("---")
+    println("Rolling $expression")
+    val result = roll(expression, NoisyRolling)
     result.parseErrors.forEach {
         err.println(printParseError(it))
     }
