@@ -5,8 +5,6 @@ fun interface OnRoll {
 }
 
 object DoNothing : OnRoll {
-    // TODO: Change from String to a sealed class with specific details: let
-    //       the callback decide how to present the information
     override fun onRoll(action: RollAction) = Unit
 }
 
