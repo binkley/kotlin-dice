@@ -2,16 +2,6 @@ package hm.binkley.dice
 
 import kotlin.random.Random
 
-fun interface OnRoll {
-    fun onRoll(message: String)
-}
-
-object DoNothing : OnRoll {
-    // TODO: Change from String to a sealed class with specific details: let
-    //       the callback decide how to present the information
-    override fun onRoll(message: String) = Unit
-}
-
 data class Roller(
     private val n: Int,
     private val d: Int,
@@ -19,7 +9,7 @@ data class Roller(
     private val keep: Int,
     private val explode: Int,
     private val random: Random,
-    private val callback: OnRoll = DoNothing
+    private val callback: OnRoll = DoNothing,
 ) {
     fun rollDice(): Int {
         val rolls = (1..n).map {
