@@ -27,7 +27,14 @@ fun main() {
 private fun rollNoisily(expression: String) {
     println("---")
     println("Rolling $expression")
-    val result = roll(expression) { message ->
+    val result = roll(expression) { action ->
+        val message = when (action) {
+            is PlainRoll -> "roll(d${action.d}) -> ${action.roll}"
+            is PlainReroll -> "reroll(d${action.d}) -> ${action.roll}"
+            is ExplodedRoll -> "!roll(d${action.d}) -> ${action.roll}"
+            is ExplodedReroll -> "!reroll(d${action.d}) -> ${action.roll}"
+            is DroppedRoll -> "drop -> ${action.roll}"
+        }
         println(message)
     }
     result.parseErrors.forEach {
