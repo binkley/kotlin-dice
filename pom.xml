@@ -222,7 +222,7 @@
         seeing branches
   TODO: JaCoCo not seeing Kotlin 1.4 SAM (fun interface) code
                                             -->
-                                            <minimum>96%</minimum>
+                                            <minimum>84%</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -257,7 +257,7 @@
                         <jvmArg>-XX:TieredStopAtLevel=1</jvmArg>
                     </jvmArgs>
                     <!-- TODO: How to make mutation testing happy? -->
-                    <mutationThreshold>63</mutationThreshold>
+                    <mutationThreshold>56</mutationThreshold>
                 </configuration>
                 <executions>
                     <execution>

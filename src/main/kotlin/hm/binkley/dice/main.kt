@@ -24,17 +24,14 @@ fun main() {
 }
 
 @Generated // Lie to JaCoCo
-private object NoisyRolling : OnRoll {
-    override fun onRoll(action: RollAction) {
-        val message = when (action) {
-            is PlainRoll -> "roll(d${action.d}) -> ${action.roll}"
-            is PlainReroll -> "reroll(d${action.d}) -> ${action.roll}"
-            is ExplodedRoll -> "!roll(d${action.d}) -> ${action.roll}"
-            is ExplodedReroll -> "!reroll(d${action.d}) -> ${action.roll}"
-            is DroppedRoll -> "drop -> ${action.roll}"
-        }
-        println(message)
-    }
+private val NoisyRolling = OnRoll {
+    println(when (it) {
+        is PlainRoll -> "roll(d${it.d}) -> ${it.roll}"
+        is PlainReroll -> "reroll(d${it.d}) -> ${it.roll}"
+        is ExplodedRoll -> "!roll(d${it.d}) -> ${it.roll}"
+        is ExplodedReroll -> "!reroll(d${it.d}) -> ${it.roll}"
+        is DroppedRoll -> "drop -> ${it.roll}"
+    })
 }
 
 @Generated // Lie to JaCoCo
