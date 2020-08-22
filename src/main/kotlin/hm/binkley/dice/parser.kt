@@ -21,7 +21,7 @@ import kotlin.random.Random
 @BuildParseTree
 open class DiceParser(
     private val callback: OnRoll,
-    private val random: Random
+    private val random: Random,
 ) : BaseParser<Int>() {
     // Internal secondary constructors used by Parboiled reflection
     // With pure Kotlin, these would be default values for the primary
@@ -223,7 +223,7 @@ open class DiceParser(
 @Generated // Lie to JaCoCo
 fun roll(
     expression: String,
-    callback: OnRoll = DoNothing
+    callback: OnRoll = DoNothing,
 ): ParsingResult<Int> =
     ReportingParseRunner<Int>(
         createParser(DiceParser::class.java, callback).diceExpression()

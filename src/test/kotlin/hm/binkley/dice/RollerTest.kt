@@ -2,8 +2,6 @@ package hm.binkley.dice
 
 import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.verbs.expect
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -21,7 +19,7 @@ internal class RollerTest {
         reroll: Int,
         keep: Int,
         explode: Int,
-        expected: Int
+        expected: Int,
     ) {
         val random = stableSeedForEachTest()
 

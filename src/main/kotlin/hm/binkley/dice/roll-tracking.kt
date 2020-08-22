@@ -4,10 +4,6 @@ fun interface OnRoll {
     fun onRoll(action: RollAction)
 }
 
-object DoNothing : OnRoll {
-    override fun onRoll(action: RollAction) = Unit
-}
-
 sealed class RollAction(
     val n: Int,
     val d: Int,

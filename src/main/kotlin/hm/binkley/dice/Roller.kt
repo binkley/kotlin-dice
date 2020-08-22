@@ -8,6 +8,8 @@ private enum class RollType {
     PLAIN, EXPLODED
 }
 
+val DoNothing = OnRoll { }
+
 data class Roller(
     val n: Int,
     val d: Int,
