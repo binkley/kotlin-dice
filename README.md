@@ -111,6 +111,7 @@ The parser still used a stack for some cases:
 
 * Support factors of rolls, ie, a syntax for "2*(2d6)" or "(2d6)/2"
 * Support `floor`, `ceil`, etc., to round down/up dice rolls
+* Reroll should support options other than low rolls
 
 ## References
 
@@ -118,4 +119,4 @@ The parser still used a stack for some cases:
 * [_Dice Syntax_](https://rollem.rocks/syntax/)
 * [_Dice notation_](https://en.wikipedia.org/wiki/Dice_notation)
 * [_Dice Reference_](https://wiki.roll20.net/Dice_Reference)
-* [_parboiled_](https://github.com/sirthias/parboiled/wiki)
+* [_parboiled_](https://github.com/sirthias/parboiled/wiki) &mdash; the parser

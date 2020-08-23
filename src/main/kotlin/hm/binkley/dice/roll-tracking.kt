@@ -1,20 +1,28 @@
 package hm.binkley.dice
 
+/**
+ * This could have been a `typealias`.  However, Kotlin syntax plays nicer
+ * with using a `fun interface` (SAM interface).
+ */
 fun interface OnRoll {
     fun onRoll(action: RollAction)
 }
 
+/**
+ * *Not* an `enum class`.  The subtypes need to be specific to values
+ * passed in the constructors.
+ */
 sealed class RollAction(
-    val n: Int,
     val d: Int,
+    val n: Int,
     val reroll: Int,
     val keep: Int,
     val explode: Int,
     val roll: Int,
 ) {
     constructor(roller: Roller, roll: Int) : this(
-        roller.n,
         roller.d,
+        roller.n,
         roller.reroll,
         roller.keep,
         roller.explode,
