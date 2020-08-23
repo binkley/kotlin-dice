@@ -17,7 +17,7 @@ A dice expression has these parts:
 The smallest roll expression is just a die type, eg, `d6` meaning roll 1
 6-sided die.  See [_Examples_](#examples), below.
 
-Try `./run.sh` for a demonstration.
+Try `./run.sh` for a demonstration.  See [TODO](#todo) for further improvements.
 
 ## Table of contents
 
