@@ -44,8 +44,8 @@ jobs:
       - name: Build and verify
         run: ./mvnw -C verify
 
-      - name: Validate runner
-        run: ./run.sh 2>&1  # TODO: GitHub discards STDERR
-
       - name: Validate batect
         run: ./batect --permanently-enable-telemetry run
+
+      - name: Validate runner
+        run: ./run.sh 2>&1  # TODO: GitHub discards STDERR
