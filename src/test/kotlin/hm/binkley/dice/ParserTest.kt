@@ -46,7 +46,7 @@ internal class ParserTest {
             expect(result.parseErrors).isNotEmpty()
     }
 
-    internal companion object {
+    companion object {
         @JvmStatic
         @Suppress("unused")
         fun args(): Stream<Arguments> = Stream.of(

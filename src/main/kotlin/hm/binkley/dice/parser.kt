@@ -45,7 +45,8 @@ open class DiceParser(
     open fun diceExpression(): Rule = Sequence(
         rollExpression(),
         maybeRollMore(),
-        maybeAdjust()
+        maybeAdjust(),
+        EOI
     )
 
     @Generated // Lie to JaCoCo
