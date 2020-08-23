@@ -1,12 +1,8 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.RollType.EXPLODED
-import hm.binkley.dice.RollType.PLAIN
 import kotlin.random.Random
 
-private enum class RollType {
-    PLAIN, EXPLODED
-}
+private typealias ReportType = (Roller, Int) -> RollAction
 
 val DoNothing = OnRoll { }
 
@@ -20,34 +16,34 @@ data class Roller(
     private val callback: OnRoll = DoNothing,
 ) {
     fun rollDice(): Int {
-        val rolls = (1..n).map {
-            rollSpecialDie(PLAIN)
-        }.sorted()
+        val rolls = generateSequence {
+            rollPlain()
+        }.take(n).toList().sorted()
 
-        val kept: List<Int> =
-            if (keep < 0) keepLowest(rolls)
-            else keepHighest(rolls)
+        val kept =
+            if (keep < 0) rolls.keepLowest()
+            else rolls.keepHighest()
 
-        return kept.sum() + rollExplosions(kept).sum()
+        return kept.sum() + kept.rollExplosions().sum()
     }
 
-    private fun keepLowest(rolls: List<Int>): List<Int> {
-        rolls.subList(-keep, n).forEach {
-            report(DroppedRoll(this, it))
+    private fun List<Int>.keepLowest(): List<Int> {
+        subList(-keep, n).forEach {
+            report(DroppedRoll(this@Roller, it))
         }
-        return rolls.subList(0, -keep)
+        return subList(0, -keep)
     }
 
-    private fun keepHighest(rolls: List<Int>): List<Int> {
-        rolls.subList(0, n - keep).forEach {
-            report(DroppedRoll(this, it))
+    private fun List<Int>.keepHighest(): List<Int> {
+        subList(0, n - keep).forEach {
+            report(DroppedRoll(this@Roller, it))
         }
-        return rolls.subList(n - keep, n)
+        return subList(n - keep, n)
     }
 
-    private fun rollExplosions(keep: List<Int>): List<Int> {
+    private fun List<Int>.rollExplosions(): List<Int> {
         val explosions = mutableListOf<Int>()
-        keep.forEach {
+        forEach {
             var roll = it
             while (roll >= explode) {
                 roll = rollExplosion()
@@ -57,20 +53,20 @@ data class Roller(
         return explosions
     }
 
-    private fun rollExplosion() = rollSpecialDie(EXPLODED)
+    private fun rollPlain() =
+        rollReportedDie(::PlainRoll, ::PlainReroll)
 
-    private fun rollSpecialDie(type: RollType): Int {
+    private fun rollExplosion() =
+        rollReportedDie(::ExplodedRoll, ::ExplodedReroll)
+
+    private fun rollReportedDie(
+        onRoll: ReportType, onReroll: ReportType,
+    ): Int {
         var roll = rollDie()
-        report(when (type) {
-            PLAIN -> PlainRoll(this, roll)
-            EXPLODED -> ExplodedRoll(this, roll)
-        })
+        report(onRoll(this, roll))
         while (roll <= reroll) {
             roll = rollDie()
-            report(when (type) {
-                PLAIN -> PlainReroll(this, roll)
-                EXPLODED -> ExplodedReroll(this, roll)
-            })
+            report(onReroll(this, roll))
         }
         return roll
     }
