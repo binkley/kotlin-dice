@@ -75,6 +75,8 @@ same roll.
 
 Whitespace in a dice expression is **not supported**.
 
+See [TODO](#todo) for further improvements.
+
 ## Examples
 
 - `d6` -- roll 1 6-sided die; "dD" is the minimal possible expression
@@ -108,6 +110,7 @@ The parser still used a stack for some cases:
 ## TODO
 
 * Support factors of rolls, ie, a syntax for "2*(2d6)" or "(2d6)/2"
+* Support `floor`, `ceil`, etc., to round down/up dice rolls
 
 ## References
 
