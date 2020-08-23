@@ -42,7 +42,7 @@ jobs:
           version: 11
 
       - name: Build and verify
-        run: ./mvnw -C clean verify
+        run: ./mvnw -C verify
 
       - name: Validate runner
         run: ./run.sh
