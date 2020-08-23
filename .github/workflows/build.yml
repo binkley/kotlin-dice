@@ -48,4 +48,4 @@ jobs:
         run: ./run.sh
 
       - name: Validate batect
-        run: ./batect run
+        run: ./batect --permanently-enable-telemetry run
