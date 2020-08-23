@@ -6,13 +6,37 @@ private typealias ReportType = (Roller, Int) -> RollAction
 
 val DoNothing = OnRoll { }
 
+/**
+ * Represents rolling dice of a given [d] number of sides, eg, d12, and
+ * summing the results.
+ *
+ * *NB* &mdash; Exploding dice can result in more than [n] dice in total.
+ */
 data class Roller(
-    val n: Int,
+    /** The number of die sides, eg, d12. */
     val d: Int,
+    /** The number of dice to roll. */
+    val n: Int,
+    /**
+     * Reroll die values this value or lower.  This is not the same as
+     * "dropping" dice, as rolling continues to meet [n] (or possibly more
+     * with [explode]).
+     *
+     * @todo Syntax and support for other comparisons than less-than-or-equal
+     */
     val reroll: Int,
+    /**
+     * Keep rolls:
+     * * If positive, keep highest value (ie, top N)
+     * * If negative, keep lowest value (ie, bottom N)
+     * * If zero, keep all
+     */
     val keep: Int,
+    /** Continue rolling more dice while the roll is this value or greater. */
     val explode: Int,
+    /** The RNG.  Tests will prefer a fixed seed for reproducibility. */
     private val random: Random,
+    /** Reports back on roll outcomes, potentially for logging or feedback. */
     private val callback: OnRoll = DoNothing,
 ) {
     fun rollDice(): Int {
@@ -54,12 +78,12 @@ data class Roller(
     }
 
     private fun rollPlain() =
-        rollReportedDie(::PlainRoll, ::PlainReroll)
+        rollDieAndTrack(::PlainRoll, ::PlainReroll)
 
     private fun rollExplosion() =
-        rollReportedDie(::ExplodedRoll, ::ExplodedReroll)
+        rollDieAndTrack(::ExplodedRoll, ::ExplodedReroll)
 
-    private fun rollReportedDie(
+    private fun rollDieAndTrack(
         onRoll: ReportType, onReroll: ReportType,
     ): Int {
         var roll = rollDie()

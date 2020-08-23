@@ -164,8 +164,8 @@ open class DiceParser(
     internal fun rollTheDice(): Boolean {
         return push(
             Roller(
-                n!!,
                 d!!,
+                n!!,
                 reroll!!,
                 keep!!,
                 explode!!,
