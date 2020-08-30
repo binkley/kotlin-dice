@@ -109,6 +109,7 @@ The parser still used a stack for some cases:
 
 ## TODO
 
+* Support plain values, eg, Goodberry is a 1 always
 * Support factors of rolls, ie, a syntax for "2*(2d6)" or "(2d6)/2"
 * Support `floor`, `ceil`, etc., to round down/up dice rolls
 * Reroll should support options other than low rolls
