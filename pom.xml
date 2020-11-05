@@ -239,25 +239,12 @@
                     <avoidCallsTo>
                         <avoidCallsTo>kotlin.jvm.internal</avoidCallsTo>
                     </avoidCallsTo>
-                    <coverageThreshold>53</coverageThreshold>
+                    <coverageThreshold>61</coverageThreshold>
                     <excludedClasses>
-                        <excludedClass>hm.binkley.math.MainKt
-                        </excludedClass>
+                        <excludedClass>hm.binkley.dice.MainKt</excludedClass>
                     </excludedClasses>
-                    <excludedMethods>
-                        <excludedMethod>byteValue</excludedMethod>
-                        <excludedMethod>doubleValue</excludedMethod>
-                        <excludedMethod>floatValue</excludedMethod>
-                        <excludedMethod>intValue</excludedMethod>
-                        <excludedMethod>longValue</excludedMethod>
-                        <excludedMethod>shortValue</excludedMethod>
-                    </excludedMethods>
-                    <jvmArgs>
-                        <jvmArg>-noverify</jvmArg>
-                        <jvmArg>-XX:TieredStopAtLevel=1</jvmArg>
-                    </jvmArgs>
                     <!-- TODO: How to make mutation testing happy? -->
-                    <mutationThreshold>56</mutationThreshold>
+                    <mutationThreshold>57</mutationThreshold>
                 </configuration>
                 <executions>
                     <execution>
