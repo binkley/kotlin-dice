@@ -44,6 +44,7 @@ private fun rollNoisily(expression: String) {
     }
     if (!result.hasErrors())
         println("RESULT -> ${result.resultValue}")
+    // TODO: Oddly sometimes STDIN shows up first for a subsequent call
     err.flush()
     out.flush()
 }
