@@ -41,13 +41,6 @@
         <!-- @formatter:on -->
     </properties>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jcenter.bintray.com</id>
-            <url>https://jcenter.bintray.com</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -343,4 +336,17 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>Sonatype SNAPSHOT</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
