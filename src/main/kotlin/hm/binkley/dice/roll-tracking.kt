@@ -8,26 +8,15 @@ fun interface OnRoll {
     fun onRoll(action: RollAction)
 }
 
-/**
- * *Not* an `enum class`.  The subtypes need to be specific to values
- * passed in the constructors.
- */
 sealed class RollAction(
-    val d: Int,
-    val n: Int,
-    val reroll: Int,
-    val keep: Int,
-    val explode: Int,
+    private val roller: Roller,
     val roll: Int,
 ) {
-    constructor(roller: Roller, roll: Int) : this(
-        roller.d,
-        roller.n,
-        roller.reroll,
-        roller.keep,
-        roller.explode,
-        roll,
-    )
+    val d: Int get() = roller.d
+    val n: Int get() = roller.n
+    val reroll: Int get() = roller.reroll
+    val keep: Int get() = roller.keep
+    val explode: Int get() = roller.explode
 }
 
 class PlainRoll(roller: Roller, roll: Int) : RollAction(roller, roll)
