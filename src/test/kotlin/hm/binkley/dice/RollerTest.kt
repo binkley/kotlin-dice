@@ -1,6 +1,6 @@
 package hm.binkley.dice
 
-import ch.tutteli.atrium.api.fluent.en_GB.toBe
+import ch.tutteli.atrium.api.fluent.en_GB.toEqual
 import ch.tutteli.atrium.api.verbs.expect
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -25,7 +25,7 @@ internal class RollerTest {
 
         val result = Roller(d, n, reroll, keep, explode, random).rollDice()
 
-        expect(result).toBe(expected)
+        expect(result).toEqual(expected)
     }
 
     internal companion object {

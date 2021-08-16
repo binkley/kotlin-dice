@@ -1,7 +1,7 @@
 package hm.binkley.dice
 
-import ch.tutteli.atrium.api.fluent.en_GB.isNotEmpty
-import ch.tutteli.atrium.api.fluent.en_GB.toBe
+import ch.tutteli.atrium.api.fluent.en_GB.notToBeEmpty
+import ch.tutteli.atrium.api.fluent.en_GB.toEqual
 import ch.tutteli.atrium.api.verbs.expect
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -41,9 +41,9 @@ internal class ParserTest {
             ).diceExpression()
         ).run(expression)
 
-        expect(result.resultValue).toBe(expected)
+        expect(result.resultValue).toEqual(expected)
         if (null == expected)
-            expect(result.parseErrors).isNotEmpty()
+            expect(result.parseErrors).notToBeEmpty()
     }
 
     companion object {
