@@ -46,28 +46,25 @@ create a demo program.  Use `./run.sh` or `./batect run` to run the demo.
 optimization is to avoid redownloading plugins and dependencies from within
 a Docker container.
 
-With Batect, link to your user Maven cache directory:
-
-```
-$ ln -s ~/.m2 .maven-cache
-```
-
 This shares Maven plugin and dependency downloads with the Docker container
 run by Batect.
 
 ## Dice expression syntax
 
 ```
-[N]'d'D['r'R]['h'K|'l'K][!|!Z][+EXP|-EXP...][+A|-A]
+[N]'x'D['r'R]['h'K|'l'K][!|!Z][+EXP|-EXP...][+A|-A]
 ```
 
 - N - number of dice, default 1
-- D - sides on the die, or '%' for percentile dice
+- x - either a literal 'd' (1 to D based) or 'z' (0 to D-1 based)
+- D - sides on the die, or '%' for percentile dice (same as using 100)
 - R - reroll dice this or lower, eg, reroll 1s
-- K - keep highest ('h') or ('l') lowest rolls
+- K - keep the highest ('h') or ('l') the lowest rolls
 - Z - "explode" on die face or greater, default is to explode on max die face
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
+
+**TODO** Support `4d6-L` or `4d6-H` meaning drop the lowest or highest
 
 Single-character prefixes are _case-insensitive_, eg, `d6` and `D6` are the
 same roll.
@@ -79,6 +76,8 @@ See [TODO](#todo) for further improvements.
 ## Examples
 
 - `d6` -- roll 1 6-sided die; "dD" is the minimal possible expression
+- `z6` -- roll 1 6-sided die zero-based (0-5); "zD" is the minimal possible 
+  expression
 - `2d%+1` -- roll percentile dice 2 times, sum, and add 1 to the result
 - `3d6r1!` -- roll 3 6-sided dice, rerolling 1s, "explode" on 6s
 - `3d6r1!5` -- roll 3 6-sided dice, rerolling 1s, "explode" on 5s or 6s

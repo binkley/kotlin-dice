@@ -16,7 +16,7 @@ private fun stableSeedForEachTest() = Random(1L)
 
 internal class StandAloneTest {
     @Test
-    fun `should not throw on roll`() {
+    fun `should not throw exception on roll`() {
         roll("3d6")
     }
 
@@ -51,6 +51,8 @@ internal class ParserTest {
         @Suppress("unused")
         fun args(): Stream<Arguments> = Stream.of(
             Arguments.of("D6", 4),
+            Arguments.of("z6", 3),
+            Arguments.of("Z6", 3),
             Arguments.of("3d6", 10),
             Arguments.of("3D6", 10),
             Arguments.of("3d6+1", 11),

@@ -2,6 +2,8 @@
 
 package hm.binkley.dice
 
+import hm.binkley.dice.DieShift.ONE
+import hm.binkley.dice.DieShift.ZERO
 import lombok.Generated
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
@@ -36,6 +38,7 @@ open class DiceParser(
 
     // These properties define the current roll expression
     private var n: Int? = null
+    private var dieShift: DieShift? = null
     private var d: Int? = null
     private var reroll: Int? = null
     private var keep: Int? = null
@@ -53,6 +56,7 @@ open class DiceParser(
     internal open fun rollExpression() = Sequence(
         rollCount(),
         dieType(),
+        dieSides(),
         maybeRerollLow(),
         maybeKeepFewer(),
         maybeExplode(),
@@ -79,16 +83,31 @@ open class DiceParser(
     internal open fun dieType() = Sequence(
         FirstOf(
             Ch('d'),
-            Ch('D')
-        ),
-        FirstOf(
-            number(),
-            Ch('%')
+            Ch('D'),
+            Ch('z'),
+            Ch('Z')
         ),
         recordDieType()
     )
 
     internal fun recordDieType(): Boolean {
+        dieShift = when (match()) {
+            "d", "D" -> ONE
+            else -> ZERO
+        }
+        return true
+    }
+
+    @Generated // Lie to JaCoCo
+    internal open fun dieSides() = Sequence(
+        FirstOf(
+            number(),
+            Ch('%')
+        ),
+        recordDieSides()
+    )
+
+    internal fun recordDieSides(): Boolean {
         d = when (val match = match()) {
             "%" -> 100
             else -> match.toInt()
@@ -166,6 +185,7 @@ open class DiceParser(
         return push(
             Roller(
                 d!!,
+                dieShift!!,
                 n!!,
                 reroll!!,
                 keep!!,

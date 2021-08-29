@@ -1,5 +1,7 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.DieShift.ONE
+import hm.binkley.dice.DieShift.ZERO
 import kotlin.random.Random
 
 private typealias ReportType = (Roller, Int) -> RollAction
@@ -15,6 +17,8 @@ val DoNothing = OnRoll { }
 data class Roller(
     /** The number of die sides, eg, d12. */
     val d: Int,
+    /** If the die is one-based (standard) or zero-based. */
+    val dieShift: DieShift,
     /** The number of dice to roll. */
     val n: Int,
     /**
@@ -95,7 +99,13 @@ data class Roller(
         return roll
     }
 
-    private fun rollDie() = random.nextInt(0, d) + 1
+    private fun rollDie(): Int {
+        val roll = random.nextInt(0, d)
+        return when (dieShift) {
+            ZERO -> roll
+            ONE -> roll + 1
+        }
+    }
 
     private fun report(action: RollAction) = callback.onRoll(action)
 }
