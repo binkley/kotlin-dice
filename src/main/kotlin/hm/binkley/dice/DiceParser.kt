@@ -55,7 +55,7 @@ open class DiceParser(
     @Generated // Lie to JaCoCo
     internal open fun rollExpression() = Sequence(
         rollCount(),
-        dieType(),
+        dieShift(),
         dieSides(),
         maybeRerollLow(),
         maybeKeepFewer(),
@@ -80,17 +80,17 @@ open class DiceParser(
     )
 
     @Generated // Lie to JaCoCo
-    internal open fun dieType() = Sequence(
+    internal open fun dieShift() = Sequence(
         FirstOf(
             Ch('d'),
             Ch('D'),
             Ch('z'),
             Ch('Z')
         ),
-        recordDieType()
+        recordDieShift()
     )
 
-    internal fun recordDieType(): Boolean {
+    internal fun recordDieShift(): Boolean {
         dieShift = when (match()) {
             "d", "D" -> ONE
             else -> ZERO
