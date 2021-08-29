@@ -8,7 +8,9 @@ import java.lang.System.out
 @Generated // Lie to JaCoCo
 fun main() {
     rollNoisily("D6")
+    rollNoisily("z6")
     rollNoisily("3d6")
+    rollNoisily("3z6")
     rollNoisily("3d6+1")
     rollNoisily("3d6-1")
     rollNoisily("10d3!")
