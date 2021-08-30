@@ -10,9 +10,6 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.parboiled.Parboiled.createParser
 import org.parboiled.parserunners.ReportingParseRunner
 import java.util.stream.Stream
-import kotlin.random.Random
-
-private fun stableSeedForEachTest() = Random(1L)
 
 internal class StandAloneTest {
     @Test
