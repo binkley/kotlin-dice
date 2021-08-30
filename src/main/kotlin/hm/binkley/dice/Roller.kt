@@ -15,25 +15,28 @@ val DoNothing = OnRoll { }
  * *NB* &mdash; Exploding dice can result in more than [n] dice in total.
  */
 data class Roller(
-    /** The number of die sides, eg, d12. */
+    /** The number of die sides, eg, d12 (the 12). */
     val d: Int,
-    /** If the die is one-based (standard) or zero-based. */
+    /**
+     * Whether the die is one-based (standard, eg, 1-6) or zero-based (eg,
+     * 0-5).
+     */
     val dieShift: DieShift,
-    /** The number of dice to roll. */
+    /** The number of dice to roll, eg, 3d6 (the three). */
     val n: Int,
     /**
      * Reroll die values this value or lower.  This is not the same as
      * "dropping" dice, as rolling continues to meet [n] (or possibly more
-     * with [explode]).
+     * dice with [explode]).
      *
-     * @todo Syntax and support for other comparisons than less-than-or-equal
+     * @todo Syntax and support for comparisons other than less-than-or-equal
      */
     val reroll: Int,
     /**
      * Keep rolls:
-     * * If positive, keep highest value (ie, top N)
-     * * If negative, keep lowest value (ie, bottom N)
-     * * If zero, keep all
+     * * If positive, keep the highest values (ie, top N die rolls)
+     * * If negative, keep the lowest values (ie, bottom N die rolls)
+     * * If zero, keep all values regardless of die roll
      */
     val keep: Int,
     /** Continue rolling more dice while the roll is this value or greater. */
