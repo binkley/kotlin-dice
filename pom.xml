@@ -11,6 +11,7 @@
 
     <properties>
         <!-- @formatter:off -->
+        <asm.version>9.1</asm.version>
         <atrium.version>0.17.0-RC1</atrium.version>
         <dependency-check-maven.version>6.2.2</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.17.1</detekt-maven-plugin.version>
@@ -55,6 +56,26 @@
         </dependency>
 
         <!-- Parsing -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-analysis</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.parboiled</groupId>
             <artifactId>parboiled-java</artifactId>
