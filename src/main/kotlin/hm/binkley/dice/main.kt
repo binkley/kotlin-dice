@@ -2,11 +2,19 @@ package hm.binkley.dice
 
 import lombok.Generated
 import org.parboiled.errors.ErrorUtils.printParseError
+import picocli.CommandLine
+import picocli.CommandLine.Option
+import picocli.CommandLine.Parameters
 import java.lang.System.err
 import java.lang.System.out
+import java.util.concurrent.Callable
+import kotlin.system.exitProcess
 
 @Generated // Lie to JaCoCo
-fun main() {
+fun main(args: Array<String>): Unit =
+    exitProcess(CommandLine(Options()).execute(*args))
+
+private fun runDemo() {
     rollNoisily("D6")
     rollNoisily("z6")
     rollNoisily("3d6")
@@ -27,13 +35,15 @@ fun main() {
 
 @Generated // Lie to JaCoCo
 private val NoisyRolling = OnRoll {
-    println(when (it) {
-        is PlainRoll -> "roll(d${it.d}) -> ${it.roll}"
-        is PlainReroll -> "reroll(d${it.d}) -> ${it.roll}"
-        is ExplodedRoll -> "!roll(d${it.d}) -> ${it.roll}"
-        is ExplodedReroll -> "!reroll(d${it.d}) -> ${it.roll}"
-        is DroppedRoll -> "drop -> ${it.roll}"
-    })
+    println(
+        when (it) {
+            is PlainRoll -> "roll(d${it.d}) -> ${it.roll}"
+            is PlainReroll -> "reroll(d${it.d}) -> ${it.roll}"
+            is ExplodedRoll -> "!roll(d${it.d}) -> ${it.roll}"
+            is ExplodedReroll -> "!reroll(d${it.d}) -> ${it.roll}"
+            is DroppedRoll -> "drop -> ${it.roll}"
+        }
+    )
 }
 
 @Generated // Lie to JaCoCo
@@ -48,4 +58,17 @@ private fun rollNoisily(expression: String) {
         println("RESULT -> ${result.resultValue}")
     err.flush()
     out.flush()
+}
+
+private class Options : Callable<Int> {
+    @Option(names = ["--no-demo"])
+    var demo = true
+
+    @Parameters
+    var parameters: List<String> = emptyList()
+
+    override fun call(): Int {
+        if (demo) runDemo()
+        return 0
+    }
 }
