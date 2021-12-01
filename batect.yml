@@ -21,12 +21,12 @@ tasks:
     description: Build and test with Maven
     run:
       container: build-env
-      command: ./mvnw --no-transfer-progress --strict-checksums clean verify
+      command: ./mvnw --no-transfer-progress clean verify
   run:
     description: Runs the demo program
     run:
       container: build-env
-      command: ./run.sh
+      command: ./run.sh --demo
   shell:
     description: Opens a shell in the container
     run:
