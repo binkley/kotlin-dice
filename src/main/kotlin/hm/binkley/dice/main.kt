@@ -48,6 +48,8 @@ private fun runDemo() {
     println("DONE") // Show that bad expression did not throw
 }
 
+private var noisy = false
+
 @Generated // Lie to JaCoCo
 private val NoisyRolling = OnRoll {
     println(
@@ -65,7 +67,7 @@ private val NoisyRolling = OnRoll {
 private fun rollNoisily(expression: String) {
     println("---")
     println("Rolling $expression")
-    val result = roll(expression, NoisyRolling)
+    val result = roll(expression, if (noisy) NoisyRolling else DoNothing)
     result.parseErrors.forEach {
         err.println(printParseError(it))
     }
@@ -84,10 +86,14 @@ private class Options : Callable<Int> {
     @Option(names = ["--demo"])
     var demo = false
 
+    @Option(names = ["-v", "--verbose"])
+    var verbose = false
+
     @Parameters
     var parameters: List<String> = emptyList()
 
     override fun call(): Int {
+        noisy = verbose
         if (demo) runDemo()
         return 0
     }
