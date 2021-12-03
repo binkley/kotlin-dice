@@ -6,6 +6,7 @@ import org.jline.reader.impl.DefaultParser
 import org.jline.terminal.TerminalBuilder
 import org.parboiled.errors.ErrorUtils.printParseError
 import picocli.CommandLine
+import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import java.lang.System.err
@@ -15,14 +16,17 @@ import kotlin.system.exitProcess
 
 @Generated // Lie to JaCoCo
 fun main(args: Array<String>) {
+    // Funny construction so that JAnsi can clean up the terminal before we
+    // call exit()
     AnsiConsole.systemInstall()
-    try {
+    val exitCode = try {
         val terminal = TerminalBuilder.builder().build()
         val parser = DefaultParser()
-        exitProcess(CommandLine(Options()).execute(*args))
+        CommandLine(Options()).execute(*args)
     } finally {
         AnsiConsole.systemUninstall()
     }
+    exitProcess(exitCode)
 }
 
 private fun runDemo() {
@@ -71,6 +75,11 @@ private fun rollNoisily(expression: String) {
     out.flush()
 }
 
+@Command(
+    name = "dice",
+    mixinStandardHelpOptions = true,
+    version = ["dice 0-SNAPSHOT"]
+)
 private class Options : Callable<Int> {
     @Option(names = ["--demo"])
     var demo = false
