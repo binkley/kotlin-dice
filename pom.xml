@@ -19,6 +19,7 @@
         <!-- Java version is held back by parboiled -->
         <jdk.version>11</jdk.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <jansi.version>2.4.0</jansi.version>
         <junit.version>5.8.1</junit.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>${jdk.version}</kotlin.compiler.jvmTarget>
@@ -87,6 +88,11 @@
             <groupId>info.picocli</groupId>
             <artifactId>picocli-shell-jline3</artifactId>
             <version>${picocli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>${jansi.version}</version>
         </dependency>
 
         <!-- Coverage -->
