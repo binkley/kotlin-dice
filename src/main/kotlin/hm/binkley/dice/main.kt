@@ -30,21 +30,21 @@ fun main(args: Array<String>) {
 }
 
 private fun runDemo() {
-    rollNoisily("D6")
-    rollNoisily("z6")
-    rollNoisily("3d6")
-    rollNoisily("3z6")
-    rollNoisily("3d6+1")
-    rollNoisily("3d6-1")
-    rollNoisily("10d3!")
-    rollNoisily("10d3!2")
-    rollNoisily("4d6h3")
-    rollNoisily("4d6l3")
-    rollNoisily("3d6+2d4")
-    rollNoisily("d%")
-    rollNoisily("6d4l5!")
-    rollNoisily("3d12r1h2!11")
-    rollNoisily("blah")
+    roll("D6")
+    roll("z6")
+    roll("3d6")
+    roll("3z6")
+    roll("3d6+1")
+    roll("3d6-1")
+    roll("10d3!")
+    roll("10d3!2")
+    roll("4d6h3")
+    roll("4d6l3")
+    roll("3d6+2d4")
+    roll("d%")
+    roll("6d4l5!")
+    roll("3d12r1h2!11")
+    roll("blah")
     println("DONE") // Show that bad expression did not throw
 }
 
@@ -63,16 +63,34 @@ private val NoisyRolling = OnRoll {
     )
 }
 
+@Generated
+fun roll(expression: String) {
+    if (noisy) rollNoisily(expression)
+    else rollQuietly(expression)
+}
+
 @Generated // Lie to JaCoCo
 private fun rollNoisily(expression: String) {
     println("---")
     println("Rolling $expression")
-    val result = roll(expression, if (noisy) NoisyRolling else DoNothing)
+    val result = roll(expression, NoisyRolling)
     result.parseErrors.forEach {
         err.println(printParseError(it))
     }
     if (!result.hasErrors())
         println("RESULT -> ${result.resultValue}")
+    err.flush()
+    out.flush()
+}
+
+@Generated // Lie to JaCoCo
+private fun rollQuietly(expression: String) {
+    val result = roll(expression, DoNothing)
+    result.parseErrors.forEach {
+        err.println(printParseError(it))
+    }
+    if (!result.hasErrors())
+        println("$expression ${result.resultValue}")
     err.flush()
     out.flush()
 }
@@ -94,7 +112,12 @@ private class Options : Callable<Int> {
 
     override fun call(): Int {
         noisy = verbose
+
         if (demo) runDemo()
+
+        for (expression in parameters)
+            roll(expression)
+
         return 0
     }
 }
