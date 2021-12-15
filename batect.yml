@@ -26,7 +26,7 @@ tasks:
     description: Runs the demo program
     run:
       container: build-env
-      command: ./run.sh -X --demo
+      command: ./run.sh -- --demo
   shell:
     description: Opens a shell in the container
     run:
