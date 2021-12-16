@@ -16,16 +16,16 @@ import kotlin.system.exitProcess
 
 @Generated // Lie to JaCoCo
 fun main(args: Array<String>) {
-    // Funny construction so that JAnsi can clean up the terminal before we
-    // call exit()
     AnsiConsole.systemInstall()
     val exitCode = try {
         val terminal = TerminalBuilder.builder().build()
-        val parser = DefaultParser()
+        val terminalParser = DefaultParser()
         CommandLine(Options()).execute(*args)
     } finally {
         AnsiConsole.systemUninstall()
     }
+    // Funny construction so that JAnsi can clean up the terminal before we
+    // call exit().  Normally this would be in the "try" block
     exitProcess(exitCode)
 }
 
