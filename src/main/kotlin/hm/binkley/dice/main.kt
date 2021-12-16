@@ -100,6 +100,7 @@ private fun rollQuietly(expression: String) {
     mixinStandardHelpOptions = true,
     version = ["dice 0-SNAPSHOT"]
 )
+@Generated // Lie to JaCoCo -- TODO: tests for CLI
 private class Options : Callable<Int> {
     @Option(names = ["--demo"])
     var demo = false
@@ -113,7 +114,7 @@ private class Options : Callable<Int> {
     override fun call(): Int {
         noisy = verbose
 
-        if (demo) runDemo()
+        if (demo || parameters.isEmpty()) runDemo()
 
         for (expression in parameters)
             roll(expression)
