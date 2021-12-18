@@ -245,7 +245,6 @@ open class DiceParser(
 fun roll(
     expression: String,
     callback: OnRoll = DoNothing,
-): ParsingResult<Int> =
-    ReportingParseRunner<Int>(
-        createParser(DiceParser::class.java, callback).diceExpression()
-    ).run(expression)
+): ParsingResult<Int> = ReportingParseRunner<Int>(
+    createParser(DiceParser::class.java, callback).diceExpression()
+).run(expression)
