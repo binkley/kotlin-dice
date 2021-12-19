@@ -30,9 +30,7 @@ fun main(args: Array<String>) {
  * @todo No prompt if there is no input
  * @todo No prompt if STDIN is not a terminal, ie, for scripts
  */
-private fun readShell() {
-    val prompt = "\uD83C\uDFB2 " // A colored die
-
+private fun readShell(prompt: String) {
     do {
         print(prompt)
         val line = readLine() ?: return
@@ -118,6 +116,9 @@ private class Options : Callable<Int> {
     @Option(names = ["-v", "--verbose"])
     var verbose = false
 
+    @Option(names = ["-p", "--prompt"])
+    var prompt = "\uD83C\uDFB2 " // Colorful die
+
     @Parameters
     var parameters: List<String> = emptyList()
 
@@ -127,7 +128,7 @@ private class Options : Callable<Int> {
         if (demo) {
             runDemo()
         } else if (parameters.isEmpty()) {
-            readShell()
+            readShell(prompt)
         } else {
             for (expression in parameters) roll(expression)
         }
