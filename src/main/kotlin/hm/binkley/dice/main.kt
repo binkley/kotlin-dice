@@ -10,6 +10,7 @@ import picocli.CommandLine.Parameters
 import java.lang.System.err
 import java.lang.System.out
 import java.util.concurrent.Callable
+import kotlin.random.Random
 import kotlin.system.exitProcess
 
 @Generated // Lie to JaCoCo
@@ -40,25 +41,30 @@ private fun readShell(prompt: String) {
 }
 
 private fun runDemo() {
-    roll("D6")
-    roll("z6")
-    roll("3d6")
-    roll("3z6")
-    roll("3d6+1")
-    roll("3d6-1")
-    roll("10d3!")
-    roll("10d3!2")
-    roll("4d6h3")
-    roll("4d6l3")
-    roll("3d6+2d4")
-    roll("d%")
-    roll("6d4l5!")
-    roll("3d12r1h2!11")
-    roll("blah")
+    for (expression in arrayOf(
+        "D6",
+        "z6",
+        "3d6",
+        "3z6",
+        "3d6+1",
+        "3d6-1",
+        "10d3!",
+        "10d3!2",
+        "4d6h3",
+        "4d6l3",
+        "3d6+2d4",
+        "d%",
+        "6d4l5!",
+        "3d12r1h2!11",
+        "blah",
+    ))
+        roll(expression)
+
     println("DONE") // Show that bad expression did not throw
 }
 
 private var noisy = false
+private var random: Random = Random.Default
 
 @Generated // Lie to JaCoCo
 private val NoisyRolling = OnRoll {
@@ -113,17 +119,22 @@ private class Options : Callable<Int> {
     @Option(names = ["--demo"])
     var demo = false
 
-    @Option(names = ["-v", "--verbose"])
-    var verbose = false
-
     @Option(names = ["-p", "--prompt"])
     var prompt = "\uD83C\uDFB2 " // Colorful die
+
+    @Option(names = ["-s", "--seed"])
+    var seed: Int? = null
+
+    @Option(names = ["-v", "--verbose"])
+    var verbose = false
 
     @Parameters
     var parameters: List<String> = emptyList()
 
     override fun call(): Int {
         noisy = verbose
+        // TODO: Why does Kotlin require non-null assertion?
+        if (null != seed) random = Random(seed!!)
 
         if (demo) {
             runDemo()
