@@ -124,6 +124,7 @@
     </dependencies>
 
     <build>
+        <!-- When you type just `./mvnw`: -->
         <defaultGoal>clean verify</defaultGoal>
 
         <!-- @formatter:off -->
