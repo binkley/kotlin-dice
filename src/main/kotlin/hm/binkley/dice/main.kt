@@ -36,7 +36,7 @@ private fun readShell(prompt: String) {
         print(prompt)
         val line = readLine() ?: return
         if (line.isEmpty()) continue
-        roll(line)
+        rollForMain(line)
     } while (true)
 }
 
@@ -58,7 +58,7 @@ private fun runDemo() {
         "3d12r1h2!11",
         "blah",
     ))
-        roll(expression)
+        rollForMain(expression)
 
     println("DONE") // Show that bad expression did not throw
 }
@@ -80,7 +80,7 @@ private val NoisyRolling = OnRoll {
 }
 
 @Generated
-fun roll(expression: String) {
+fun rollForMain(expression: String) {
     if (noisy) rollNoisily(expression)
     else rollQuietly(expression)
 }
@@ -141,7 +141,7 @@ private class Options : Callable<Int> {
         } else if (parameters.isEmpty()) {
             readShell(prompt)
         } else {
-            for (expression in parameters) roll(expression)
+            for (expression in parameters) rollForMain(expression)
         }
 
         return 0
