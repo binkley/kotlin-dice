@@ -118,7 +118,7 @@ private fun rollQuietly(expression: String) {
 private class Options : Callable<Int> {
     @Option(
         names = ["--demo"],
-        description = ["Run the demo; ignore other options and arguments."]
+        description = ["Run the demo; ignore arguments."]
     )
     var demo = false
 
