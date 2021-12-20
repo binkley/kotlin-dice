@@ -116,16 +116,25 @@ private fun rollQuietly(expression: String) {
 )
 @Generated // Lie to JaCoCo -- TODO: tests for CLI
 private class Options : Callable<Int> {
-    @Option(names = ["--demo"])
+    @Option(
+        names = ["--demo"],
+        description = ["Run the demo; ignore other options and arguments."]
+    )
     var demo = false
 
-    @Option(names = ["-p", "--prompt"])
+    @Option(
+        names = ["-p", "--prompt"],
+        description = ["Change the interactive prompt from '\uD83C\uDFB2 '."]
+    )
     var prompt = "\uD83C\uDFB2 " // Colorful die
 
     @Option(names = ["-s", "--seed"])
     var seed: Int? = null
 
-    @Option(names = ["-v", "--verbose"])
+    @Option(
+        names = ["-v", "--verbose"],
+        description = ["Explain each die roll as it happens."]
+    )
     var verbose = false
 
     @Parameters
