@@ -89,7 +89,7 @@ fun rollForMain(expression: String) {
 private fun rollNoisily(expression: String) {
     println("---")
     println("Rolling $expression")
-    val result = roll(expression, NoisyRolling)
+    val result = roll(expression, NoisyRolling, random)
     result.parseErrors.forEach {
         err.println(printParseError(it))
     }
@@ -100,7 +100,7 @@ private fun rollNoisily(expression: String) {
 
 @Generated // Lie to JaCoCo
 private fun rollQuietly(expression: String) {
-    val result = roll(expression, DoNothing)
+    val result = roll(expression, DoNothing, random)
     result.parseErrors.forEach {
         err.println(printParseError(it))
     }
@@ -128,7 +128,10 @@ private class Options : Callable<Int> {
     )
     var prompt = "\uD83C\uDFB2 " // Colorful die
 
-    @Option(names = ["-s", "--seed"])
+    @Option(
+        names = ["-s", "--seed"],
+        description = ["Provide a random seed for repeatable results."]
+    )
     var seed: Int? = null
 
     @Option(
