@@ -31,9 +31,12 @@ private fun readShell(prompt: String) {
     val isatty = null != System.console()
     do {
         if (isatty) print(prompt)
-        val line = readLine() ?: return
-        if (line.isEmpty()) continue
-        rollForMain(line)
+        val line = readLine()
+        when {
+            null == line -> return
+            line.isEmpty() -> continue
+            else -> rollForMain(line)
+        }
     } while (true)
 }
 
