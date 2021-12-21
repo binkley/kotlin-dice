@@ -1,30 +1,29 @@
 package hm.binkley.dice
 
-import ch.tutteli.atrium.api.fluent.en_GB.toEqual
-import ch.tutteli.atrium.api.fluent.en_GB.toThrow
-import ch.tutteli.atrium.api.verbs.expect
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 internal class MappingTest {
     @Test
     fun `should map roll`() {
-        expect(3.mapTo {
+        3.mapTo {
             when (it) {
                 3 -> "Good!"
                 else -> null
             }
-        }).toEqual("Good!")
+        } shouldBe "Good!"
     }
 
     @Test
     fun `should complain for rolls not in mapping`() {
-        expect {
+        shouldThrow<IllegalStateException> {
             2.mapTo {
                 when (it) {
                     3 -> "Good!"
                     else -> null
                 }
             }
-        }.toThrow<IllegalStateException>()
+        }
     }
 }

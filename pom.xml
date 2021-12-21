@@ -21,6 +21,7 @@
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <jansi.version>2.4.0</jansi.version>
         <junit.version>5.8.2</junit.version>
+        <kotest.version>5.0.2</kotest.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>${jdk.version}</kotlin.compiler.jvmTarget>
         <kotlin.version>1.6.10</kotlin.version>
@@ -116,9 +117,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>ch.tutteli.atrium</groupId>
-            <artifactId>atrium-fluent-en_GB</artifactId>
-            <version>${atrium.version}</version>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-runner-junit5-jvm</artifactId>
+            <version>${kotest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-assertions-core-jvm</artifactId>
+            <version>${kotest.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,9 +1,8 @@
 package hm.binkley.dice
 
-import ch.tutteli.atrium.api.fluent.en_GB.toEqual
-import ch.tutteli.atrium.api.verbs.expect
 import hm.binkley.dice.DieShift.ONE
 import hm.binkley.dice.DieShift.ZERO
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -26,7 +25,7 @@ internal class RollerTest {
         val result = Roller(d, dieShift, n, reroll, keep, explode, random)
             .rollDice()
 
-        expect(result).toEqual(expected)
+        result shouldBe expected
     }
 
     internal companion object {
