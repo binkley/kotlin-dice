@@ -23,10 +23,15 @@ tasks:
       container: build-env
       command: ./mvnw --no-transfer-progress clean verify
   run:
-    description: Runs the demo program
+    description: Prompts user for dice to roll
     run:
       container: build-env
       command: ./run.sh
+  run-demo:
+    description: Runs the demo program
+    run:
+      container: build-env
+      command: ./run.sh -- --demo
   shell:
     description: Opens a shell in the container
     run:
