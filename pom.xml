@@ -274,7 +274,7 @@
   TODO: JaCoCo not seeing Kotlin SAM (fun interface) code
   TODO: Coverage drops while poking at adding Picocli and JLine
                                             -->
-                                            <minimum>65%</minimum>
+                                            <minimum>75%</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
