@@ -118,30 +118,33 @@ private fun rollQuietly(expression: String) {
 private class Options : Callable<Int> {
     @Option(
         names = ["--demo"],
-        description = ["Run the demo; ignore arguments."]
+        description = ["Run the demo; ignore arguments."],
     )
     var demo = false
 
     @Option(
         names = ["-p", "--prompt"],
-        description = ["Change the interactive prompt from '\uD83C\uDFB2 '."]
+        description = ["Change the interactive prompt from '\uD83C\uDFB2 '."],
     )
     var prompt = "\uD83C\uDFB2 " // Colorful die
 
     @Option(
         names = ["-s", "--seed"],
-        description = ["Provide a random seed for repeatable results."]
+        description = ["Provide a random seed for repeatable results."],
     )
     var seed: Int? = null
 
     @Option(
         names = ["-v", "--verbose"],
-        description = ["Explain each die roll as it happens."]
+        description = ["Explain each die roll as it happens."],
     )
     var verbose = false
 
-    @Parameters
-    var parameters: List<String> = emptyList()
+    @Parameters(
+        description = ["Dice expressions to roll",
+            "If none provided, prompt user interactively"],
+    )
+    var expressions: List<String> = emptyList()
 
     override fun call(): Int {
         noisy = verbose
@@ -150,10 +153,10 @@ private class Options : Callable<Int> {
 
         if (demo) {
             runDemo()
-        } else if (parameters.isEmpty()) {
+        } else if (expressions.isEmpty()) {
             readShell(prompt)
         } else {
-            for (expression in parameters) rollForMain(expression)
+            expressions.forEach { rollForMain(it) }
         }
 
         return 0
