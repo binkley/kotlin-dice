@@ -3,27 +3,12 @@ package hm.binkley.dice
 import ch.tutteli.atrium.api.fluent.en_GB.notToBeEmpty
 import ch.tutteli.atrium.api.fluent.en_GB.toEqual
 import ch.tutteli.atrium.api.verbs.expect
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.parboiled.Parboiled.createParser
 import org.parboiled.parserunners.ReportingParseRunner
 import java.util.stream.Stream
-
-internal class StandAloneTest {
-    @Test
-    fun `should not throw exception on roll`() {
-        roll("3d6")
-    }
-
-    @Test
-    fun `should default construct with the RNG`() {
-        ReportingParseRunner<Int>(
-            createParser(DiceParser::class.java).diceExpression()
-        ).run("3d6")
-    }
-}
 
 internal class ParserTest {
     @MethodSource("args")
