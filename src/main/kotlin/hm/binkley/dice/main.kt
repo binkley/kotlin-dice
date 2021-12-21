@@ -26,14 +26,11 @@ fun main(args: Array<String>) {
     exitProcess(exitCode)
 }
 
-private val ISATTY: Boolean by lazy {
-    null != System.console()
-}
-
 /** @todo Use JLine for line editing, help, etc */
 private fun readShell(prompt: String) {
+    val isatty = null != System.console()
     do {
-        if (ISATTY) print(prompt)
+        if (isatty) print(prompt)
         val line = readLine() ?: return
         if (line.isEmpty()) continue
         rollForMain(line)
