@@ -26,14 +26,14 @@ fun main(args: Array<String>) {
     exitProcess(exitCode)
 }
 
-/**
- * @todo Use JLine for line editing, help, etc
- * @todo No prompt if there is no input
- * @todo No prompt if STDIN is not a terminal, ie, for scripts
- */
+private val ISATTY: Boolean by lazy {
+    null != System.console()
+}
+
+/** @todo Use JLine for line editing, help, etc */
 private fun readShell(prompt: String) {
     do {
-        print(prompt)
+        if (ISATTY) print(prompt)
         val line = readLine() ?: return
         if (line.isEmpty()) continue
         rollForMain(line)
