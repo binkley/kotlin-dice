@@ -13,7 +13,7 @@
         <!-- @formatter:off -->
         <asm.version>9.2</asm.version>
         <atrium.version>0.17.0</atrium.version>
-        <dependency-check-maven.version>6.5.0</dependency-check-maven.version>
+        <dependency-check-maven.version>6.5.1</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.18.1.1</detekt-maven-plugin.version>
         <java.charset>UTF-8</java.charset>
         <!-- Java version is held back by parboiled -->
