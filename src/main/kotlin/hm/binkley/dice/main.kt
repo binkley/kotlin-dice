@@ -1,7 +1,6 @@
 package hm.binkley.dice
 
 import lombok.Generated
-import org.fusesource.jansi.AnsiConsole
 import org.parboiled.errors.ErrorUtils.printParseError
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -14,17 +13,8 @@ import kotlin.random.Random
 import kotlin.system.exitProcess
 
 @Generated // Lie to JaCoCo
-fun main(args: Array<String>) {
-    AnsiConsole.systemInstall()
-    val exitCode = try {
-        CommandLine(Options()).execute(*args)
-    } finally {
-        AnsiConsole.systemUninstall()
-    }
-    // Funny construction so that JAnsi can clean up the terminal before we
-    // call exit().  Normally this would be in the "try" block
-    exitProcess(exitCode)
-}
+fun main(args: Array<String>): Unit =
+    exitProcess(CommandLine(Options()).execute(*args))
 
 /** @todo Use JLine for line editing, help, etc */
 private fun readShell(prompt: String) {
