@@ -284,11 +284,9 @@
                                         <limit>
                                             <!--
   TODO: Work around issue between JaCoCo and Kotlin.  JaCoCo is not seeing
-        branches in some cases
-  TODO: JaCoCo not seeing Kotlin SAM (fun interface) code
-  TODO: Coverage drops while poking at adding Picocli and JLine
+        branches in some cases, and can struggle with SAM
                                             -->
-                                            <minimum>75%</minimum>
+                                            <minimum>87%</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -309,7 +307,7 @@
                         <excludedClass>hm.binkley.dice.MainKt</excludedClass>
                     </excludedClasses>
                     <!-- TODO: How to make mutation testing happy? -->
-                    <mutationThreshold>55</mutationThreshold>
+                    <mutationThreshold>60</mutationThreshold>
                 </configuration>
                 <executions>
                     <execution>

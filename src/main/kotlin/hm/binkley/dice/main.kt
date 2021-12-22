@@ -1,6 +1,5 @@
 package hm.binkley.dice
 
-import lombok.Generated
 import org.parboiled.errors.ErrorUtils.printParseError
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -12,7 +11,6 @@ import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
-@Generated // Lie to JaCoCo
 fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(Options()).execute(*args))
 
@@ -56,7 +54,6 @@ private fun runDemo() {
 private var noisy = false
 private var random: Random = Random.Default
 
-@Generated // Lie to JaCoCo
 private val NoisyRolling = OnRoll {
     println(
         when (it) {
@@ -69,13 +66,11 @@ private val NoisyRolling = OnRoll {
     )
 }
 
-@Generated
 fun rollForMain(expression: String) {
     if (noisy) rollNoisily(expression)
     else rollQuietly(expression)
 }
 
-@Generated // Lie to JaCoCo
 private fun rollNoisily(expression: String) {
     println("---")
     println("Rolling $expression")
@@ -88,7 +83,6 @@ private fun rollNoisily(expression: String) {
     out.flush()
 }
 
-@Generated // Lie to JaCoCo
 private fun rollQuietly(expression: String) {
     val result = roll(expression, DoNothing, random)
     result.parseErrors.forEach {
@@ -104,7 +98,6 @@ private fun rollQuietly(expression: String) {
     mixinStandardHelpOptions = true,
     version = ["dice 0-SNAPSHOT"]
 )
-@Generated // Lie to JaCoCo -- TODO: tests for CLI
 private class Options : Callable<Int> {
     @Option(
         names = ["--demo"],
