@@ -107,6 +107,20 @@ internal class MainTest {
             err.shouldBeEmpty()
         }
     }
+
+    @Test
+    fun `seed is optional()`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    main(arrayOf("3d6")) // Call real main, not wrapper
+                }
+                exitCode shouldBe 0
+            }
+            out.shouldNotBeEmpty()
+        }
+        err.shouldBeEmpty()
+    }
 }
 
 private fun main(vararg cmdLine: String) = main(

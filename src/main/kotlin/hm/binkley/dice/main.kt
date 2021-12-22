@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import lombok.Generated
 import org.parboiled.errors.ErrorUtils.printParseError
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -98,6 +99,7 @@ private fun rollQuietly(expression: String) {
     mixinStandardHelpOptions = true,
     version = ["dice 0-SNAPSHOT"]
 )
+@Generated // Lie to JaCoCo
 private class Options : Callable<Int> {
     @Option(
         names = ["--demo"],
