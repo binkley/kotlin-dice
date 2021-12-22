@@ -43,6 +43,7 @@
         <pitest-maven.version>1.7.3</pitest-maven.version>
         <project.build.sourceEncoding>${java.charset}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${java.charset}</project.reporting.outputEncoding>
+        <system-lambda.version>1.2.0</system-lambda.version>
         <!-- @formatter:on -->
     </properties>
 
@@ -126,6 +127,12 @@
             <groupId>io.kotest</groupId>
             <artifactId>kotest-assertions-core-jvm</artifactId>
             <version>${kotest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-lambda</artifactId>
+            <version>${system-lambda.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
