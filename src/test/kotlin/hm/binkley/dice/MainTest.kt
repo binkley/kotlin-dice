@@ -3,7 +3,9 @@ package hm.binkley.dice
 import com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrNormalized
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
+import com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable
 import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
+import io.kotest.extensions.system.withEnvironment
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldNotBeEmpty
@@ -66,17 +68,20 @@ internal class MainTest {
 
     @Test
     fun `should prompt for dice expressions()`() {
-        withTextFromSystemIn("3d6").execute {
-            val err = tapSystemErrNormalized {
-                val out = tapSystemOutNormalized {
-                    val exitCode = catchSystemExit {
-                        main()
+        // TODO: This is ugly needing to hack the environment for testing :(
+        withEnvironmentVariable("TERM", "dumb").execute {
+            withTextFromSystemIn("3d6").execute {
+                val err = tapSystemErrNormalized {
+                    val out = tapSystemOutNormalized {
+                        val exitCode = catchSystemExit {
+                            main()
+                        }
+                        exitCode shouldBe 0
                     }
-                    exitCode shouldBe 0
+                    out shouldBe "3d6 12\n"
                 }
-                out shouldBe "3d6 12\n"
+                err.shouldBeEmpty()
             }
-            err.shouldBeEmpty()
         }
     }
 

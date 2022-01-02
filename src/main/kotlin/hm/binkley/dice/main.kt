@@ -1,6 +1,10 @@
 package hm.binkley.dice
 
 import lombok.Generated
+import org.jline.reader.EndOfFileException
+import org.jline.reader.LineReaderBuilder
+import org.jline.reader.UserInterruptException
+import org.jline.terminal.TerminalBuilder
 import org.parboiled.errors.ErrorUtils.printParseError
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -16,11 +20,24 @@ import kotlin.system.exitProcess
 fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(Options()).execute(*args))
 
-/** @todo Use JLine for line editing, help, etc */
-private fun readShell(prompt: String) {
-    val isatty = null != System.console()
+private typealias ReadLine = () -> String?
+
+private fun repl(prompt: String) {
+    // TODO: This is ugly needing to hack the environment for testing :(
+    val term = System.getenv().getOrDefault("TERM", "")
+    val dumb = "dumb" == term || term.isEmpty()
+
+    if (dumb) replLogic { readLine() }
+    else {
+        val isatty = null != System.console()
+        val readerPrompt = if (isatty) prompt else null
+
+        fancyRepl(readerPrompt)
+    }
+}
+
+private fun replLogic(readLine: ReadLine) {
     do {
-        if (isatty) print(prompt)
         val line = readLine()
         when {
             null == line -> return
@@ -29,6 +46,22 @@ private fun readShell(prompt: String) {
         }
     } while (true)
 }
+
+@Generated // Lie to JaCoCo
+private fun fancyRepl(readerPrompt: String?) = TerminalBuilder.builder()
+    .name("Dice Roller")
+    .build().use { terminal ->
+        try {
+            val reader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .build()
+            replLogic { reader.readLine(readerPrompt) }
+        } catch (e: UserInterruptException) {
+            return // TODO: Should we complain on ^C?
+        } catch (e: EndOfFileException) {
+            return
+        }
+    }
 
 private fun runDemo() {
     for (expression in arrayOf(
@@ -140,7 +173,7 @@ private class Options : Callable<Int> {
         if (demo) {
             runDemo()
         } else if (expressions.isEmpty()) {
-            readShell(prompt)
+            repl(prompt)
         } else {
             expressions.forEach { rollForMain(it) }
         }
