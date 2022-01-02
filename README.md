@@ -16,7 +16,8 @@ A dice expression has these parts:
 The smallest roll expression is just a die type, eg, `d6` meaning roll 1
 6-sided die.  See [_Examples_](#examples), below.
 
-Try `./run.sh` for a demonstration.  See [TODO](#todo) for further improvements.
+Try `./run.sh -- --demo` for a demonstration.  (Plain `./run.sh` prompts 
+you to input dice expressions.)
 
 ## Table of contents
 
@@ -51,6 +52,16 @@ run by Batect.
 
 ## Dice expression syntax
 
+Parsing dice expressions turned out to be an interesting programming problem.
+This project implements a mashup of dice expression syntaxes. Inspirations
+drawn from:
+
+- [_Dice Expressions_](https://wiki.rptools.info/index.php/Dice_Expressions)
+- [_Dice notation_](https://en.wikipedia.org/wiki/Dice_notation)
+- [_Sophie's Dice](https://sophiehoulden.com/dice/documentation/notation.html)
+
+General syntax supported here:
+
 ```
 [N]'x'D['r'R]['h'K|'l'K][!|!Z][+EXP|-EXP...][+A|-A]
 ```
@@ -63,8 +74,6 @@ run by Batect.
 - Z - "explode" on die face or greater, default is to explode on max die face
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
-
-**TODO** Support `4d6-L` or `4d6-H` meaning drop the lowest or highest
 
 Single-character prefixes are _case-insensitive_, eg, `d6` and `D6` are the
 same roll.
@@ -107,11 +116,14 @@ The parser still used a stack for some cases:
 
 ## TODO
 
-* Support plain values, eg, D&amp;D Goodberry is normally 1 always
-* Support factors of rolls, ie, a syntax for "2*(2d6)" or "(2d6)/2"
-* Support `floor`, `ceil`, etc., to round down/up dice rolls
-* Reroll should support options other than low rolls
+* Support whitespace, _eg_, `3d6 + 1` _vs_ `3d6+1`
+* Support plain values, eg, D&amp;D Goodberry is normally 1 always, so you 
+  should be able to input just "1" and get a result rather than a parse error
 * Error messages for bad input are **cryptic**
+* Support factors of rolls, ie, a syntax for `2*(2d6)` or `(2d6)/2`
+* Support grammar for `4d6-L` or `4d6-H` meaning drop the lowest or highest
+* Support `floor`, `ceil`, etc., to round rolls down/up
+* Reroll should support options other than low rolls
 
 ## References
 
