@@ -51,20 +51,6 @@ internal class MainTest {
     }
 
     @Test
-    fun `should run demo()`() {
-        val err = tapSystemErrNormalized {
-            val out = tapSystemOutNormalized {
-                val exitCode = catchSystemExit {
-                    main("--demo")
-                }
-                exitCode shouldBe 0
-            }
-            out.shouldNotBeEmpty()
-        }
-        err.shouldNotBeEmpty()
-    }
-
-    @Test
     fun `should roll dice from command line()`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
@@ -74,20 +60,6 @@ internal class MainTest {
                 exitCode shouldBe 0
             }
             out shouldBe "3d6 12\n"
-        }
-        err.shouldBeEmpty()
-    }
-
-    @Test
-    fun `should be noisy()`() {
-        val err = tapSystemErrNormalized {
-            val out = tapSystemOutNormalized {
-                val exitCode = catchSystemExit {
-                    main("--verbose", "3d6")
-                }
-                exitCode shouldBe 0
-            }
-            out.shouldNotBeEmpty()
         }
         err.shouldBeEmpty()
     }
@@ -120,6 +92,20 @@ internal class MainTest {
             out.shouldNotBeEmpty()
         }
         err.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should run demo noisily()`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    main("--demo", "--verbose")
+                }
+                exitCode shouldBe 0
+            }
+            out.shouldNotBeEmpty()
+        }
+        err.shouldNotBeEmpty()
     }
 }
 

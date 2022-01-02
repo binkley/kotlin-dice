@@ -286,7 +286,7 @@
   TODO: Work around issue between JaCoCo and Kotlin.  JaCoCo is not seeing
         branches in some cases, and can struggle with SAM
                                             -->
-                                            <minimum>89%</minimum>
+                                            <minimum>92%</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

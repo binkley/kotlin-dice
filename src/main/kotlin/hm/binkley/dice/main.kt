@@ -12,6 +12,7 @@ import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
+@Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(Options()).execute(*args))
 
