@@ -16,6 +16,9 @@ import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
+/**
+ * @todo Exit process with non-0 if using pipe or cmd line, and parsing fails
+ */
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(Options()).execute(*args))
@@ -24,6 +27,7 @@ private typealias ReadLine = () -> String?
 
 private fun repl(prompt: String) {
     // TODO: This is ugly needing to hack the environment for testing :(
+    // TODO: Investigate the "dumb" setting in Terminal builder
     val term = System.getenv().getOrDefault("TERM", "")
     val dumb = "dumb" == term || term.isEmpty()
 
@@ -48,8 +52,12 @@ private fun replLogic(readLine: ReadLine) {
 }
 
 @Generated // Lie to JaCoCo
+/**
+ * @todo Don't rebuild the terminal & line reader each loop.  However, how to
+ *       close the terminal when done (and reset the external command line)?
+ */
 private fun fancyRepl(readerPrompt: String?) = TerminalBuilder.builder()
-    .name("Dice Roller")
+    .name("dice")
     .build().use { terminal ->
         try {
             val reader = LineReaderBuilder.builder()
@@ -90,6 +98,7 @@ private var noisy = false
 private var random: Random = Random.Default
 
 private val NoisyRolling = OnRoll {
+    // TODO: Colorize output when using a prompt
     println(
         when (it) {
             is PlainRoll -> "roll(d${it.d}) -> ${it.roll}"
