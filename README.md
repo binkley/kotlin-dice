@@ -114,6 +114,18 @@ The parser still used a stack for some cases:
 - Tracking and applying `+`/`-` sign (add/subtract)
 - Applying the adjustment, if any, at the end
 
+## Goals for execution script [`run.sh`](./run.sh) and `main()`:
+
+Multiple modes of operation:
+
+- Support-type flags, such as `--help` should have colorized output
+- Testing -- test main and the modes when possible without hosing streams
+- REPL -- full colorizing and keyboard controls (_eg_, `Ctrl-a`, _et al_)
+- Rolls on the command line -- no colorizing, just print to STDOUT
+- Rolls from STDIN (ie, pipe, etc) -- no colorizing, just print to STDOUT
+
+In these, distinguish STDOUT from STDERR.  Think of scripting use cases.
+
 ## TODO
 
 * Support whitespace, _eg_, `3d6 + 1` _vs_ `3d6+1`
