@@ -11,7 +11,6 @@ import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import java.lang.System.err
-import java.lang.System.out
 import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
@@ -169,8 +168,6 @@ private fun rollNoisily(expression: String) {
         err.println(printParseError(it))
     }
     if (!result.hasErrors()) println("RESULT -> ${result.resultValue}")
-    err.flush()
-    out.flush()
 }
 
 private fun rollQuietly(expression: String) {
@@ -179,6 +176,4 @@ private fun rollQuietly(expression: String) {
         err.println(printParseError(it))
     }
     if (!result.hasErrors()) println("$expression ${result.resultValue}")
-    err.flush()
-    out.flush()
 }
