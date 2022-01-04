@@ -71,7 +71,7 @@ General syntax supported here:
 - D - sides on the die, or '%' for percentile dice (same as using 100)
 - R - reroll dice this or lower, eg, reroll 1s
 - K - keep the highest ('h') or ('l') the lowest rolls
-- Z - "explode" on die face or greater, default is to explode on max die face
+- ! - explode the dice; default explosion is on max die value
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
 

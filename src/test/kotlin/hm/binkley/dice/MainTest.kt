@@ -105,6 +105,44 @@ x
     }
 
     @Test
+    fun `should do nothing if STDIN is empty`() {
+        // TODO: This is ugly needing to hack the environment for testing :(
+        withEnvironmentVariable("TERM", "dumb").execute {
+            withTextFromSystemIn().execute {
+                val err = tapSystemErrNormalized {
+                    val out = tapSystemOutNormalized {
+                        val exitCode = catchSystemExit {
+                            main()
+                        }
+                        exitCode shouldBe 0
+                    }
+                    out.shouldBeEmpty()
+                }
+                err.shouldBeEmpty()
+            }
+        }
+    }
+
+    @Test
+    fun `should do nothing if STDIN is just a blank line`() {
+        // TODO: This is ugly needing to hack the environment for testing :(
+        withEnvironmentVariable("TERM", "dumb").execute {
+            withTextFromSystemIn("").execute {
+                val err = tapSystemErrNormalized {
+                    val out = tapSystemOutNormalized {
+                        val exitCode = catchSystemExit {
+                            main()
+                        }
+                        exitCode shouldBe 0
+                    }
+                    out.shouldBeEmpty()
+                }
+                err.shouldBeEmpty()
+            }
+        }
+    }
+
+    @Test
     fun `should fail if STDIN is bad`() {
         // TODO: This is ugly needing to hack the environment for testing :(
         withEnvironmentVariable("TERM", "dumb").execute {

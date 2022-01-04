@@ -122,25 +122,38 @@ private fun rollFromLines(readLine: ReadLine): Int {
     } while (true)
 }
 
+/**
+ * Used by both demo and testing.
+ * The second value is the expectation given a seed of 123 (used by testing).
+ */
+internal val demoExpressions = arrayOf(
+    "D6" to 4,
+    "z6" to 3,
+    "Z6" to 3,
+    "3d6" to 10,
+    "3D6" to 10,
+    "3d6+1" to 11,
+    "3d6-1" to 9,
+    "10d3!" to 20,
+    "10d3!2" to 49,
+    "4d6h3" to 10,
+    "4d6H3" to 10,
+    "4d6l3" to 6,
+    "4d6L3" to 6,
+    "3d6+2d4" to 17,
+    "d%" to 66,
+    // Constant seed keeps the role constant, so z% is one less than d%
+    "z%" to 65,
+    "6d4l5!" to 20,
+    "3d3r1h2!" to 10,
+    "3d12!10" to 23,
+    "100d3r1h99!+100d3r1l99!3-17" to 919,
+    "blah" to null,
+)
+
 private fun runDemo(): Int {
-    for (expression in arrayOf(
-        "D6",
-        "z6",
-        "3d6",
-        "3z6",
-        "3d6+1",
-        "3d6-1",
-        "10d3!",
-        "10d3!2",
-        "4d6h3",
-        "4d6l3",
-        "3d6+2d4",
-        "d%",
-        "6d4l5!",
-        "3d12r1h2!11",
-        "blah",
-    ))
-        rollIt(expression)
+    for (expression in demoExpressions)
+        rollIt(expression.first)
 
     println("DONE") // Show that bad expression did not throw
 
