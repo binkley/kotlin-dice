@@ -23,120 +23,6 @@ import kotlin.system.exitProcess
 fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(Options()).execute(*args))
 
-private typealias ReadLine = () -> String?
-
-private fun repl(prompt: String) {
-    // TODO: This is ugly needing to hack the environment for testing :(
-    // TODO: Investigate the "dumb" setting in Terminal builder
-    val term = System.getenv().getOrDefault("TERM", "")
-    val dumb = "dumb" == term || term.isEmpty()
-
-    if (dumb) replLogic { readLine() }
-    else {
-        val isatty = null != System.console()
-        val readerPrompt = if (isatty) prompt else null
-
-        fancyRepl(readerPrompt)
-    }
-}
-
-private fun replLogic(readLine: ReadLine) {
-    do {
-        val line = readLine()
-        when {
-            null == line -> return
-            line.isEmpty() -> continue
-            else -> rollForMain(line)
-        }
-    } while (true)
-}
-
-@Generated // Lie to JaCoCo
-/**
- * @todo Don't rebuild the terminal & line reader each loop.  However, how to
- *       close the terminal when done (and reset the external command line)?
- */
-private fun fancyRepl(readerPrompt: String?) = TerminalBuilder.builder()
-    .name("dice")
-    .build().use { terminal ->
-        try {
-            val reader = LineReaderBuilder.builder()
-                .terminal(terminal)
-                .build()
-            replLogic { reader.readLine(readerPrompt) }
-        } catch (e: UserInterruptException) {
-            return // TODO: Should we complain on ^C?
-        } catch (e: EndOfFileException) {
-            return
-        }
-    }
-
-private fun runDemo() {
-    for (expression in arrayOf(
-        "D6",
-        "z6",
-        "3d6",
-        "3z6",
-        "3d6+1",
-        "3d6-1",
-        "10d3!",
-        "10d3!2",
-        "4d6h3",
-        "4d6l3",
-        "3d6+2d4",
-        "d%",
-        "6d4l5!",
-        "3d12r1h2!11",
-        "blah",
-    ))
-        rollForMain(expression)
-
-    println("DONE") // Show that bad expression did not throw
-}
-
-private var noisy = false
-private var random: Random = Random.Default
-
-private val NoisyRolling = OnRoll {
-    // TODO: Colorize output when using a prompt
-    println(
-        when (it) {
-            is PlainRoll -> "roll(d${it.d}) -> ${it.roll}"
-            is PlainReroll -> "reroll(d${it.d}) -> ${it.roll}"
-            is ExplodedRoll -> "!roll(d${it.d}) -> ${it.roll}"
-            is ExplodedReroll -> "!reroll(d${it.d}) -> ${it.roll}"
-            is DroppedRoll -> "drop -> ${it.roll}"
-        }
-    )
-}
-
-fun rollForMain(expression: String) {
-    if (noisy) rollNoisily(expression)
-    else rollQuietly(expression)
-}
-
-private fun rollNoisily(expression: String) {
-    println("---")
-    println("Rolling $expression")
-    val result = roll(expression, NoisyRolling, random)
-    result.parseErrors.forEach {
-        err.println(printParseError(it))
-    }
-    if (!result.hasErrors()) println("RESULT -> ${result.resultValue}")
-    err.flush()
-    out.flush()
-}
-
-private fun rollQuietly(expression: String) {
-    val result = roll(expression, DoNothing, random)
-    result.parseErrors.forEach {
-        err.println(printParseError(it))
-    }
-    if (!result.hasErrors()) println("$expression ${result.resultValue}")
-    err.flush()
-    out.flush()
-}
-
 @Command(
     name = "dice",
     mixinStandardHelpOptions = true,
@@ -172,7 +58,7 @@ private class Options : Callable<Int> {
         description = ["Dice expressions to roll",
             "If none provided, prompt user interactively"],
     )
-    var expressions: List<String> = emptyList()
+    var arguments: List<String> = emptyList()
 
     override fun call(): Int {
         noisy = verbose
@@ -181,12 +67,118 @@ private class Options : Callable<Int> {
 
         if (demo) {
             runDemo()
-        } else if (expressions.isEmpty()) {
-            repl(prompt)
+        } else if (arguments.isNotEmpty()) {
+            rollFromArguments(arguments)
+        } else if (null == System.console()) {
+            rollFromStdin()
         } else {
-            expressions.forEach { rollForMain(it) }
+            rollFromRepl(prompt)
         }
 
         return 0
     }
+}
+
+private typealias ReadLine = () -> String?
+
+private fun rollFromArguments(arguments: List<String>) =
+    arguments.forEach { rollIt(it) }
+
+private fun rollFromStdin() = rollFromLines { readLine() }
+
+/**
+ * @todo Don't rebuild the terminal & line reader each loop.  However, how to
+ *       close the terminal when done (and reset the external command line)?
+ */
+@Generated // Lie to JaCoCo
+private fun rollFromRepl(readerPrompt: String?) = TerminalBuilder.builder()
+    .name("dice")
+    .build().use { terminal ->
+        try {
+            val reader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .build()
+            rollFromLines { reader.readLine(readerPrompt) }
+        } catch (e: UserInterruptException) {
+            return // TODO: Should we complain on ^C?
+        } catch (e: EndOfFileException) {
+            return
+        }
+    }
+
+private fun rollFromLines(readLine: ReadLine) {
+    do {
+        val line = readLine()
+        when {
+            null == line -> return
+            line.isEmpty() -> continue
+            else -> rollIt(line)
+        }
+    } while (true)
+}
+
+private fun runDemo() {
+    for (expression in arrayOf(
+        "D6",
+        "z6",
+        "3d6",
+        "3z6",
+        "3d6+1",
+        "3d6-1",
+        "10d3!",
+        "10d3!2",
+        "4d6h3",
+        "4d6l3",
+        "3d6+2d4",
+        "d%",
+        "6d4l5!",
+        "3d12r1h2!11",
+        "blah",
+    ))
+        rollIt(expression)
+
+    println("DONE") // Show that bad expression did not throw
+}
+
+private var noisy = false
+private var random: Random = Random.Default
+
+private val NoisyRolling = OnRoll {
+    // TODO: Colorize output when using a prompt
+    println(
+        when (it) {
+            is PlainRoll -> "roll(d${it.d}) -> ${it.roll}"
+            is PlainReroll -> "reroll(d${it.d}) -> ${it.roll}"
+            is ExplodedRoll -> "!roll(d${it.d}) -> ${it.roll}"
+            is ExplodedReroll -> "!reroll(d${it.d}) -> ${it.roll}"
+            is DroppedRoll -> "drop -> ${it.roll}"
+        }
+    )
+}
+
+fun rollIt(expression: String) {
+    if (noisy) rollNoisily(expression)
+    else rollQuietly(expression)
+}
+
+private fun rollNoisily(expression: String) {
+    println("---")
+    println("Rolling $expression")
+    val result = roll(expression, NoisyRolling, random)
+    result.parseErrors.forEach {
+        err.println(printParseError(it))
+    }
+    if (!result.hasErrors()) println("RESULT -> ${result.resultValue}")
+    err.flush()
+    out.flush()
+}
+
+private fun rollQuietly(expression: String) {
+    val result = roll(expression, DoNothing, random)
+    result.parseErrors.forEach {
+        err.println(printParseError(it))
+    }
+    if (!result.hasErrors()) println("$expression ${result.resultValue}")
+    err.flush()
+    out.flush()
 }
