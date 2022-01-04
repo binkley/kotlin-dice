@@ -5,7 +5,6 @@ import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrNormalized
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
 import com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable
 import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
-import io.kotest.extensions.system.withEnvironment
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldNotBeEmpty
@@ -67,7 +66,27 @@ internal class MainTest {
     }
 
     @Test
-    fun `should prompt for dice expressions()`() {
+    fun `should fail if command line is bad`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    main("3d6", "x")
+                }
+                exitCode shouldBe 1
+            }
+            out shouldBe "3d6 12\n"
+        }
+        err shouldBe """
+Invalid input 'x', expected diceExpression (line 1, pos 1):
+x
+^
+
+
+""".trimIndent()
+    }
+
+    @Test
+    fun `should roll dice from STDIN`() {
         // TODO: This is ugly needing to hack the environment for testing :(
         withEnvironmentVariable("TERM", "dumb").execute {
             withTextFromSystemIn("3d6").execute {
@@ -81,6 +100,31 @@ internal class MainTest {
                     out shouldBe "3d6 12\n"
                 }
                 err.shouldBeEmpty()
+            }
+        }
+    }
+
+    @Test
+    fun `should fail if STDIN is bad`() {
+        // TODO: This is ugly needing to hack the environment for testing :(
+        withEnvironmentVariable("TERM", "dumb").execute {
+            withTextFromSystemIn("3d6", "x").execute {
+                val err = tapSystemErrNormalized {
+                    val out = tapSystemOutNormalized {
+                        val exitCode = catchSystemExit {
+                            main()
+                        }
+                        exitCode shouldBe 1
+                    }
+                    out shouldBe "3d6 12\n"
+                }
+                err shouldBe """
+Invalid input 'x', expected diceExpression (line 1, pos 1):
+x
+^
+
+
+""".trimIndent()
             }
         }
     }

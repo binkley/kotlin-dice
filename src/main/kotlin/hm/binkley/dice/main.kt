@@ -15,9 +15,6 @@ import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
-/**
- * @todo Exit process with non-0 if using pipe or cmd line, and parsing fails
- */
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(Options()).execute(*args))
@@ -64,7 +61,7 @@ private class Options : Callable<Int> {
         // TODO: Why does Kotlin require non-null assertion?
         if (null != seed) random = Random(seed!!)
 
-        if (demo) {
+        return if (demo) {
             runDemo()
         } else if (arguments.isNotEmpty()) {
             rollFromArguments(arguments)
@@ -73,15 +70,18 @@ private class Options : Callable<Int> {
         } else {
             rollFromRepl(prompt)
         }
-
-        return 0
     }
 }
 
 private typealias ReadLine = () -> String?
 
-private fun rollFromArguments(arguments: List<String>) =
-    arguments.forEach { rollIt(it) }
+private fun rollFromArguments(arguments: List<String>): Int {
+    for (argument in arguments) {
+        val result = rollIt(argument)
+        if (0 != result) return result
+    }
+    return 0
+}
 
 private fun rollFromStdin() = rollFromLines { readLine() }
 
@@ -90,33 +90,39 @@ private fun rollFromStdin() = rollFromLines { readLine() }
  *       close the terminal when done (and reset the external command line)?
  */
 @Generated // Lie to JaCoCo
-private fun rollFromRepl(readerPrompt: String?) = TerminalBuilder.builder()
-    .name("dice")
-    .build().use { terminal ->
-        try {
-            val reader = LineReaderBuilder.builder()
-                .terminal(terminal)
-                .build()
-            rollFromLines { reader.readLine(readerPrompt) }
-        } catch (e: UserInterruptException) {
-            return // TODO: Should we complain on ^C?
-        } catch (e: EndOfFileException) {
-            return
+private fun rollFromRepl(readerPrompt: String?): Int {
+    TerminalBuilder.builder()
+        .name("dice")
+        .build().use { terminal ->
+            try {
+                val reader = LineReaderBuilder.builder()
+                    .terminal(terminal)
+                    .build()
+                // Ignore failing exit code
+                while (true) rollFromLines { reader.readLine(readerPrompt) }
+            } catch (e: UserInterruptException) {
+                return 130 // Shells return 130 on SIGINT
+            } catch (e: EndOfFileException) {
+                return 0
+            }
         }
-    }
+}
 
-private fun rollFromLines(readLine: ReadLine) {
+private fun rollFromLines(readLine: ReadLine): Int {
     do {
         val line = readLine()
         when {
-            null == line -> return
+            null == line -> return 0
             line.isEmpty() -> continue
-            else -> rollIt(line)
+            else -> {
+                val result = rollIt(line)
+                if (0 != result) return result
+            }
         }
     } while (true)
 }
 
-private fun runDemo() {
+private fun runDemo(): Int {
     for (expression in arrayOf(
         "D6",
         "z6",
@@ -137,6 +143,8 @@ private fun runDemo() {
         rollIt(expression)
 
     println("DONE") // Show that bad expression did not throw
+
+    return 0
 }
 
 private var noisy = false
@@ -155,25 +163,37 @@ private val NoisyRolling = OnRoll {
     )
 }
 
-fun rollIt(expression: String) {
-    if (noisy) rollNoisily(expression)
+fun rollIt(expression: String): Int {
+    return if (noisy) rollNoisily(expression)
     else rollQuietly(expression)
 }
 
-private fun rollNoisily(expression: String) {
+private fun rollNoisily(expression: String): Int {
     println("---")
     println("Rolling $expression")
     val result = roll(expression, NoisyRolling, random)
-    result.parseErrors.forEach {
-        err.println(printParseError(it))
+
+    return if (!result.hasErrors()) {
+        println("RESULT -> ${result.resultValue}")
+        0
+    } else {
+        result.parseErrors.forEach {
+            err.println(printParseError(it))
+        }
+        1
     }
-    if (!result.hasErrors()) println("RESULT -> ${result.resultValue}")
 }
 
-private fun rollQuietly(expression: String) {
+private fun rollQuietly(expression: String): Int {
     val result = roll(expression, DoNothing, random)
-    result.parseErrors.forEach {
-        err.println(printParseError(it))
+
+    return if (!result.hasErrors()) {
+        println("$expression ${result.resultValue}")
+        0
+    } else {
+        result.parseErrors.forEach {
+            err.println(printParseError(it))
+        }
+        1
     }
-    if (!result.hasErrors()) println("$expression ${result.resultValue}")
 }
