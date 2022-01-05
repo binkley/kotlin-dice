@@ -16,7 +16,7 @@ A dice expression has these parts:
 The smallest roll expression is just a die type, eg, `d6` meaning roll 1
 6-sided die.  See [_Examples_](#examples), below.
 
-Try `./run.sh -- --demo` for a demonstration.  (Plain `./run.sh` prompts 
+Try `./roll.sh -- --demo` for a demonstration.  (Plain `./roll.sh` prompts 
 you to input dice expressions.)
 
 ## Table of contents
@@ -41,7 +41,7 @@ for Kotlin
 vulnerabilities
 
 Use `./mvnw` (Maven) or `./batect build` (Batect) to build, run tests, and
-create a demo program.  Use `./run.sh` or `./batect run` to run the demo.
+create a demo program.  Use `./roll.sh` or `./batect run` to run the demo.
 
 [Batect](https://batect.dev/) works "out of the box", however, an important
 optimization is to avoid redownloading plugins and dependencies from within
@@ -115,7 +115,7 @@ The parser still used a stack for some cases:
 - Tracking and applying `+`/`-` sign (add/subtract)
 - Applying the adjustment, if any, at the end
 
-## Goals for execution script [`run.sh`](./run.sh) and `main()`:
+## Goals for execution script [`roll.sh`](./roll.sh) and `main()`:
 
 Multiple modes of operation:
 
