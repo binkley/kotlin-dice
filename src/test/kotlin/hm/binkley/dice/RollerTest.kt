@@ -12,7 +12,6 @@ import java.util.stream.Stream
 internal class RollerTest {
     @Test
     fun `should report roll details`() {
-        val random = stableSeedForEachTest()
         val assertOnRoll = OnRoll {
             it.d shouldBe 6
             it.n shouldBe 7
@@ -28,7 +27,7 @@ internal class RollerTest {
             reroll = 2,
             keep = 3,
             explode = 4,
-            random = random,
+            random = stableSeedForEachTest(),
             reporting = assertOnRoll
         )
         roller.rollDice()
@@ -48,9 +47,15 @@ internal class RollerTest {
         explode: Int,
         expected: Int,
     ) {
-        val random = stableSeedForEachTest()
-
-        val result = Roller(d, dieShift, n, reroll, keep, explode, random)
+        val result = Roller(
+            d,
+            dieShift,
+            n,
+            reroll,
+            keep,
+            explode,
+            stableSeedForEachTest(),
+        )
             .rollDice()
 
         result shouldBe expected

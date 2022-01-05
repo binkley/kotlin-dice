@@ -1,41 +1,32 @@
 package hm.binkley.dice
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.api.Test
 import org.parboiled.Parboiled.createParser
 import org.parboiled.parserunners.ReportingParseRunner
-import java.util.Arrays
-import java.util.stream.Stream
 
 internal class ParserTest {
-    @MethodSource("args")
-    @ParameterizedTest
-    fun `should parse`(expression: String, expected: Int?) {
-        val random = stableSeedForEachTest()
+    @Test
+    fun `should parse and roll`() {
+        for ((expression, expected) in demoExpressions)
+            withClue(expression) {
+                val result = runner().run(expression)
 
-        val result = ReportingParseRunner<Int>(
-            createParser(
-                DiceParser::class.java,
-                random
-            ).diceExpression()
-        ).run(expression)
+                result.resultValue shouldBe expected
 
-        result.resultValue shouldBe expected
-        if (null == expected)
-            result.parseErrors.shouldNotBeEmpty()
-    }
-
-    companion object {
-        @JvmStatic
-        @Suppress("unused")
-        fun args(): Stream<Arguments> {
-            return Arrays.stream(demoExpressions)
-                .map { (expression, result) ->
-                    Arguments.of(expression, result)
-                }
-        }
+                if (null != expected) result.parseErrors.shouldBeEmpty()
+                else result.parseErrors.shouldNotBeEmpty()
+            }
     }
 }
+
+/** Creates a new runner each time so the `Random` is reset each time. */
+private fun runner() = ReportingParseRunner<Int>(
+    createParser(
+        DiceParser::class.java,
+        stableSeedForEachTest()
+    ).diceExpression()
+)

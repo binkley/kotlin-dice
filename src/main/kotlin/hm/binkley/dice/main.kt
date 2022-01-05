@@ -167,7 +167,10 @@ internal val demoExpressions = arrayOf(
     "Z6" to 3,
     "3d6" to 10,
     "3D6" to 10,
-    "3d6+1" to 11,
+    "3d6+1" to 11, // whitespace example
+    "3d6+ 1" to 11, // whitespace example
+    "3d6 +1" to 11, // whitespace example
+    "3d6 + 1" to 11, // whitespace example
     "3d6-1" to 9,
     "10d3!" to 20,
     "10d3!2" to 49,

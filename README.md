@@ -78,7 +78,8 @@ General syntax supported here:
 Single-character prefixes are _case-insensitive_, eg, `d6` and `D6` are the
 same roll.
 
-Whitespace in a dice expression is **not supported**.
+Whitespace in a dice expression is supported **only** around `+` and `-` 
+operators.
 
 See [TODO](#todo) for further improvements.
 
@@ -128,7 +129,6 @@ In these, distinguish STDOUT from STDERR.  Think of scripting use cases.
 
 ## TODO
 
-* Support whitespace, _eg_, `3d6 + 1` _vs_ `3d6+1`
 * Support plain values, eg, D&amp;D Goodberry is normally 1 always, so you 
   should be able to input just "1" and get a result rather than a parse error
 * Error messages for bad input are **cryptic**

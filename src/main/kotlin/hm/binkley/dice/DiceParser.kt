@@ -19,6 +19,10 @@ import kotlin.random.Random
  * See [kotlin dice](https://github.com/binkley/kotlin-dice)
  *
  * @see [roll]
+ *
+ * @todo Several parse methods use `@Generated`: they are actually covered,
+ *       but JaCoCo doesn't see through Parboiled's proxying and reflection.
+ *       Which functions need `@Generated` seems hit or miss
  */
 @BuildParseTree
 open class DiceParser(
@@ -203,14 +207,25 @@ open class DiceParser(
         )
     )
 
+    /**
+     * @todo Why doesn't JaCoCo see this? There are clearly tests from
+     *       [demoExpressions]
+     */
     @Generated // Lie to JaCoCo
     internal open fun rememberAddOrSubtract() = Sequence(
+        arithmeticWhitespace(),
         FirstOf(
             Ch('+'),
             Ch('-')
         ),
-        push(matchAddOrSubtract())
+        push(matchAddOrSubtract()),
+        arithmeticWhitespace()
     )
+
+    /** See https://github.com/sirthias/parboiled/wiki/Handling-Whitespace. */
+    internal open fun arithmeticWhitespace() =
+        // Note that Kotlin does not have a `\f` escape
+        ZeroOrMore(AnyOf(" \t\u000c"))
 
     internal fun matchAddOrSubtract() = if ("+" == match()) 1 else -1
 
