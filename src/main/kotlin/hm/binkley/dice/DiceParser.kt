@@ -31,9 +31,6 @@ open class DiceParser(
     internal constructor() : this(DoNothing, Random.Default)
 
     @Suppress("unused")
-    internal constructor(callback: OnRoll) : this(callback, Random.Default)
-
-    @Suppress("unused")
     internal constructor(random: Random) : this(DoNothing, random)
 
     // These properties define the current roll expression
