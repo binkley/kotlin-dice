@@ -1,12 +1,6 @@
 package hm.binkley.dice
 
 import lombok.Generated
-import org.jline.reader.EndOfFileException
-import org.jline.reader.LineReader
-import org.jline.reader.LineReaderBuilder
-import org.jline.reader.UserInterruptException
-import org.jline.terminal.Terminal
-import org.jline.terminal.TerminalBuilder
 import org.parboiled.errors.ErrorUtils.printParseError
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -17,12 +11,14 @@ import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
+internal const val PROGRAM_NAME = "dice"
+
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(Options()).execute(*args))
 
 @Command(
-    name = REPL_TERMINAL_NAME,
+    name = PROGRAM_NAME,
     mixinStandardHelpOptions = true,
     version = ["dice 0-SNAPSHOT"]
 )
@@ -87,40 +83,7 @@ private fun rollFromArguments(arguments: List<String>): Int {
 
 private fun rollFromStdin() = rollFromLines { readLine() }
 
-private const val REPL_TERMINAL_NAME = "dice"
-
-/**
- * @todo This may be better expressed a lazy property, however JaCoCo does not
- *       grok that.
- */
-@Generated // Lie to JaCoCo
-private fun repl(): Pair<Terminal, LineReader> {
-    val terminal = TerminalBuilder.builder()
-        .name(REPL_TERMINAL_NAME)
-        .build()
-    val replReader = LineReaderBuilder.builder()
-        .terminal(terminal)
-        .build()
-    return terminal to replReader
-}
-
-@Generated // Lie to JaCoCo
-private fun rollFromRepl(readerPrompt: String?): Int {
-    val (terminal, replReader) = repl()
-    terminal.use { // Terminals need closing to reset the external terminal
-        try {
-            while (true) rollFromLines {
-                replReader.readLine(readerPrompt)
-            }
-        } catch (e: UserInterruptException) {
-            return 130 // Shells return 130 on SIGINT
-        } catch (e: EndOfFileException) {
-            return 0
-        }
-    }
-}
-
-private fun rollFromLines(readLine: ReadLine): Int {
+internal fun rollFromLines(readLine: ReadLine): Int {
     do {
         val line = readLine()
         when {
@@ -134,35 +97,6 @@ private fun rollFromLines(readLine: ReadLine): Int {
     } while (true)
 }
 
-/**
- * Used by both demo and testing.
- * The second value is the expectation given a seed of 123 (used by testing).
- */
-internal val demoExpressions = arrayOf(
-    "D6" to 4,
-    "z6" to 3,
-    "Z6" to 3,
-    "3d6" to 10,
-    "3D6" to 10,
-    "3d6+1" to 11,
-    "3d6-1" to 9,
-    "10d3!" to 20,
-    "10d3!2" to 49,
-    "4d6h3" to 10,
-    "4d6H3" to 10,
-    "4d6l3" to 6,
-    "4d6L3" to 6,
-    "3d6+2d4" to 17,
-    "d%" to 66,
-    // Constant seed keeps the role constant, so z% is one less than d%
-    "z%" to 65,
-    "6d4l5!" to 20,
-    "3d3r1h2!" to 10,
-    "3d12!10" to 23,
-    "100d3r1h99!+100d3r1l99!3-17" to 919,
-    "blah" to null,
-)
-
 private fun runDemo(): Int {
     for (expression in demoExpressions)
         rollIt(expression.first)
@@ -173,16 +107,16 @@ private fun runDemo(): Int {
 }
 
 private var noisy = false
-private var random: Random = Random.Default
 
+private var random: Random = Random.Default
 private val NoisyRolling = OnRoll {
     // TODO: Colorize output when using a prompt
     println(
         when (it) {
             is PlainRoll -> "roll(d${it.d}) -> ${it.roll}"
             is PlainReroll -> "reroll(d${it.d}) -> ${it.roll}"
-            is ExplodedRoll -> "!roll(d${it.d}) -> ${it.roll}"
-            is ExplodedReroll -> "!reroll(d${it.d}) -> ${it.roll}"
+            is ExplodedRoll -> "!roll(d${it.d}: exploding on ${it.explode}) -> ${it.roll}"
+            is ExplodedReroll -> "!reroll(d${it.d}: exploding on ${it.explode}) -> ${it.roll}"
             is DroppedRoll -> "drop -> ${it.roll}"
         }
     )
@@ -222,3 +156,32 @@ private fun rollQuietly(expression: String): Int {
         1
     }
 }
+
+/**
+ * Used by both demo and testing.
+ * The second value is the expectation given a seed of 123 (used by testing).
+ */
+internal val demoExpressions = arrayOf(
+    "D6" to 4,
+    "z6" to 3,
+    "Z6" to 3,
+    "3d6" to 10,
+    "3D6" to 10,
+    "3d6+1" to 11,
+    "3d6-1" to 9,
+    "10d3!" to 20,
+    "10d3!2" to 49,
+    "4d6h3" to 10,
+    "4d6H3" to 10,
+    "4d6l3" to 6,
+    "4d6L3" to 6,
+    "3d6+2d4" to 17,
+    "d%" to 66,
+    // Constant seed keeps the role constant, so z% is one less than d%
+    "z%" to 65,
+    "6d4l5!" to 20,
+    "3d3r1h2!" to 10,
+    "3d12!10" to 23,
+    "100d3r1h99!+100d3r1l99!3-17" to 919,
+    "blah" to null,
+)
