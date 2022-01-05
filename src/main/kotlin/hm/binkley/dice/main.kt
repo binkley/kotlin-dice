@@ -159,7 +159,7 @@ private fun rollQuietly(expression: String): Int {
 
 /**
  * Used by both demo and testing.
- * The second value is the expectation given a seed of 123 (used by testing).
+ * The second value is the expectation given a seed of 1 (used by testing).
  */
 internal val demoExpressions = arrayOf(
     "D6" to 4,

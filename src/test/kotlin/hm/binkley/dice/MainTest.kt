@@ -22,7 +22,7 @@ import org.parboiled.parserunners.ReportingParseRunner
  * - Do not forget line breaks for stream assertion expected values; they
  * are normalized to use `\n` regardless of platform
  *
- * - The random seed is fixed at "123" so tests are reproducible
+ * - The random seed is fixed at "1" so tests are reproducible
  */
 internal class MainTest {
     @Test
@@ -60,7 +60,7 @@ internal class MainTest {
                 }
                 exitCode shouldBe 0
             }
-            out shouldBe "3d6 12\n"
+            out shouldBe "3d6 10\n"
         }
         err.shouldBeEmpty()
     }
@@ -74,7 +74,7 @@ internal class MainTest {
                 }
                 exitCode shouldBe 1
             }
-            out shouldBe "3d6 12\n"
+            out shouldBe "3d6 10\n"
         }
         err shouldBe """
 Invalid input 'x', expected diceExpression (line 1, pos 1):
@@ -97,7 +97,7 @@ x
                         }
                         exitCode shouldBe 0
                     }
-                    out shouldBe "3d6 12\n"
+                    out shouldBe "3d6 10\n"
                 }
                 err.shouldBeEmpty()
             }
@@ -154,7 +154,7 @@ x
                         }
                         exitCode shouldBe 1
                     }
-                    out shouldBe "3d6 12\n"
+                    out shouldBe "3d6 10\n"
                 }
                 err shouldBe """
 Invalid input 'x', expected diceExpression (line 1, pos 1):
@@ -198,7 +198,7 @@ x
 
 private fun main(vararg cmdLine: String) = main(
     arrayOf(
-        "--seed=123", // Hard-coded for test reproducibility
+        "--seed=${TESTING_SEED}", // Hard-coded for reproducibility
         *cmdLine,
     )
 )

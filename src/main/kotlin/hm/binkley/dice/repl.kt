@@ -26,7 +26,7 @@ internal fun rollFromRepl(readerPrompt: String?): Int {
 
 /**
  * @todo This may be better expressed a lazy property, however JaCoCo does not
- *       grok that.
+ *       grok that, and `@Generated` doesn't work on properties
  */
 @Generated // Lie to JaCoCo
 private fun repl(): Pair<Terminal, LineReader> {
