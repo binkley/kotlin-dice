@@ -3,12 +3,36 @@ package hm.binkley.dice
 import hm.binkley.dice.DieShift.ONE
 import hm.binkley.dice.DieShift.ZERO
 import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
 internal class RollerTest {
+    @Test
+    fun `should report roll details`() {
+        val random = stableSeedForEachTest()
+        val assertOnRoll = OnRoll {
+            it.d shouldBe 6
+            it.n shouldBe 7
+            it.reroll shouldBe 2
+            it.keep shouldBe 3
+            it.explode shouldBe 4
+        }
+
+        Roller(
+            d = 6,
+            dieShift = ONE,
+            n = 7,
+            reroll = 2,
+            keep = 3,
+            explode = 4,
+            random = random,
+            reporting = assertOnRoll
+        ).rollDice()
+    }
+
     @MethodSource("args")
     @ParameterizedTest
     fun `should roll`(

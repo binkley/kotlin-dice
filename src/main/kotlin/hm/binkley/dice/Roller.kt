@@ -44,7 +44,7 @@ data class Roller(
     /** The RNG.  Tests will prefer a fixed seed for reproducibility. */
     private val random: Random,
     /** Reports back on roll outcomes, potentially for logging or feedback. */
-    private val callback: OnRoll = DoNothing,
+    private val reporting: OnRoll = DoNothing,
 ) {
     fun rollDice(): Int {
         val rolls = generateSequence {
@@ -110,5 +110,5 @@ data class Roller(
         }
     }
 
-    private fun report(action: RollAction) = callback.onRoll(action)
+    private fun report(action: RollAction) = reporting.onRoll(action)
 }
