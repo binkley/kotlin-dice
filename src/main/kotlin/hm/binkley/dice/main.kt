@@ -2,8 +2,10 @@ package hm.binkley.dice
 
 import lombok.Generated
 import org.jline.reader.EndOfFileException
+import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.UserInterruptException
+import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
 import org.parboiled.errors.ErrorUtils.printParseError
 import picocli.CommandLine
@@ -20,7 +22,7 @@ fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(Options()).execute(*args))
 
 @Command(
-    name = "dice",
+    name = REPL_TERMINAL_NAME,
     mixinStandardHelpOptions = true,
     version = ["dice 0-SNAPSHOT"]
 )
@@ -85,27 +87,37 @@ private fun rollFromArguments(arguments: List<String>): Int {
 
 private fun rollFromStdin() = rollFromLines { readLine() }
 
+private const val REPL_TERMINAL_NAME = "dice"
+
 /**
- * @todo Don't rebuild the terminal & line reader each loop.  However, how to
- *       close the terminal when done (and reset the external command line)?
+ * @todo This may be better expressed a lazy property, however JaCoCo does not
+ *       grok that.
  */
 @Generated // Lie to JaCoCo
+private fun repl(): Pair<Terminal, LineReader> {
+    val terminal = TerminalBuilder.builder()
+        .name(REPL_TERMINAL_NAME)
+        .build()
+    val replReader = LineReaderBuilder.builder()
+        .terminal(terminal)
+        .build()
+    return terminal to replReader
+}
+
+@Generated // Lie to JaCoCo
 private fun rollFromRepl(readerPrompt: String?): Int {
-    TerminalBuilder.builder()
-        .name("dice")
-        .build().use { terminal ->
-            try {
-                val reader = LineReaderBuilder.builder()
-                    .terminal(terminal)
-                    .build()
-                // Ignore failing exit code
-                while (true) rollFromLines { reader.readLine(readerPrompt) }
-            } catch (e: UserInterruptException) {
-                return 130 // Shells return 130 on SIGINT
-            } catch (e: EndOfFileException) {
-                return 0
+    val (terminal, replReader) = repl()
+    terminal.use { // Terminals need closing to reset the external terminal
+        try {
+            while (true) rollFromLines {
+                replReader.readLine(readerPrompt)
             }
+        } catch (e: UserInterruptException) {
+            return 130 // Shells return 130 on SIGINT
+        } catch (e: EndOfFileException) {
+            return 0
         }
+    }
 }
 
 private fun rollFromLines(readLine: ReadLine): Int {
