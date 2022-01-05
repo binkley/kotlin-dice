@@ -238,7 +238,6 @@ open class DiceParser(
  *
  * Note: an _expensive_ call: it recreates the parser for each call.
  */
-@Generated // Lie to JaCoCo
 fun roll(
     expression: String,
     callback: OnRoll = DoNothing,
