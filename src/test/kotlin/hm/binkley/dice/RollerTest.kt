@@ -21,7 +21,7 @@ internal class RollerTest {
             it.explode shouldBe 4
         }
 
-        Roller(
+        val roller = Roller(
             d = 6,
             dieShift = ONE,
             n = 7,
@@ -30,7 +30,11 @@ internal class RollerTest {
             explode = 4,
             random = random,
             reporting = assertOnRoll
-        ).rollDice()
+        )
+        roller.rollDice()
+
+        // TODO: Move this into [RollAction]?
+        roller.dieShift shouldBe ONE
     }
 
     @MethodSource("args")

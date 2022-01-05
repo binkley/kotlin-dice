@@ -286,7 +286,7 @@
   TODO: Work around issue between JaCoCo and Kotlin.  JaCoCo is not seeing
         branches in some cases, and can struggle with SAM
                                             -->
-                                            <minimum>98%</minimum>
+                                            <minimum>99%</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -307,7 +307,7 @@
                         <excludedClass>hm.binkley.dice.MainKt</excludedClass>
                     </excludedClasses>
                     <!-- TODO: How to make mutation testing happy? -->
-                    <mutationThreshold>60</mutationThreshold>
+                    <mutationThreshold>82</mutationThreshold>
                 </configuration>
                 <executions>
                     <execution>
