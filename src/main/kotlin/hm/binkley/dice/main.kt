@@ -97,16 +97,18 @@ internal fun rollFromLines(readLine: ReadLine): Int {
     } while (true)
 }
 
+private var noisy = false
+
 private fun runDemo(): Int {
-    for (expression in demoExpressions)
+    for (expression in demoExpressions) {
+        if (noisy) println("---")
         rollIt(expression.first)
+    }
 
     println("DONE") // Show that bad expression did not throw
 
     return 0
 }
-
-private var noisy = false
 
 private var random: Random = Random.Default
 private val NoisyRolling = OnRoll {
@@ -128,7 +130,6 @@ fun rollIt(expression: String): Int {
 }
 
 private fun rollNoisily(expression: String): Int {
-    println("---")
     println("Rolling $expression")
     val result = roll(expression, NoisyRolling, random)
 
