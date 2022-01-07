@@ -1,6 +1,7 @@
 package hm.binkley.dice
 
 import lombok.Generated
+import org.fusesource.jansi.AnsiConsole
 import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
@@ -10,17 +11,22 @@ import org.jline.terminal.TerminalBuilder
 
 @Generated // Lie to JaCoCo
 internal fun rollFromRepl(readerPrompt: String?): Int {
-    val (terminal, replReader) = repl()
-    terminal.use { // Terminals need closing to reset the external terminal
-        try {
-            while (true) rollFromLines {
-                replReader.readLine(readerPrompt)
+    AnsiConsole.systemInstall()
+    try {
+        val (terminal, replReader) = repl()
+        terminal.use { // Terminals need closing to reset the external terminal
+            try {
+                while (true) rollFromLines {
+                    replReader.readLine(readerPrompt)
+                }
+            } catch (e: UserInterruptException) {
+                return 130 // Shells return 130 on SIGINT
+            } catch (e: EndOfFileException) {
+                return 0
             }
-        } catch (e: UserInterruptException) {
-            return 130 // Shells return 130 on SIGINT
-        } catch (e: EndOfFileException) {
-            return 0
         }
+    } finally {
+        AnsiConsole.systemUninstall()
     }
 }
 
