@@ -42,7 +42,7 @@ data class Roller(
     /** The RNG.  Tests will prefer a fixed seed for reproducibility. */
     private val random: Random,
     /** Reports back on roll outcomes, potentially for logging or feedback. */
-    private val reporting: RollReporting,
+    private val reporting: RollReporter,
 ) {
     fun rollDice(): Int {
         val rolls = generateSequence {

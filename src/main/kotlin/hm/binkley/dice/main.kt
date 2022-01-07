@@ -1,19 +1,17 @@
 package hm.binkley.dice
 
 import lombok.Generated
-import org.parboiled.buffers.InputBufferUtils.collectContent
-import org.parboiled.errors.ErrorUtils.printParseError
-import org.parboiled.support.ParsingResult
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
-import java.lang.System.err
 import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
 internal const val PROGRAM_NAME = "dice"
+
+private var reporter: MainReporter = PlainReporter
 
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
@@ -57,7 +55,7 @@ private class Options : Callable<Int> {
     var arguments: List<String> = emptyList()
 
     override fun call(): Int {
-        rollReporting = if (verbose) NoisyRolling else QuietRolling
+        reporter = if (verbose) VerboseReporter else PlainReporter
 
         // TODO: Why does Kotlin require non-null assertion?
         if (null != seed) random = Random(seed!!)
@@ -74,8 +72,6 @@ private class Options : Callable<Int> {
     }
 }
 
-private typealias ReadLine = () -> String?
-
 private fun rollFromArguments(arguments: List<String>): Int {
     for (argument in arguments) {
         val result = rollIt(argument)
@@ -85,6 +81,8 @@ private fun rollFromArguments(arguments: List<String>): Int {
 }
 
 private fun rollFromStdin() = rollFromLines { readLine() }
+
+private typealias ReadLine = () -> String?
 
 internal fun rollFromLines(readLine: ReadLine): Int {
     do {
@@ -102,7 +100,7 @@ internal fun rollFromLines(readLine: ReadLine): Int {
 
 private fun runDemo(): Int {
     for (expression in demoExpressions) {
-        if (NoisyRolling == rollReporting) println("---")
+        if (VerboseReporter == reporter) println("---")
         rollIt(expression.first)
     }
 
@@ -113,61 +111,13 @@ private fun runDemo(): Int {
 
 private var random: Random = Random.Default
 
-private val NoisyRolling = RollReporting {
-    // TODO: Colorize output when using a prompt
-    println(
-        when (it) {
-            is PlainRoll -> "roll(d${it.d}) -> ${it.roll}"
-            is PlainReroll -> "reroll(d${it.d}) -> ${it.roll}"
-            is ExplodedRoll -> "!roll(d${it.d}: exploding on ${it.explode}) -> ${it.roll}"
-            is ExplodedReroll -> "!reroll(d${it.d}: exploding on ${it.explode}) -> ${it.roll}"
-            is DroppedRoll -> "drop -> ${it.roll}"
-        }
-    )
-}
-
-internal val QuietRolling = RollReporting { }
-
 private fun rollIt(expression: String): Int {
-    val result = roll(expression, rollReporting, random)
+    val result = roll(expression, random, reporter)
 
-    if (NoisyRolling == rollReporting)
-        VerboseDisplayer.display(result)
-    else
-        PlainDisplayer.display(result)
+    reporter.display(result)
 
     return if (!result.hasErrors()) 0 else 1
 }
-
-fun interface Displayers {
-    fun display(result: ParsingResult<Int>)
-
-    val ParsingResult<Int>.expression: String
-        get() = collectContent(inputBuffer)
-    val ParsingResult<Int>.roll: Int get() = resultValue
-}
-
-private object PlainDisplayer : Displayers {
-    override fun display(result: ParsingResult<Int>) {
-        if (!result.hasErrors())
-            println("${result.expression} ${result.roll}")
-        else result.parseErrors.forEach {
-            err.println(printParseError(it))
-        }
-    }
-}
-
-private object VerboseDisplayer : Displayers {
-    override fun display(result: ParsingResult<Int>) {
-        if (!result.hasErrors())
-            println("RESULT -> ${result.roll}")
-        else result.parseErrors.forEach {
-            err.println(printParseError(it))
-        }
-    }
-}
-
-private var rollReporting: RollReporting = QuietRolling
 
 /**
  * Used by both demo and testing.

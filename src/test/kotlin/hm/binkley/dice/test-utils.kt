@@ -10,3 +10,5 @@ internal const val TESTING_SEED = 1L
  * object.
  */
 internal fun stableSeedForEachTest() = Random(TESTING_SEED)
+
+internal val silentTestingReporter = RollReporter { }

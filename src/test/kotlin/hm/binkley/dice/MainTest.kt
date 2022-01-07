@@ -9,8 +9,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldNotBeEmpty
 import org.junit.jupiter.api.Test
-import org.parboiled.Parboiled
-import org.parboiled.parserunners.ReportingParseRunner
 
 /**
  * Notes:
@@ -25,18 +23,6 @@ import org.parboiled.parserunners.ReportingParseRunner
  * - The random seed is fixed at "1" so tests are reproducible
  */
 internal class MainTest {
-    @Test
-    fun `should not throw exception on roll`() {
-        roll("3d6")
-    }
-
-    @Test
-    fun `should default construct with the RNG`() {
-        ReportingParseRunner<Int>(
-            Parboiled.createParser(DiceParser::class.java).diceExpression()
-        ).run("3d6")
-    }
-
     @Test
     fun `should be helpful()`() {
         val err = tapSystemErrNormalized {
