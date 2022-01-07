@@ -92,11 +92,11 @@ private fun rollFromArguments(
 }
 
 private fun rollFromStdin(reporter: MainReporter) =
-    rollFromLines({ readLine() }, reporter)
+    rollFromLines(reporter) { readLine() }
 
 private typealias ReadLine = () -> String?
 
-internal fun rollFromLines(readLine: ReadLine, reporter: MainReporter): Int {
+internal fun rollFromLines(reporter: MainReporter, readLine: ReadLine): Int {
     do {
         val line = readLine()
         when {

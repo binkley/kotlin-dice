@@ -19,9 +19,9 @@ internal fun rollFromRepl(
         val (terminal, replReader) = repl()
         terminal.use { // Terminals need closing to reset the external terminal
             try {
-                while (true) rollFromLines({
+                while (true) rollFromLines(reporter) {
                     replReader.readLine(readerPrompt)
-                }, reporter)
+                }
             } catch (e: UserInterruptException) {
                 return 130 // Shells return 130 on SIGINT
             } catch (e: EndOfFileException) {
