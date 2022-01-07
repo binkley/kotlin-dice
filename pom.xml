@@ -307,7 +307,7 @@
                         <excludedClass>hm.binkley.dice.MainKt</excludedClass>
                     </excludedClasses>
                     <!-- TODO: How to make mutation testing happy? -->
-                    <mutationThreshold>81</mutationThreshold>
+                    <mutationThreshold>87</mutationThreshold>
                 </configuration>
                 <executions>
                     <execution>
