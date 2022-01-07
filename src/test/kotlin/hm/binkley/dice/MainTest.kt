@@ -11,20 +11,14 @@ import io.kotest.matchers.string.shouldNotBeEmpty
 import org.junit.jupiter.api.Test
 
 /**
- * Notes:
- * - Nested assertions are needed because `main` calls `System.exit`:
- * assertions on `System.out` and `System.err` must come before the call to
- * `System.exit`.  Be careful to trap exit before capturing output streams;
- * otherwise the exit bubbles up, and does not run the stream assertions
- *
- * - Do not forget line breaks for stream assertion expected values; they
- * are normalized to use `\n` regardless of platform
- *
- * - The random seed is fixed at "1" so tests are reproducible
+ * **NB** &mdash; Nested system-lambda handling is needed as `main` calls
+ * `System.exit`, hence assertions on `System.out` and `System.err` must come
+ * _before_ trapping `System.exit`.; otherwise the exit bubbles out, and the
+ * stream assertions do not run
  */
 internal class MainTest {
     @Test
-    fun `should show basic help()`() {
+    fun `should show basic help`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
@@ -38,7 +32,7 @@ internal class MainTest {
     }
 
     @Test
-    fun `should be show software version()`() {
+    fun `should be show software version`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
@@ -52,7 +46,7 @@ internal class MainTest {
     }
 
     @Test
-    fun `should roll dice from command line()`() {
+    fun `should roll dice from command line`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
@@ -60,13 +54,13 @@ internal class MainTest {
                 }
                 exitCode shouldBe 0
             }
-            out shouldBe "3d6 10\n"
+            out shouldBeIgnoringLineEndings "3d6 10"
         }
         err.shouldBeEmpty()
     }
 
     @Test
-    fun `should roll dice from command line in color()`() {
+    fun `should roll dice from command line in color`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
@@ -74,13 +68,13 @@ internal class MainTest {
                 }
                 exitCode shouldBe 0
             }
-            out shouldBe "3d6 10\n"
+            out shouldBeIgnoringLineEndings "3d6 10"
         }
         err.shouldBeEmpty()
     }
 
     @Test
-    fun `should roll dice from command line verbosely and in color()`() {
+    fun `should roll dice from command line verbosely and in color`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
@@ -226,11 +220,39 @@ x
     }
 
     @Test
-    fun `should run demo verbosely()`() {
+    fun `should run demo verbosely`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
                     runMain("--demo", "--verbose")
+                }
+                exitCode shouldBe 0
+            }
+            out.shouldNotBeEmpty()
+        }
+        err.shouldNotBeEmpty()
+    }
+
+    @Test
+    fun `should run demo in color`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    runMain("--demo", "--color")
+                }
+                exitCode shouldBe 0
+            }
+            out.shouldNotBeEmpty()
+        }
+        err.shouldNotBeEmpty()
+    }
+
+    @Test
+    fun `should run demo verbosely and in color`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    runMain("--demo", "--color", "--verbose")
                 }
                 exitCode shouldBe 0
             }
