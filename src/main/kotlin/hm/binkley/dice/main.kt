@@ -53,21 +53,21 @@ private class Options : Callable<Int> {
     var arguments: List<String> = emptyList()
 
     override fun call(): Int {
-        fun Boolean.reporter(colored: Boolean) =
-            selectMainReporter(this, colored)
+        infix fun Boolean.inColor(inColor: Boolean): MainReporter =
+            selectMainReporter(this, inColor)
 
         // TODO: Why does Kotlin require non-null assertion?
         if (null != seed) random = Random(seed!!)
 
         // TODO: Pass reporters to "roll" methods
         return if (demo) {
-            rollForDemo(verbose.reporter(false))
+            rollForDemo(verbose inColor false)
         } else if (arguments.isNotEmpty()) {
-            rollFromArguments(arguments, verbose.reporter(false))
+            rollFromArguments(arguments, verbose inColor false)
         } else if (null == System.console()) {
-            rollFromStdin(verbose.reporter(false))
+            rollFromStdin(verbose inColor false)
         } else {
-            rollFromRepl(prompt, verbose.reporter(true))
+            rollFromRepl(prompt, verbose inColor true)
         }
     }
 }
