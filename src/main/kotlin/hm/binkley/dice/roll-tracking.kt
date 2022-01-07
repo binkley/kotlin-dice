@@ -4,7 +4,7 @@ package hm.binkley.dice
  * This could have been a `typealias`.  However, Kotlin syntax plays nicer
  * with using a `fun interface` (SAM interface).
  */
-fun interface OnRoll {
+fun interface RollReporting {
     fun onRoll(action: RollAction)
 }
 

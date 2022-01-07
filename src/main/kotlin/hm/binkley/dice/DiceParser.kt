@@ -26,16 +26,16 @@ import kotlin.random.Random
  */
 @BuildParseTree
 open class DiceParser(
-    private val callback: OnRoll,
+    private val callback: RollReporting,
     private val random: Random,
 ) : BaseParser<Int>() {
     // Internal secondary constructors used by Parboiled reflection
     // With pure Kotlin, these would be default values for the primary
     @Suppress("unused")
-    internal constructor() : this(DoNothing, Random.Default)
+    internal constructor() : this(QuietRolling, Random.Default)
 
     @Suppress("unused")
-    internal constructor(random: Random) : this(DoNothing, random)
+    internal constructor(random: Random) : this(QuietRolling, random)
 
     // These properties define the current roll expression
     private var n: Int? = null
@@ -255,7 +255,7 @@ open class DiceParser(
  */
 fun roll(
     expression: String,
-    callback: OnRoll = DoNothing,
+    callback: RollReporting = QuietRolling,
     random: Random = Random.Default,
 ): ParsingResult<Int> = ReportingParseRunner<Int>(
     createParser(DiceParser::class.java, callback, random).diceExpression()

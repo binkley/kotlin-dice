@@ -6,8 +6,6 @@ import kotlin.random.Random
 
 private typealias ReportType = (Roller, Int) -> RollAction
 
-val DoNothing = OnRoll { }
-
 /**
  * Represents rolling dice of a given [d] number of sides, eg, d12, and
  * summing the results.
@@ -44,7 +42,7 @@ data class Roller(
     /** The RNG.  Tests will prefer a fixed seed for reproducibility. */
     private val random: Random,
     /** Reports back on roll outcomes, potentially for logging or feedback. */
-    private val reporting: OnRoll = DoNothing,
+    private val reporting: RollReporting,
 ) {
     fun rollDice(): Int {
         val rolls = generateSequence {

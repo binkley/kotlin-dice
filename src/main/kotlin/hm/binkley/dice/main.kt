@@ -3,7 +3,6 @@ package hm.binkley.dice
 import lombok.Generated
 import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.errors.ErrorUtils.printParseError
-import org.parboiled.errors.ParseError
 import org.parboiled.support.ParsingResult
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -58,7 +57,8 @@ private class Options : Callable<Int> {
     var arguments: List<String> = emptyList()
 
     override fun call(): Int {
-        noisy = verbose
+        rollReporting = if (verbose) NoisyRolling else QuietRolling
+
         // TODO: Why does Kotlin require non-null assertion?
         if (null != seed) random = Random(seed!!)
 
@@ -100,11 +100,9 @@ internal fun rollFromLines(readLine: ReadLine): Int {
     } while (true)
 }
 
-private var noisy = false
-
 private fun runDemo(): Int {
     for (expression in demoExpressions) {
-        if (noisy) println("---")
+        if (NoisyRolling == rollReporting) println("---")
         rollIt(expression.first)
     }
 
@@ -114,7 +112,8 @@ private fun runDemo(): Int {
 }
 
 private var random: Random = Random.Default
-private val NoisyRolling = OnRoll {
+
+private val NoisyRolling = RollReporting {
     // TODO: Colorize output when using a prompt
     println(
         when (it) {
@@ -127,14 +126,21 @@ private val NoisyRolling = OnRoll {
     )
 }
 
+internal val QuietRolling = RollReporting { }
+
 private fun rollIt(expression: String): Int {
-    return if (noisy) rollNoisily(expression)
-    else rollQuietly(expression)
+    val result = roll(expression, rollReporting, random)
+
+    if (NoisyRolling == rollReporting)
+        VerboseDisplayer.display(result)
+    else
+        PlainDisplayer.display(result)
+
+    return if (!result.hasErrors()) 0 else 1
 }
 
-sealed interface Displayers {
+fun interface Displayers {
     fun display(result: ParsingResult<Int>)
-    fun display(error: ParseError)
 
     val ParsingResult<Int>.expression: String
         get() = collectContent(inputBuffer)
@@ -143,55 +149,25 @@ sealed interface Displayers {
 
 private object PlainDisplayer : Displayers {
     override fun display(result: ParsingResult<Int>) {
-        println("${result.expression} ${result.roll}")
-    }
-
-    override fun display(error: ParseError) {
-        err.println(printParseError(error))
+        if (!result.hasErrors())
+            println("${result.expression} ${result.roll}")
+        else result.parseErrors.forEach {
+            err.println(printParseError(it))
+        }
     }
 }
 
 private object VerboseDisplayer : Displayers {
     override fun display(result: ParsingResult<Int>) {
-        // TODO: Fix mess of "Rolling X" called outside of showing result
-        println("RESULT -> ${result.roll}")
-    }
-
-    override fun display(error: ParseError) {
-        err.println(printParseError(error))
-    }
-}
-
-private fun rollNoisily(expression: String): Int {
-    println("Rolling $expression")
-    val result = roll(expression, NoisyRolling, random)
-    val verbose = VerboseDisplayer
-
-    return if (!result.hasErrors()) {
-        verbose.display(result)
-        0
-    } else {
-        result.parseErrors.forEach {
-            verbose.display(it)
+        if (!result.hasErrors())
+            println("RESULT -> ${result.roll}")
+        else result.parseErrors.forEach {
+            err.println(printParseError(it))
         }
-        1
     }
 }
 
-private fun rollQuietly(expression: String): Int {
-    val result = roll(expression, DoNothing, random)
-    val plain = PlainDisplayer
-
-    return if (!result.hasErrors()) {
-        plain.display(result)
-        0
-    } else {
-        result.parseErrors.forEach {
-            plain.display(it)
-        }
-        1
-    }
-}
+private var rollReporting: RollReporting = QuietRolling
 
 /**
  * Used by both demo and testing.

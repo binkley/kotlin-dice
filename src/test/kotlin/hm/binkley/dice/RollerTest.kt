@@ -12,7 +12,7 @@ import java.util.stream.Stream
 internal class RollerTest {
     @Test
     fun `should report roll details`() {
-        val assertOnRoll = OnRoll {
+        val assertOnRoll = RollReporting {
             it.d shouldBe 6
             it.n shouldBe 7
             it.reroll shouldBe 2
@@ -55,6 +55,7 @@ internal class RollerTest {
             keep,
             explode,
             stableSeedForEachTest(),
+            QuietRolling,
         )
             .rollDice()
 
