@@ -24,11 +24,25 @@ import org.junit.jupiter.api.Test
  */
 internal class MainTest {
     @Test
-    fun `should be helpful()`() {
+    fun `should show basic help()`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
                     runMain("--help")
+                }
+                exitCode shouldBe 0
+            }
+            out.shouldNotBeEmpty()
+        }
+        err.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should be show software version()`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    runMain("--version")
                 }
                 exitCode shouldBe 0
             }
@@ -52,6 +66,39 @@ internal class MainTest {
     }
 
     @Test
+    fun `should roll dice from command line in color()`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    runMain("--color", "3d6")
+                }
+                exitCode shouldBe 0
+            }
+            out shouldBe "3d6 10\n"
+        }
+        err.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should roll dice from command line verbosely and in color()`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    runMain("--verbose", "--color", "3d6")
+                }
+                exitCode shouldBe 0
+            }
+            out shouldBeIgnoringLineEndings """
+roll(d6) -> 4
+roll(d6) -> 1
+roll(d6) -> 5
+RESULT -> 10
+"""
+        }
+        err.shouldBeEmpty()
+    }
+
+    @Test
     fun `should fail if command line is bad`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
@@ -60,15 +107,13 @@ internal class MainTest {
                 }
                 exitCode shouldBe 1
             }
-            out shouldBe "3d6 10\n"
+            out shouldBeIgnoringLineEndings "3d6 10"
         }
-        err shouldBe """
+        err shouldBeIgnoringLineEndings """
 Invalid input 'x', expected diceExpression (line 1, pos 1):
 x
 ^
-
-
-""".trimIndent()
+"""
     }
 
     @Test
@@ -83,7 +128,7 @@ x
                         }
                         exitCode shouldBe 0
                     }
-                    out shouldBe "3d6 10\n"
+                    out shouldBeIgnoringLineEndings "3d6 10"
                 }
                 err.shouldBeEmpty()
             }
@@ -140,21 +185,20 @@ x
                         }
                         exitCode shouldBe 1
                     }
-                    out shouldBe "3d6 10\n"
+                    out shouldBeIgnoringLineEndings "3d6 10"
                 }
-                err shouldBe """
+
+                err shouldBeIgnoringLineEndings """
 Invalid input 'x', expected diceExpression (line 1, pos 1):
 x
 ^
-
-
-""".trimIndent()
+"""
             }
         }
     }
 
     @Test
-    fun `seed is optional()`() {
+    fun `seed is optional`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
@@ -168,7 +212,21 @@ x
     }
 
     @Test
-    fun `should run demo noisily()`() {
+    fun `should run demo`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    runMain("--demo")
+                }
+                exitCode shouldBe 0
+            }
+            out.shouldNotBeEmpty()
+        }
+        err.shouldNotBeEmpty()
+    }
+
+    @Test
+    fun `should run demo verbosely()`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
@@ -188,3 +246,7 @@ private fun runMain(vararg cmdLine: String) = main(
         *cmdLine,
     )
 )
+
+/** @todo Kotlin portable equivalent of `strip()` */
+private infix fun String.shouldBeIgnoringLineEndings(expected: String) =
+    trimIndent().strip() shouldBe expected.trimIndent().strip()

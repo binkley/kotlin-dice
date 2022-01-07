@@ -22,6 +22,15 @@ fun main(args: Array<String>): Unit =
 )
 @Generated // Lie to JaCoCo
 private class Options : Callable<Int> {
+    /** @todo Support GNU `--color[=WHEN]` */
+    @Option(
+        names = ["-C", "--color"],
+        description = ["Force color output",
+            "The demo, command-line arguments, and piped input default to no color",
+            "The REPL defaults to color based on terminal support"],
+    )
+    var color = false
+
     @Option(
         names = ["--demo"],
         description = ["Run the demo; ignore arguments."],
@@ -61,11 +70,11 @@ private class Options : Callable<Int> {
 
         // TODO: Pass reporters to "roll" methods
         return if (demo) {
-            rollForDemo(verbose inColor false)
+            rollForDemo(verbose inColor color)
         } else if (arguments.isNotEmpty()) {
-            rollFromArguments(arguments, verbose inColor false)
+            rollFromArguments(arguments, verbose inColor color)
         } else if (null == System.console()) {
-            rollFromStdin(verbose inColor false)
+            rollFromStdin(verbose inColor color)
         } else {
             rollFromRepl(prompt, verbose inColor true)
         }
