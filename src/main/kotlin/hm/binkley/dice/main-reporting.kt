@@ -1,7 +1,9 @@
 package hm.binkley.dice
 
+import org.fusesource.jansi.Ansi.ansi
 import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.errors.ErrorUtils.printParseError
+import org.parboiled.errors.ParseError
 import org.parboiled.support.ParsingResult
 import java.lang.System.err
 
@@ -13,19 +15,23 @@ sealed interface MainReporter : RollReporter {
     val ParsingResult<Int>.roll: Int get() = resultValue
 }
 
-internal object PlainReporter : MainReporter {
+internal class PlainReporter(
+    private val withColor: Boolean,
+) : MainReporter {
     override fun onRoll(action: RollAction) = Unit
 
     override fun display(result: ParsingResult<Int>) {
         if (!result.hasErrors())
             println("${result.expression} ${result.roll}")
         else result.parseErrors.forEach {
-            err.println(printParseError(it))
+            displayError(withColor, it)
         }
     }
 }
 
-internal object VerboseReporter : MainReporter {
+internal class VerboseReporter(
+    private val withColor: Boolean,
+) : MainReporter {
     override fun onRoll(action: RollAction) {
         println(
             when (action) {
@@ -42,7 +48,15 @@ internal object VerboseReporter : MainReporter {
         if (!result.hasErrors())
             println("RESULT -> ${result.roll}")
         else result.parseErrors.forEach {
-            err.println(printParseError(it))
+            displayError(withColor, it)
         }
     }
+}
+
+private fun displayError(withColor: Boolean, it: ParseError) {
+    val errorText = printParseError(it)
+    val errorDisplay =
+        if (!withColor) errorText
+        else ansi().bold().fgRed().a(errorText).reset().toString()
+    err.println(errorDisplay)
 }

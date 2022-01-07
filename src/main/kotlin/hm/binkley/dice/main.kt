@@ -11,7 +11,7 @@ import kotlin.system.exitProcess
 
 internal const val PROGRAM_NAME = "dice"
 
-private var reporter: MainReporter = PlainReporter
+private var reporter: MainReporter = PlainReporter(false)
 
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
@@ -55,18 +55,28 @@ private class Options : Callable<Int> {
     var arguments: List<String> = emptyList()
 
     override fun call(): Int {
-        reporter = if (verbose) VerboseReporter else PlainReporter
-
         // TODO: Why does Kotlin require non-null assertion?
         if (null != seed) random = Random(seed!!)
 
         return if (demo) {
+            reporter =
+                if (verbose) VerboseReporter(false)
+                else PlainReporter(false)
             runDemo()
         } else if (arguments.isNotEmpty()) {
+            reporter =
+                if (verbose) VerboseReporter(false)
+                else PlainReporter(false)
             rollFromArguments(arguments)
         } else if (null == System.console()) {
+            reporter =
+                if (verbose) VerboseReporter(false)
+                else PlainReporter(false)
             rollFromStdin()
         } else {
+            reporter =
+                if (verbose) VerboseReporter(true)
+                else PlainReporter(true)
             rollFromRepl(prompt)
         }
     }
@@ -100,7 +110,7 @@ internal fun rollFromLines(readLine: ReadLine): Int {
 
 private fun runDemo(): Int {
     for (expression in demoExpressions) {
-        if (VerboseReporter == reporter) println("---")
+        if (reporter is VerboseReporter) println("---")
         rollIt(expression.first)
     }
 

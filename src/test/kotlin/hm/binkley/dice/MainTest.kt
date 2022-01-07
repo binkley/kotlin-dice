@@ -28,7 +28,7 @@ internal class MainTest {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
-                    main("--help")
+                    runMain("--help")
                 }
                 exitCode shouldBe 0
             }
@@ -42,7 +42,7 @@ internal class MainTest {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
-                    main("3d6")
+                    runMain("3d6")
                 }
                 exitCode shouldBe 0
             }
@@ -56,7 +56,7 @@ internal class MainTest {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
-                    main("3d6", "x")
+                    runMain("3d6", "x")
                 }
                 exitCode shouldBe 1
             }
@@ -79,7 +79,7 @@ x
                 val err = tapSystemErrNormalized {
                     val out = tapSystemOutNormalized {
                         val exitCode = catchSystemExit {
-                            main()
+                            runMain()
                         }
                         exitCode shouldBe 0
                     }
@@ -98,7 +98,7 @@ x
                 val err = tapSystemErrNormalized {
                     val out = tapSystemOutNormalized {
                         val exitCode = catchSystemExit {
-                            main()
+                            runMain()
                         }
                         exitCode shouldBe 0
                     }
@@ -117,7 +117,7 @@ x
                 val err = tapSystemErrNormalized {
                     val out = tapSystemOutNormalized {
                         val exitCode = catchSystemExit {
-                            main()
+                            runMain()
                         }
                         exitCode shouldBe 0
                     }
@@ -136,7 +136,7 @@ x
                 val err = tapSystemErrNormalized {
                     val out = tapSystemOutNormalized {
                         val exitCode = catchSystemExit {
-                            main()
+                            runMain()
                         }
                         exitCode shouldBe 1
                     }
@@ -172,7 +172,7 @@ x
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
-                    main("--demo", "--verbose")
+                    runMain("--demo", "--verbose")
                 }
                 exitCode shouldBe 0
             }
@@ -182,7 +182,7 @@ x
     }
 }
 
-private fun main(vararg cmdLine: String) = main(
+private fun runMain(vararg cmdLine: String) = main(
     arrayOf(
         "--seed=${TESTING_SEED}", // Hard-coded for reproducibility
         *cmdLine,
