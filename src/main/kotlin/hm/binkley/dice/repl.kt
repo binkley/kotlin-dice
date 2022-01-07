@@ -10,15 +10,18 @@ import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
 
 @Generated // Lie to JaCoCo
-internal fun rollFromRepl(readerPrompt: String?): Int {
+internal fun rollFromRepl(
+    readerPrompt: String?,
+    reporter: MainReporter,
+): Int {
     AnsiConsole.systemInstall()
     try {
         val (terminal, replReader) = repl()
         terminal.use { // Terminals need closing to reset the external terminal
             try {
-                while (true) rollFromLines {
+                while (true) rollFromLines({
                     replReader.readLine(readerPrompt)
-                }
+                }, reporter)
             } catch (e: UserInterruptException) {
                 return 130 // Shells return 130 on SIGINT
             } catch (e: EndOfFileException) {

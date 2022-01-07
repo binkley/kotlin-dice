@@ -11,8 +11,6 @@ import kotlin.system.exitProcess
 
 internal const val PROGRAM_NAME = "dice"
 
-private var reporter: MainReporter = PlainReporter(false)
-
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
     exitProcess(CommandLine(Options()).execute(*args))
@@ -55,63 +53,62 @@ private class Options : Callable<Int> {
     var arguments: List<String> = emptyList()
 
     override fun call(): Int {
+        fun Boolean.reporter(colored: Boolean) =
+            selectMainReporter(this, colored)
+
         // TODO: Why does Kotlin require non-null assertion?
         if (null != seed) random = Random(seed!!)
 
+        // TODO: Pass reporters to "roll" methods
         return if (demo) {
-            reporter =
-                if (verbose) VerboseReporter(false)
-                else PlainReporter(false)
-            runDemo()
+            rollForDemo(verbose.reporter(false))
         } else if (arguments.isNotEmpty()) {
-            reporter =
-                if (verbose) VerboseReporter(false)
-                else PlainReporter(false)
-            rollFromArguments(arguments)
+            rollFromArguments(arguments, verbose.reporter(false))
         } else if (null == System.console()) {
-            reporter =
-                if (verbose) VerboseReporter(false)
-                else PlainReporter(false)
-            rollFromStdin()
+            rollFromStdin(verbose.reporter(false))
         } else {
-            reporter =
-                if (verbose) VerboseReporter(true)
-                else PlainReporter(true)
-            rollFromRepl(prompt)
+            rollFromRepl(prompt, verbose.reporter(true))
         }
     }
 }
 
-private fun rollFromArguments(arguments: List<String>): Int {
+private fun rollFromArguments(
+    arguments: List<String>, reporter: MainReporter
+): Int {
     for (argument in arguments) {
-        val result = rollIt(argument)
+        val result = rollIt(argument, reporter)
         if (0 != result) return result
     }
     return 0
 }
 
-private fun rollFromStdin() = rollFromLines { readLine() }
+private fun rollFromStdin(reporter: MainReporter) =
+    rollFromLines({ readLine() }, reporter)
 
 private typealias ReadLine = () -> String?
 
-internal fun rollFromLines(readLine: ReadLine): Int {
+internal fun rollFromLines(readLine: ReadLine, reporter: MainReporter): Int {
     do {
         val line = readLine()
         when {
             null == line -> return 0
             line.isEmpty() -> continue
             else -> {
-                val result = rollIt(line)
+                val result = rollIt(line, reporter)
                 if (0 != result) return result
             }
         }
     } while (true)
 }
 
-private fun runDemo(): Int {
+private fun rollForDemo(reporter: MainReporter): Int {
     for (expression in demoExpressions) {
-        if (reporter is VerboseReporter) println("---")
-        rollIt(expression.first)
+        // TODO: Teach [MainReporter] about verbosity, else a method there
+        if (reporter is UncoloredVerboseReporter
+            || reporter is ColoredVerboseReporter
+        )
+            println("---")
+        rollIt(expression.first, reporter)
     }
 
     println("DONE") // Show that bad expression did not throw
@@ -121,7 +118,7 @@ private fun runDemo(): Int {
 
 private var random: Random = Random.Default
 
-private fun rollIt(expression: String): Int {
+private fun rollIt(expression: String, reporter: MainReporter): Int {
     val result = roll(expression, random, reporter)
 
     reporter.display(result)
