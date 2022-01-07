@@ -216,7 +216,7 @@ open class DiceParser(
 
     /** See https://github.com/sirthias/parboiled/wiki/Handling-Whitespace. */
     internal open fun arithmeticWhitespace() =
-        // Note that Kotlin does not have a `\f` escape
+        // Note that Kotlin does not have an `\f` escape
         ZeroOrMore(AnyOf(" \t\u000c"))
 
     internal fun matchAddOrSubtract() = if ("+" == match()) 1 else -1
