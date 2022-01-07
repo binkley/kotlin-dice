@@ -32,11 +32,25 @@ internal class MainTest {
     }
 
     @Test
-    fun `should be show software version`() {
+    fun `should show software version`() {
         val err = tapSystemErrNormalized {
             val out = tapSystemOutNormalized {
                 val exitCode = catchSystemExit {
                     runMain("--version")
+                }
+                exitCode shouldBe 0
+            }
+            out.shouldNotBeEmpty()
+        }
+        err.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should roll dice with a default RNG`() {
+        val err = tapSystemErrNormalized {
+            val out = tapSystemOutNormalized {
+                val exitCode = catchSystemExit {
+                    main(arrayOf("3d6")) // No seed
                 }
                 exitCode shouldBe 0
             }
