@@ -1,7 +1,10 @@
 package hm.binkley.dice
 
 import lombok.Generated
+import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.errors.ErrorUtils.printParseError
+import org.parboiled.errors.ParseError
+import org.parboiled.support.ParsingResult
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
@@ -124,21 +127,52 @@ private val NoisyRolling = OnRoll {
     )
 }
 
-fun rollIt(expression: String): Int {
+private fun rollIt(expression: String): Int {
     return if (noisy) rollNoisily(expression)
     else rollQuietly(expression)
+}
+
+sealed interface Displayers {
+    fun display(result: ParsingResult<Int>)
+    fun display(error: ParseError)
+
+    val ParsingResult<Int>.expression: String
+        get() = collectContent(inputBuffer)
+    val ParsingResult<Int>.roll: Int get() = resultValue
+}
+
+private object PlainDisplayer : Displayers {
+    override fun display(result: ParsingResult<Int>) {
+        println("${result.expression} ${result.roll}")
+    }
+
+    override fun display(error: ParseError) {
+        err.println(printParseError(error))
+    }
+}
+
+private object VerboseDisplayer : Displayers {
+    override fun display(result: ParsingResult<Int>) {
+        // TODO: Fix mess of "Rolling X" called outside of showing result
+        println("RESULT -> ${result.roll}")
+    }
+
+    override fun display(error: ParseError) {
+        err.println(printParseError(error))
+    }
 }
 
 private fun rollNoisily(expression: String): Int {
     println("Rolling $expression")
     val result = roll(expression, NoisyRolling, random)
+    val verbose = VerboseDisplayer
 
     return if (!result.hasErrors()) {
-        println("RESULT -> ${result.resultValue}")
+        verbose.display(result)
         0
     } else {
         result.parseErrors.forEach {
-            err.println(printParseError(it))
+            verbose.display(it)
         }
         1
     }
@@ -146,13 +180,14 @@ private fun rollNoisily(expression: String): Int {
 
 private fun rollQuietly(expression: String): Int {
     val result = roll(expression, DoNothing, random)
+    val plain = PlainDisplayer
 
     return if (!result.hasErrors()) {
-        println("$expression ${result.resultValue}")
+        plain.display(result)
         0
     } else {
         result.parseErrors.forEach {
-            err.println(printParseError(it))
+            plain.display(it)
         }
         1
     }
