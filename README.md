@@ -129,8 +129,6 @@ In these, distinguish STDOUT from STDERR.  Think of scripting use cases.
 
 ## TODO
 
-* Support plain values, eg, D&amp;D Goodberry is normally 1 always, so you 
-  should be able to input just "1" and get a result rather than a parse error
 * Error messages for bad input are **cryptic**
 * Support factors of rolls, ie, a syntax for `2*(2d6)` or `(2d6)/2`
 * Support grammar for `4d6-L` or `4d6-H` meaning drop the lowest or highest
