@@ -11,6 +11,9 @@ private typealias ReportType = (Roller, Int) -> RollAction
  * summing the results.
  *
  * *NB* &mdash; Exploding dice can result in more than [n] dice in total.
+ *
+ * @see [DiceParser] for turning dice expression strings into `Roller`
+ * instances
  */
 data class Roller(
     /** The number of die sides, eg, d12 (the 12). */
@@ -39,9 +42,9 @@ data class Roller(
     val keep: Int,
     /** Continue rolling more dice while the roll is this value or greater. */
     val explode: Int,
-    /** The RNG.  Tests will prefer a fixed seed for reproducibility. */
+    /** The RNG.  Tests use `stableSeedForEachTest()` for reproducibility. */
     private val random: Random,
-    /** Reports back on roll outcomes, potentially for logging or feedback. */
+    /** Reports on individual roll outcomes for feedback. */
     private val reporting: RollReporter,
 ) {
     fun rollDice(): Int {
@@ -82,8 +85,7 @@ data class Roller(
         return explosions
     }
 
-    private fun rollPlain() =
-        rollDieAndTrack(::PlainRoll, ::PlainReroll)
+    private fun rollPlain() = rollDieAndTrack(::PlainRoll, ::PlainReroll)
 
     private fun rollExplosion() =
         rollDieAndTrack(::ExplodedRoll, ::ExplodedReroll)
