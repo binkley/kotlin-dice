@@ -136,6 +136,7 @@ In these, distinguish STDOUT from STDERR.  Think of scripting use cases.
 * Support grammar for `4d6-L` or `4d6-H` meaning drop the lowest or highest
 * Support `floor`, `ceil`, etc., to round rolls down/up
 * Reroll should support options other than low rolls
+* REPL should support syntax like "set verbose on" to toggle cmd line flags
 
 ## References
 
