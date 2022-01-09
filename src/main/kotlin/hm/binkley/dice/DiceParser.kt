@@ -163,7 +163,6 @@ open class DiceParser(
         recordExplode()
     )
 
-    @Generated // Lie to JaCoCo
     internal fun recordExplode(): Boolean {
         explode = when (val match = match()) {
             "" -> d!! + 1 // d6 explodes on 7, meaning, no exploding
@@ -199,10 +198,6 @@ open class DiceParser(
         )
     )
 
-    /**
-     * @todo Why doesn't JaCoCo see this? There are clearly tests from
-     *       [demoExpressions]
-     */
     @Generated // Lie to JaCoCo
     internal open fun rememberAddOrSubtract() = Sequence(
         arithmeticWhitespace(),
