@@ -34,25 +34,38 @@ java | kotlin) ;;
     ;;
 esac
 
+# Check for terminal output vs pipe, etc, for formatting
+if [ -t 1 ]; then
+    printf -v preset "\e[0m"
+    printf -v pbold "\e[1m"
+    printf -v pitalic "\e[3m"
+    printf -v pyellow "\e[33m"
+else
+    printf -v preset ""
+    printf -v pbold ""
+    printf -v pitalic ""
+    printf -v pyellow ""
+fi
+
 function print-help() {
     cat <<EOH
-Usage: $progname [OPTIONS] [-- ARGUMENTS]
+Usage: $pbold$progname$preset [${pyellow}OPTIONS$preset] [-- ${pyellow}ARGUMENTS$preset]
 Runs a single-jar JVM project.
 
 Options:
-  -B, --build-tool=TOOL
+  $pyellow-B$preset, $pyellow--build-tool${preset}=$pitalic<TOOL>$preset
                  builds the example using TOOL; tools:
                     gradle$([[ gradle == "$build_tool" ]] && echo ' (default)')
                     maven$([[ maven == "$build_tool" ]] && echo ' (default)')
-  -C, --alt-class=CLASS
+  $pyellow-C$preset, $pyellow--alt-class$preset=$pitalic<CLASS>$preset
                  execute CLASS as the alternate main class, otherwise assume
                  the jar is executable
-  -L, --language=LANGUAGE
+  $pyellow-L$preset, $pyellow--language$preset=$pitalic<LANGUAGE>$preset
                  runs the example for LANGUAGE; languages:
                     java$([[ java == "$language" ]] && echo ' (default)')
                     kotlin$([[ kotlin == "$language" ]] && echo ' (default)')
-  -d, --debug    print script execution to STDERR
-  -h, --help     display this help and exit
+  $pyellow-d$preset, $pyellow--debug$preset    print script execution to STDERR
+  $pyellow-h$preset, $pyellow--help$preset     display this help and exit
 
 Examples:
   $progname              Runs the executable jar with no arguments to main
