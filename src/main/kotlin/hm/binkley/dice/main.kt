@@ -18,46 +18,49 @@ fun main(args: Array<String>): Unit =
 @Command(
     name = PROGRAM_NAME,
     mixinStandardHelpOptions = true,
-    version = ["dice 0-SNAPSHOT"]
+    version = ["dice 0-SNAPSHOT"],
 )
 @Generated // Lie to JaCoCo
 private class Options : Callable<Int> {
     /** @todo Support GNU `--color[=WHEN]` */
     @Option(
-        names = ["-C", "--color"],
         description = ["Force color output",
             "The demo, command-line arguments, and piped input default to no color",
             "The REPL defaults to color based on terminal support"],
+        names = ["-C", "--color"],
     )
     var color = false
 
     @Option(
-        names = ["--demo"],
         description = ["Run the demo; ignore arguments."],
+        names = ["--demo"],
     )
     var demo = false
 
     @Option(
-        names = ["-p", "--prompt"],
         description = ["Change the interactive prompt from '\uD83C\uDFB2 '."],
+        names = ["-p", "--prompt"],
+        paramLabel = "PROMPT",
     )
     var prompt = "\uD83C\uDFB2 " // Colorful die
 
     @Option(
-        names = ["-s", "--seed"],
         description = ["Provide a random seed for repeatable results."],
+        names = ["-s", "--seed"],
+        paramLabel = "SEED",
     )
     var seed: Int? = null
 
     @Option(
-        names = ["-v", "--verbose"],
         description = ["Explain each die roll as it happens."],
+        names = ["-v", "--verbose"],
     )
     var verbose = false
 
     @Parameters(
         description = ["Dice expressions to roll",
             "If none provided, prompt user interactively"],
+        paramLabel = "EXPRESSION",
     )
     var arguments: List<String> = emptyList()
 

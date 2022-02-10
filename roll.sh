@@ -38,6 +38,9 @@ Options:
   $pyellow--debug$preset      Show run script execution to STDERR.
   $pyellow-h$preset, $pyellow--help$preset   Show this help message and exit.
 
+Try '$pbold$progname$preset -- -h' to see program-specific help.
+${pbold}TODO$preset: Merge help from wrapper script and main program.
+
 Examples:
   $pbold$progname$preset
      Start the interactive dice rolling prompt.
