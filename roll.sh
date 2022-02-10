@@ -5,8 +5,6 @@
 readonly package=hm.binkley.dice
 readonly artifactId=kotlin-dice
 readonly version=0-SNAPSHOT
-build_tool=maven
-language=kotlin
 jvm_flags=(-ea --add-opens java.base/java.lang=ALL-UNNAMED)
 # No editable parts below here
 
@@ -17,22 +15,6 @@ set -u
 set -o pipefail
 
 readonly progname="${0##*/}"
-
-case $build_tool in
-gradle | maven) ;;
-*)
-    echo "$progname: BUG: Pick 'gradle' or 'maven': $build_tool" >&2
-    exit 2
-    ;;
-esac
-
-case $language in
-java | kotlin) ;;
-*)
-    echo "$progname: BUG: Pick 'java' or 'kotlin': $language" >&2
-    exit 2
-    ;;
-esac
 
 # Check for terminal output vs pipe, etc, for formatting
 if [ -t 1 ]; then
@@ -49,28 +31,25 @@ fi
 
 function print-help() {
     cat <<EOH
-Usage: $pbold$progname$preset [${pyellow}OPTIONS$preset] [-- ${pyellow}ARGUMENTS$preset]
-Runs a single-jar JVM project.
+Usage: $pbold$progname$preset [$pyellow-d$preset] [-- ${pyellow}PROGRAM-ARGUMENTS$preset]
+Roll dice.
 
 Options:
-  $pyellow-B$preset, $pyellow--build-tool${preset}=$pitalic<TOOL>$preset
-                 builds the example using TOOL; tools:
-                    gradle$([[ gradle == "$build_tool" ]] && echo ' (default)')
-                    maven$([[ maven == "$build_tool" ]] && echo ' (default)')
-  $pyellow-C$preset, $pyellow--alt-class$preset=$pitalic<CLASS>$preset
-                 execute CLASS as the alternate main class, otherwise assume
-                 the jar is executable
-  $pyellow-L$preset, $pyellow--language$preset=$pitalic<LANGUAGE>$preset
-                 runs the example for LANGUAGE; languages:
-                    java$([[ java == "$language" ]] && echo ' (default)')
-                    kotlin$([[ kotlin == "$language" ]] && echo ' (default)')
-  $pyellow-d$preset, $pyellow--debug$preset    print script execution to STDERR
-  $pyellow-h$preset, $pyellow--help$preset     display this help and exit
+  $pyellow--debug$preset      Show run script execution to STDERR.
+  $pyellow-h$preset, $pyellow--help$preset   Show this help message and exit.
 
 Examples:
-  $progname              Runs the executable jar with no arguments to main
-  $progname -C a-class   Runs the main from "a-class"
-  $progname -- an-arg    Runs the executable jar passing "an-arg" to main
+  $pbold$progname$preset
+     Start the interactive dice rolling prompt.
+  $pbold$progname$preset <${pitalic}expression$preset>
+     Print result of dice expresion, and exit.
+  echo $pitalic<expression>$preset | $pbold$progname$preset
+     Print result of STDIN as a dice expression, and exit.
+
+Exit codes:
+  ${pbold}0$preset - Successful completion
+  ${pbold}1$preset - Bad dice expression
+  ${pbold}2$preset - Bad program usage
 EOH
 }
 
@@ -131,33 +110,15 @@ function rebuild-if-needed() {
     # TODO: Rebuild if build script is newer than jar
     [[ -e "$jar" && -z "$(find src/main -type f -newer "$jar")" ]] && return
 
-    case $build_tool in
-    gradle) ./gradlew --warning-mode=all jar ;;
-    maven) ./mvnw --strict-checksums -Dmaven.test.skip=true package ;;
-    esac
+    ./mvnw --strict-checksums -Dmaven.test.skip=true package
 }
 
 alt_class=''
 debug=false
-while getopts :B:C:L:a:b:dhl:-: opt; do
+while getopts :d:h-: opt; do
     [[ $opt == - ]] && opt=${OPTARG%%=*} OPTARG=${OPTARG#*=}
     case $opt in
-    B | build-tool) case "$OPTARG" in
-        gradle | maven) build_tool="$OPTARG" ;;
-        *)
-            bad-build-tool "$OPTARG"
-            exit 2
-            ;;
-        esac ;;
-    C | alt-class) alt_class=$OPTARG ;;
-    L | language) case "$OPTARG" in
-        java | kotlin) language="$OPTARG" ;;
-        *)
-            bad-language "$OPTARG"
-            exit 2
-            ;;
-        esac ;;
-    d | debug) debug=true ;;
+    debug) debug=true ;;
     h | help)
         print-help
         exit 0
@@ -172,30 +133,13 @@ shift $((OPTIND - 1))
 
 $debug && set -x
 
-case $build_tool in
-gradle)
-    if [[ ! -x "./gradlew" ]]; then
-        echo "$progname: Not executable: ./gradlew" >&2
-        exit 2
-    fi
-    readonly jar=build/libs/$artifactId-$version.jar
-    ;;
-maven)
-    if [[ ! -x "./mvnw" ]]; then
-        echo "$progname: Not executable: ./mvnw" >&2
-        exit 2
-    fi
-    readonly jar=target/$artifactId-$version-jar-with-dependencies.jar
-    ;;
-esac
+if [[ ! -x "./mvnw" ]]; then
+    echo "$progname: Not executable: ./mvnw" >&2
+    exit 2
+fi
+readonly jar=target/$artifactId-$version-jar-with-dependencies.jar
 
-case "$alt_class" in
-'') jvm_flags=("${jvm_flags[@]}" -jar "$jar") ;;
-*)
-    readonly runtime_classname="$(runtime-classname "$package.$alt_class")"
-    jvm_flags=("${jvm_flags[@]}" -cp "$jar" "$runtime_classname")
-    ;;
-esac
+jvm_flags=("${jvm_flags[@]}" -jar "$jar")
 
 rebuild-if-needed
 
