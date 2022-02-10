@@ -19,8 +19,10 @@ internal class DiceParserTest {
 
                 result.resultValue shouldBe expected
 
-                if (null == expected) result.parseErrors.shouldNotBeEmpty()
-                else result.parseErrors.shouldBeEmpty()
+                when (expected) {
+                    null -> result.parseErrors.shouldNotBeEmpty()
+                    else -> result.parseErrors.shouldBeEmpty()
+                }
             }
     }
 }
