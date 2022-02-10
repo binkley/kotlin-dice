@@ -58,8 +58,8 @@ open class DiceParser(
     @Generated // Lie to JaCoCo
     internal open fun rollExpression() = Sequence(
         rollCount(),
-        dieShift(),
-        dieSides(),
+        dieBase(),
+        dieSide(),
         maybeRerollLow(),
         maybeKeepFewer(),
         maybeExplode(),
@@ -83,7 +83,7 @@ open class DiceParser(
     )
 
     @Generated // Lie to JaCoCo
-    internal open fun dieShift() = Sequence(
+    internal open fun dieBase() = Sequence(
         FirstOf(
             Ch('d'),
             Ch('D'),
@@ -102,15 +102,15 @@ open class DiceParser(
     }
 
     @Generated // Lie to JaCoCo
-    internal open fun dieSides() = Sequence(
+    internal open fun dieSide() = Sequence(
         FirstOf(
             number(),
             Ch('%')
         ),
-        recordDieSides()
+        recordDieSide()
     )
 
-    internal fun recordDieSides(): Boolean {
+    internal fun recordDieSide(): Boolean {
         d = when (val match = match()) {
             "%" -> 100
             else -> match.toInt()

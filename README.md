@@ -100,17 +100,17 @@ The [demo examples](./src/main/kotlin/hm/binkley/dice/main.kt) (look at
 
 ## Code conventions
 
-As each top-level part of a dice expression (eg, die type) parse, the parser 
+At each top-level part of a dice expression parse (eg, die side), the parser 
 saves a local value internally.  By the end of the dice expression, this
 includes:
 
-- Die type, ie, number of die sides
+- Die side, ie, number of sides on a die (ex: d4)
 - Roll count, or 1 if none specified; ie, number of dice to roll
 - Reroll value, or 0 if none specified; rolls of this value or lower are
   rerolled
 - Dice to keep, or "roll count" if none specified; a positive number is
   keep highest, a negative number is keep lowest
-- Explosion limit, or "die type + 1" if none specified
+- Explosion limit, or "die side + 1" if none specified
 - Adjustment, or 0 when none specified
 
 The parser still used a stack for some cases:
