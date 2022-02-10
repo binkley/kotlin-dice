@@ -13,6 +13,15 @@ import org.parboiled.parserunners.ReportingParseRunner
 import org.parboiled.support.ParsingResult
 import kotlin.random.Random
 
+/** Parses a dice expression, rolls, and returns the result. */
+fun roll(
+    expression: String,
+    random: Random = Random,
+    reporter: RollReporter,
+): ParsingResult<Int> = ReportingParseRunner<Int>(
+    createParser(DiceParser::class.java, random, reporter).diceExpression()
+).run(expression)
+
 /**
  * A dice expression evaluator.
  *
@@ -23,11 +32,10 @@ import kotlin.random.Random
  * @todo Several parse methods use `@Generated`: they are actually covered,
  *       but JaCoCo doesn't see through Parboiled's proxying and reflection.
  *       Which functions need `@Generated` seems hit or miss
- * @todo Is this reusable?
  */
 @BuildParseTree
 open class DiceParser(
-    private val random: Random,
+    private val random: Random, // TODO: RandomGenerator once on Java 17
     private val reporter: RollReporter,
 ) : BaseParser<Int>() {
     // These properties define the current roll expression.  They are mutable
@@ -43,8 +51,7 @@ open class DiceParser(
     open fun diceExpression(): Rule = Sequence(
         rollExpression(),
         maybeRollMore(),
-        maybeAdjust(),
-        EOI
+        maybeAdjust()
     )
 
     @Generated // Lie to JaCoCo
@@ -235,16 +242,3 @@ open class DiceParser(
 
     internal fun matchAdjustment() = match().toInt()
 }
-
-/**
- * Parses a dice expression.
- *
- * Note: an _expensive_ call: it recreates the parser each call.
- */
-fun roll(
-    expression: String,
-    random: Random = Random,
-    reporter: RollReporter,
-): ParsingResult<Int> = ReportingParseRunner<Int>(
-    createParser(DiceParser::class.java, random, reporter).diceExpression()
-).run(expression)
