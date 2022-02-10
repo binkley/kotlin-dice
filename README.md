@@ -134,8 +134,8 @@ In these, distinguish STDOUT from STDERR.  Think of scripting use cases.
 ## TODO
 
 * Error messages for bad input are **cryptic**
-* Support factors of rolls, ie, a syntax for `(2d6)*2` or `(2d6)/2`
-* Support grammar for `4d6-L` or `4d6-H` meaning drop the lowest or highest
+* Support multipliers (or divisors) of rolls, ie, a syntax for `2d6x2` or
+  `2d6/2`
 * Support `floor`, `ceil`, etc., to round rolls down/up
 * Reroll should support options other than low rolls
 * REPL should support syntax like "set verbose on" to toggle cmd line flags

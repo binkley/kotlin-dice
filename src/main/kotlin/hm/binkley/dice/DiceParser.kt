@@ -30,8 +30,9 @@ fun roll(
  * @see [roll]
  *
  * @todo Several parse methods use `@Generated`: they are actually covered,
- *       but JaCoCo doesn't see through Parboiled's proxying and reflection.
- *       Which functions need `@Generated` seems hit or miss
+ *       but JaCoCo doesn't see through Parboiled's proxying and reflection,
+ *       and use of ASM to transform bytecode does not improve this. Which
+ *       functions need `@Generated` seems hit or miss
  */
 @BuildParseTree
 open class DiceParser(
