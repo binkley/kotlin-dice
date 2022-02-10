@@ -1,7 +1,7 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.DieShift.ONE
-import hm.binkley.dice.DieShift.ZERO
+import hm.binkley.dice.DieBase.ONE
+import hm.binkley.dice.DieBase.ZERO
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -22,7 +22,7 @@ internal class RollerTest {
 
         val roller = Roller(
             d = 6,
-            dieShift = ONE,
+            dieBase = ONE,
             n = 7,
             reroll = 2,
             keep = 3,
@@ -33,14 +33,14 @@ internal class RollerTest {
         roller.rollDice()
 
         // TODO: Move this into [RollAction]?
-        roller.dieShift shouldBe ONE
+        roller.dieBase shouldBe ONE
     }
 
     @MethodSource("args")
     @ParameterizedTest
     fun `should roll`(
         n: Int,
-        dieShift: DieShift,
+        dieBase: DieBase,
         d: Int,
         reroll: Int,
         keep: Int,
@@ -49,7 +49,7 @@ internal class RollerTest {
     ) {
         val result = Roller(
             d,
-            dieShift,
+            dieBase,
             n,
             reroll,
             keep,

@@ -5,7 +5,7 @@ package hm.binkley.dice
  * Physical dice are 1-based, _eg_, 1-6 for "d6"; "z dice" are 0-based,
  * _eg_, 0-5 for "z6", equal to one less than the equivalent physical dice.
  */
-enum class DieShift {
+enum class DieBase {
     ZERO,
     ONE,
 }

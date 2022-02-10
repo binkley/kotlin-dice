@@ -2,8 +2,8 @@
 
 package hm.binkley.dice
 
-import hm.binkley.dice.DieShift.ONE
-import hm.binkley.dice.DieShift.ZERO
+import hm.binkley.dice.DieBase.ONE
+import hm.binkley.dice.DieBase.ZERO
 import lombok.Generated
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
@@ -23,15 +23,17 @@ import kotlin.random.Random
  * @todo Several parse methods use `@Generated`: they are actually covered,
  *       but JaCoCo doesn't see through Parboiled's proxying and reflection.
  *       Which functions need `@Generated` seems hit or miss
+ * @todo Is this reusable?
  */
 @BuildParseTree
 open class DiceParser(
     private val random: Random,
     private val reporter: RollReporter,
 ) : BaseParser<Int>() {
-    // These properties define the current roll expression
+    // These properties define the current roll expression.  They are mutable
+    // as the parser processes the input expression a piece at a time
     private var n: Int? = null
-    private var dieShift: DieShift? = null
+    private var dieBase: DieBase? = null
     private var d: Int? = null
     private var reroll: Int? = null
     private var keep: Int? = null
@@ -84,7 +86,7 @@ open class DiceParser(
     )
 
     internal fun recordDieShift(): Boolean {
-        dieShift = when (match()) {
+        dieBase = when (match()) {
             "d", "D" -> ONE
             else -> ZERO
         }
@@ -177,7 +179,7 @@ open class DiceParser(
         return push(
             Roller(
                 d!!,
-                dieShift!!,
+                dieBase!!,
                 n!!,
                 reroll!!,
                 keep!!,
@@ -235,8 +237,7 @@ open class DiceParser(
 }
 
 /**
- * Creates a dice expression evaluator using the default random
- * number generator.
+ * Parses a dice expression.
  *
  * Note: an _expensive_ call: it recreates the parser each call.
  */
