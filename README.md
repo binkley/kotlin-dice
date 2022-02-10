@@ -10,14 +10,16 @@
 
 A dice expression has these parts:
 
-- 1 or more roll expressions, added/subtracted together
+- 1 or more dice expressions, added/subtracted together
 - An optional adjustment, added/subtracted at the end
 
-The smallest roll expression is just a die type, eg, `d6` meaning roll 1
-6-sided die.  See [_Examples_](#examples), below.
+The smallest dice expression is just a die type, eg, `d6` meaning roll a 
+single, regular 6-sided die.  See
+[_Dice Expression Syntax_](#dice-expression-syntax) and
+[_Examples_](#examples), below, for more interesting expressions.
 
 Try `./roll --demo` for a demonstration, or `./roll --demo --verbose` to 
-see more in how roll expressions work. Running `./roll` prompts presents 
+see more in how dice expressions work. Running `./roll` prompts presents 
 you an interactive prompt for entering and evaluating dice expressions.
 
 ## Table of contents
@@ -44,24 +46,20 @@ vulnerabilities
 Use `./mvnw` (Maven) or `./batect build` (Batect) to build, run tests, and
 create a demo program.  Use `./roll` or `./batect demo` to run the demo.
 
-[Batect](https://batect.dev/) works "out of the box", however, an important
-optimization is to avoid redownloading plugins and dependencies from within
-a Docker container.
-
-This project shares Maven plugin and dependency downloads with the Docker 
-container run by Batect and CI.
+CI uses [Batect](https://batect.dev/) to verify the build and behavior, so 
+an easy way for you to check your changes before pushing to GitHub.
 
 ## Dice expression syntax
 
-Parsing dice expressions turned out to be an interesting programming problem.
-This project implements a mashup of dice expression syntaxes. Inspirations
-drawn from:
+Parsing dice expressions turn out to be an interesting programming problem.
+This project implements a mashup of several dice expression syntaxes, 
+drawing inspiration from:
 
 - [_Dice Expressions_](https://wiki.rptools.info/index.php/Dice_Expressions)
 - [_Dice notation_](https://en.wikipedia.org/wiki/Dice_notation)
 - [_Sophie's Dice](https://sophiehoulden.com/dice/documentation/notation.html)
 
-General syntax supported here:
+This project supports these types of expressions:
 
 ```
 [N]'x'D['r'R]['h'K|'l'K][!|!Z][+EXP|-EXP...][+A|-A]
@@ -82,6 +80,8 @@ same roll.
 Whitespace in a dice expression is supported **only** around `+` and `-` 
 operators.
 
+Note that this is _not_ a general calculator so `1 + 2` will not work.
+
 See [TODO](#todo) for further improvements.
 
 ## Examples
@@ -95,10 +95,13 @@ See [TODO](#todo) for further improvements.
 - `2d4+2d6h1` -- roll 2 4-sided dice, sum; roll 2 6-sided dice keeping the
   highest roll; add both results
 
+The [demo examples](./src/main/kotlin/hm/binkley/dice/main.kt) (look at 
+`demoExpressions`) cover all supported examples.
+
 ## Code conventions
 
-As each top-level part of a roll expression (eg, die type) parse, the parser 
-saves a local value internally.  By the end of the roll expression, this
+As each top-level part of a dice expression (eg, die type) parse, the parser 
+saves a local value internally.  By the end of the dice expression, this
 includes:
 
 - Die type, ie, number of die sides
