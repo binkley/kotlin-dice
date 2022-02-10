@@ -51,7 +51,7 @@ internal class MainTest {
         }
 
         exitCode shouldBe 0
-        out shouldBeAfterStripping "3d6 10"
+        out shouldBeAfterTrimming "3d6 10"
         err.shouldBeEmpty()
     }
 
@@ -62,7 +62,7 @@ internal class MainTest {
         }
 
         exitCode shouldBe 0
-        out shouldBeAfterStripping "3d6 10"
+        out shouldBeAfterTrimming "3d6 10"
         err.shouldBeEmpty()
     }
 
@@ -73,7 +73,7 @@ internal class MainTest {
         }
 
         exitCode shouldBe 0
-        out shouldBeAfterStripping """
+        out shouldBeAfterTrimming """
 roll(d6) -> 4
 roll(d6) -> 1
 roll(d6) -> 5
@@ -89,8 +89,8 @@ RESULT -> 10
         }
 
         exitCode shouldBe 1
-        out shouldBeAfterStripping "3d6 10"
-        err shouldBeAfterStripping """
+        out shouldBeAfterTrimming "3d6 10"
+        err shouldBeAfterTrimming """
 Invalid input 'x', expected diceExpression (line 1, pos 1):
 x
 ^
@@ -107,7 +107,7 @@ x
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterStripping "3d6 10"
+            out shouldBeAfterTrimming "3d6 10"
             err.shouldBeEmpty()
         }
     }
@@ -149,8 +149,8 @@ x
             }
 
             exitCode shouldBe 1
-            out shouldBeAfterStripping "3d6 10"
-            err shouldBeAfterStripping """
+            out shouldBeAfterTrimming "3d6 10"
+            err shouldBeAfterTrimming """
 Invalid input 'x', expected diceExpression (line 1, pos 1):
 x
 ^
@@ -210,9 +210,8 @@ private fun testMain(vararg cmdLine: String) = main(
     )
 )
 
-/** @todo Kotlin portable equivalent of `strip()` */
-private infix fun String.shouldBeAfterStripping(expected: String) =
-    trimIndent().strip() shouldBe expected.trimIndent().strip()
+private infix fun String.shouldBeAfterTrimming(expected: String) =
+    trimIndent().trim() shouldBe expected.trimIndent().trim()
 
 /**
  * **NB** &mdash; Nested system-lambda handling is needed as `main` calls
