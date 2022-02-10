@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+export PS4='+${BASH_SOURCE}:${LINENO}:${FUNCNAME[0]:+${FUNCNAME[0]}():} '
+
+set -e
+set -u
+set -o pipefail
+
+readonly artifactId=kotlin-dice
+readonly version=0-SNAPSHOT
+
+readonly jar=target/$artifactId-$version-jar-with-dependencies.jar
+
+function rebuild-if-needed() {
+    [[ -e "$jar" && -z "$(find src/main -type f -newer "$jar")" ]] && return
+
+    ./mvnw --strict-checksums -Dmaven.test.skip=true package
+}
+
+rebuild-if-needed
+
+exec java -ea --add-opens java.base/java.lang=ALL-UNNAMED -jar "$jar" "$@"

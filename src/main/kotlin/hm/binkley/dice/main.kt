@@ -9,7 +9,7 @@ import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
-internal const val PROGRAM_NAME = "dice"
+internal const val PROGRAM_NAME = "roll"
 
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
@@ -19,6 +19,22 @@ fun main(args: Array<String>): Unit =
     name = PROGRAM_NAME,
     mixinStandardHelpOptions = true,
     version = ["dice 0-SNAPSHOT"],
+    footer = [
+        """
+Examples:
+  @|bold roll|@
+     Start the interactive dice rolling prompt.
+  @|bold roll|@ <@|italic expression|@>
+     Print result of dice expresion, and exit.
+  echo @|italic <expression>|@ | @|bold roll|@
+     Print result of STDIN as a dice expression, and exit.
+
+Exit codes:
+  @|bold 0|@ - Successful completion
+  @|bold 1|@ - Bad dice expression
+  @|bold 2|@ - Bad program usage
+        """
+    ],
 )
 @Generated // Lie to JaCoCo
 private class Options : Callable<Int> {
