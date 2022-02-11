@@ -48,6 +48,23 @@ open class DiceParser(
     private var keep: Int? = null
     private var explode: Int? = null
 
+    /**
+     * This is equivalent to `build()` in builder patterns.
+     *
+     * @todo How do unassigned parse data have a value?  This is hard to
+     *       follow: default values are from deep in the parsing functions
+     *       Use of `!!` is not needed if the code were more explicit on
+     *       builder pattern
+     */
+    fun toDiceExpression() = DiceExpression(
+        d = d!!,
+        dieBase = dieBase!!,
+        n = n!!,
+        reroll = reroll!!,
+        keep = keep!!,
+        explode = explode!!,
+    )
+
     /** The main entry point for the parser. */
     open fun diceExpression(): Rule = Sequence(
         rollExpression(),
@@ -96,7 +113,7 @@ open class DiceParser(
     internal fun recordDieShift(): Boolean {
         dieBase = when (match()) {
             "d", "D" -> ONE
-            else -> ZERO
+            else -> ZERO // must be "z" or "Z" from parsing
         }
         return true
     }
@@ -113,7 +130,7 @@ open class DiceParser(
     internal fun recordDieSide(): Boolean {
         d = when (val match = match()) {
             "%" -> 100
-            else -> match.toInt()
+            else -> match.toInt() // must be a positive integer from parsing
         }
         return true
     }
@@ -185,16 +202,7 @@ open class DiceParser(
 
     internal fun rollTheDice(): Boolean {
         return push(
-            Roller(
-                d!!,
-                dieBase!!,
-                n!!,
-                reroll!!,
-                keep!!,
-                explode!!,
-                random,
-                reporter
-            ).rollDice()
+            Roller(toDiceExpression(), random, reporter).rollDice()
         )
     }
 

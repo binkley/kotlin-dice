@@ -156,9 +156,10 @@ private fun rollIt(expression: String, reporter: MainReporter): Int {
 
 /**
  * Used by both demo and testing.
- * The second value is the expectation given a seed of 1 (used by testing).
+ * The second value is the expectation given a seed of 1 used in testing.
  */
 internal val demoExpressions = arrayOf(
+    "d6" to 4,
     "D6" to 4,
     "z6" to 3,
     "Z6" to 3,

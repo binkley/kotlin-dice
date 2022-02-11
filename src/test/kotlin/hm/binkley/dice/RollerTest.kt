@@ -21,19 +21,21 @@ internal class RollerTest {
         }
 
         val roller = Roller(
-            d = 6,
-            dieBase = ONE,
-            n = 7,
-            reroll = 2,
-            keep = 3,
-            explode = 4,
+            DiceExpression(
+                d = 6,
+                dieBase = ONE,
+                n = 7,
+                reroll = 2,
+                keep = 3,
+                explode = 4,
+            ),
             random = stableSeedForEachTest(),
             reporting = assertOnRoll
         )
         roller.rollDice()
 
         // TODO: Move this into [RollAction]?
-        roller.dieBase shouldBe ONE
+        roller.expression.dieBase shouldBe ONE
     }
 
     @MethodSource("args")
@@ -47,17 +49,19 @@ internal class RollerTest {
         explode: Int,
         expected: Int,
     ) {
-        val result = Roller(
-            d,
-            dieBase,
-            n,
-            reroll,
-            keep,
-            explode,
+        val roller = Roller(
+            DiceExpression(
+                d,
+                dieBase,
+                n,
+                reroll,
+                keep,
+                explode,
+            ),
             stableSeedForEachTest(),
             silentTestingReporter,
         )
-            .rollDice()
+        val result = roller.rollDice()
 
         result shouldBe expected
     }

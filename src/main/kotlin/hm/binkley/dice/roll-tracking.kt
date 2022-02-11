@@ -9,18 +9,27 @@ fun interface RollReporter {
 }
 
 sealed class RollAction(
-    private val roller: Roller,
+    private val expression: DiceExpression,
     val roll: Int,
 ) {
-    val d: Int get() = roller.d
-    val n: Int get() = roller.n
-    val reroll: Int get() = roller.reroll
-    val keep: Int get() = roller.keep
-    val explode: Int get() = roller.explode
+    val d: Int get() = expression.d
+    val n: Int get() = expression.n
+    val reroll: Int get() = expression.reroll
+    val keep: Int get() = expression.keep
+    val explode: Int get() = expression.explode
 }
 
-class PlainRoll(roller: Roller, roll: Int) : RollAction(roller, roll)
-class PlainReroll(roller: Roller, roll: Int) : RollAction(roller, roll)
-class ExplodedRoll(roller: Roller, roll: Int) : RollAction(roller, roll)
-class ExplodedReroll(roller: Roller, roll: Int) : RollAction(roller, roll)
-class DroppedRoll(roller: Roller, roll: Int) : RollAction(roller, roll)
+class PlainRoll(expression: DiceExpression, roll: Int) :
+    RollAction(expression, roll)
+
+class PlainReroll(expression: DiceExpression, roll: Int) :
+    RollAction(expression, roll)
+
+class ExplodedRoll(expression: DiceExpression, roll: Int) :
+    RollAction(expression, roll)
+
+class ExplodedReroll(expression: DiceExpression, roll: Int) :
+    RollAction(expression, roll)
+
+class DroppedRoll(expression: DiceExpression, roll: Int) :
+    RollAction(expression, roll)
