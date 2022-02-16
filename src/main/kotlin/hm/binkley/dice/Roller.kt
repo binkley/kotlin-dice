@@ -31,7 +31,8 @@ data class Roller(
             if (expression.keep < 0) rolls.keepLowest()
             else rolls.keepHighest()
 
-        return kept.sum() + kept.rollExplosions().sum()
+        return (kept.sum() + kept.rollExplosions().sum()) *
+                expression.multiply
     }
 
     private fun List<Int>.keepLowest(): List<Int> {

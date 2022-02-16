@@ -47,6 +47,7 @@ open class DiceParser(
     private var reroll: Int? = null
     private var keep: Int? = null
     private var explode: Int? = null
+    private var multiply: Int? = null
 
     /**
      * This is equivalent to `build()` in builder patterns.
@@ -63,6 +64,7 @@ open class DiceParser(
         reroll = reroll!!,
         keep = keep!!,
         explode = explode!!,
+        multiply = multiply!!,
     )
 
     /** The main entry point for the parser. */
@@ -80,6 +82,7 @@ open class DiceParser(
         maybeRerollLow(),
         maybeKeepFewer(),
         maybeExplode(),
+        maybeMultiply(),
         rollTheDice()
     )
 
@@ -196,6 +199,30 @@ open class DiceParser(
             // TODO: JaCoCo is not seeing "!" getting matched
             "!" -> d!! // d6 explodes on 6
             else -> match.substring(1).toInt()
+        }
+        return true
+    }
+
+    @Generated // Lie to JaCoCo
+    internal open fun maybeMultiply() = Sequence(
+        Optional(
+            FirstOf(
+                Ch('*'),
+                Ch('x'),
+                Ch('X'),
+            ),
+            number()
+        ),
+        recordMultiply()
+    )
+
+    internal fun recordMultiply(): Boolean {
+        val match = match()
+        multiply = when {
+            match.startsWith('*') ||
+                    match.startsWith('x') || match.startsWith('X') ->
+                match.substring(1).toInt()
+            else -> 1 // multiply by one is idempotent
         }
         return true
     }

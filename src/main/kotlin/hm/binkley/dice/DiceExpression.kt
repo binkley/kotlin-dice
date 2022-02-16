@@ -40,4 +40,10 @@ data class DiceExpression(
      * The default is to explode no rolls.
      */
     val explode: Int,
+
+    /**
+     * Multiply the dice rolls, or the final dice result.
+     * The default is to multiply by one (no change).
+     */
+    val multiply: Int,
 )

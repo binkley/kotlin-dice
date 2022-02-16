@@ -62,20 +62,20 @@ drawing inspiration from:
 This project supports these types of expressions:
 
 ```
-[N]'x'D['r'R]['h'K|'l'K][!|!Z][+EXP|-EXP...][+A|-A]
+[N]'B'D['r'R]['h'K|'l'K][!|!Z]['*'M|'x'M][+EXP|-EXP...][+A|-A]
 ```
 
 - N - number of dice, default 1
-- x - either a literal 'd' (1 to D based) or 'z' (0 to D-1 based)
+- B - either a literal 'd' (1 to D based) or 'z' (0 to D-1 based)
 - D - sides on the die, or '%' for percentile dice (same as using 100)
 - R - reroll dice this or lower, eg, reroll 1s
 - K - keep the highest ('h') or ('l') the lowest rolls
 - ! - explode the dice; default explosion is on max die value
+- m - either a literal '*' or 'x' to multiply the result
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
 
-Single-character prefixes are _case-insensitive_, eg, `d6` and `D6` are the
-same roll.
+All characters _case-insensitive_, eg, `d6` and `D6` are the same roll.
 
 Whitespace in a dice expression is supported **only** around `+` and `-` 
 operators.
@@ -87,6 +87,7 @@ See [TODO](#todo) for further improvements.
 ## Examples
 
 - `d6` -- roll 1 6-sided die; "dD" is the minimal possible expression
+- `d6x2` -- roll 1 6-sided die, double the result
 - `z6` -- roll 1 6-sided die zero-based (0-5); "zD" is the minimal possible 
   expression
 - `2d%+1` -- roll percentile dice 2 times, sum, and add 1 to the result
@@ -134,8 +135,7 @@ In these, distinguish STDOUT from STDERR.  Think of scripting use cases.
 ## TODO
 
 * Error messages for bad input are **cryptic**
-* Support multipliers (or divisors) of rolls, ie, a syntax for `2d6x2` or
-  `2d6/2`
+* Support divisors of rolls, ie, a syntax for `2d6/2`
 * Support `floor`, `ceil`, etc., to round rolls down/up
 * Reroll should support options other than low rolls
 * REPL should support syntax like "set verbose on" to toggle cmd line flags
