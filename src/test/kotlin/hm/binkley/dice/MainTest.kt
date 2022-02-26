@@ -14,7 +14,7 @@ internal class MainTest {
     @Test
     fun `should show basic help`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("--help")
+            mainWithFixedTestSeed("--help")
         }
 
         exitCode shouldBe 0
@@ -25,7 +25,7 @@ internal class MainTest {
     @Test
     fun `should show software version`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("--version")
+            mainWithFixedTestSeed("--version")
         }
 
         exitCode shouldBe 0
@@ -36,7 +36,7 @@ internal class MainTest {
     @Test
     fun `should roll dice with a default RNG`() {
         val (exitCode, out, err) = runWithCapture {
-            main(arrayOf("3d6")) // Avoid testing seed
+            main(arrayOf("3d6")) // Avoid the testing seed
         }
 
         exitCode shouldBe 0
@@ -47,7 +47,7 @@ internal class MainTest {
     @Test
     fun `should roll dice from command line`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("3d6")
+            mainWithFixedTestSeed("3d6")
         }
 
         exitCode shouldBe 0
@@ -58,7 +58,7 @@ internal class MainTest {
     @Test
     fun `should trim dice expression`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain(" 3d6 + 1 ")
+            mainWithFixedTestSeed(" 3d6 + 1 ")
         }
 
         exitCode shouldBe 0
@@ -72,7 +72,7 @@ internal class MainTest {
     @Test
     fun `should roll dice from command line in color`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("--color", "3d6")
+            mainWithFixedTestSeed("--color", "3d6")
         }
 
         exitCode shouldBe 0
@@ -83,7 +83,7 @@ internal class MainTest {
     @Test
     fun `should roll dice from command line verbosely and in color`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("--verbose", "--color", "3d6")
+            mainWithFixedTestSeed("--verbose", "--color", "3d6")
         }
 
         exitCode shouldBe 0
@@ -99,7 +99,7 @@ RESULT -> 10
     @Test
     fun `should fail if command line is bad`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("3d6", "x")
+            mainWithFixedTestSeed("3d6", "x")
         }
 
         exitCode shouldBe 1
@@ -117,7 +117,7 @@ x
 //        withEnvironmentVariable("TERM", "dumb").execute {
         withTextFromSystemIn("3d6").execute {
             val (exitCode, out, err) = runWithCapture {
-                testMain()
+                mainWithFixedTestSeed()
             }
 
             exitCode shouldBe 0
@@ -132,7 +132,7 @@ x
             val err = tapSystemErrNormalized {
                 val out = tapSystemOutNormalized {
                     val exitCode = catchSystemExit {
-                        testMain()
+                        mainWithFixedTestSeed()
                     }
                     exitCode shouldBe 0
                 }
@@ -146,7 +146,7 @@ x
     fun `should do nothing if STDIN is just a blank line`() {
         withTextFromSystemIn("").execute {
             val (exitCode, out, err) = runWithCapture {
-                testMain()
+                mainWithFixedTestSeed()
             }
 
             exitCode shouldBe 0
@@ -159,7 +159,7 @@ x
     fun `should fail if STDIN is bad`() {
         withTextFromSystemIn("3d6", "x").execute {
             val (exitCode, out, err) = runWithCapture {
-                testMain()
+                mainWithFixedTestSeed()
             }
 
             exitCode shouldBe 1
@@ -175,7 +175,7 @@ x
     @Test
     fun `should run demo`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("--demo")
+            mainWithFixedTestSeed("--demo")
         }
 
         exitCode shouldBe 0
@@ -186,7 +186,7 @@ x
     @Test
     fun `should run demo verbosely`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("--demo", "--verbose")
+            mainWithFixedTestSeed("--demo", "--verbose")
         }
 
         exitCode shouldBe 0
@@ -197,7 +197,7 @@ x
     @Test
     fun `should run demo in color`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("--demo", "--color")
+            mainWithFixedTestSeed("--demo", "--color")
         }
 
         exitCode shouldBe 0
@@ -208,7 +208,7 @@ x
     @Test
     fun `should run demo verbosely and in color`() {
         val (exitCode, out, err) = runWithCapture {
-            testMain("--demo", "--color", "--verbose")
+            mainWithFixedTestSeed("--demo", "--color", "--verbose")
         }
 
         exitCode shouldBe 0
@@ -217,7 +217,7 @@ x
     }
 }
 
-private fun testMain(vararg cmdLine: String) = main(
+private fun mainWithFixedTestSeed(vararg cmdLine: String) = main(
     arrayOf(
         "--seed=${TESTING_SEED}", // Hard-coded for reproducibility
         *cmdLine,
