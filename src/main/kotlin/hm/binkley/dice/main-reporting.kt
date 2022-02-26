@@ -32,7 +32,7 @@ internal object UncoloredPlainReporter : MainReporter {
 
     override fun display(result: ParsingResult<Int>) {
         if (!result.hasErrors())
-            println("${result.expression} ${result.roll}")
+            println("${result.expression.trim()} ${result.roll}")
         else result.parseErrors.forEach {
             displayErrorUncolored(it)
         }
@@ -45,7 +45,7 @@ internal object ColoredPlainReporter : MainReporter {
 
     override fun display(result: ParsingResult<Int>) {
         if (!result.hasErrors())
-            println("${result.expression} ${result.roll}")
+            println("${result.expression.trim()} ${result.roll}")
         else result.parseErrors.forEach {
             displayErrorColored(it)
         }

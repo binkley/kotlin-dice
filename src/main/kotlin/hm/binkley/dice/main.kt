@@ -160,6 +160,9 @@ private fun rollIt(expression: String, reporter: MainReporter): Int {
  */
 internal val demoExpressions = arrayOf(
     "d6" to 4,
+    " d6" to 4, // whitespace
+    "d6 " to 4, // whitespace
+    " d6 " to 4, // whitespace
     "D6" to 4,
     "d6x2" to 8,
     "z6" to 3,
@@ -167,12 +170,12 @@ internal val demoExpressions = arrayOf(
     "z6x2" to 6,
     "3d6" to 10,
     "3D6" to 10,
-    "3d6+1" to 11, // whitespace example
-    "3d6+ 1" to 11, // whitespace example
-    "3d6 +1" to 11, // whitespace example
-    "3d6 + 1" to 11, // whitespace example
+    "3d6+1" to 11, // adding adjustment
+    "3d6+ 1" to 11, // whitespace
+    "3d6 +1" to 11, // whitespace
+    "3d6 + 1" to 11, // whitespace
     "3d6x2+1" to 21, // double before adding one
-    "3d6-1" to 9,
+    "3d6-1" to 9, // subtracting adjustment
     "10d3!" to 20,
     "10d3!*2" to 40, // double after exploding
     "10d3!2" to 49,

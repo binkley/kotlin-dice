@@ -56,6 +56,20 @@ internal class MainTest {
     }
 
     @Test
+    fun `should trim dice expression`() {
+        val (exitCode, out, err) = runWithCapture {
+            testMain(" 3d6 + 1 ")
+        }
+
+        exitCode shouldBe 0
+        // NOT trimmed by test.  If main broken, might be:
+        // - " 3d6 + 1  11\n"
+        // - "3d6+1 11\n"
+        out shouldBe "3d6 + 1 11\n"
+        err.shouldBeEmpty()
+    }
+
+    @Test
     fun `should roll dice from command line in color`() {
         val (exitCode, out, err) = runWithCapture {
             testMain("--color", "3d6")

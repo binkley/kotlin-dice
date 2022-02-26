@@ -69,9 +69,12 @@ open class DiceParser(
 
     /** The main entry point for the parser. */
     open fun diceExpression(): Rule = Sequence(
+        ignoreWhitespace(),
         rollExpression(),
         maybeRollMore(),
-        maybeAdjust()
+        maybeAdjust(),
+        ignoreWhitespace(),
+        EOI
     )
 
     @Generated // Lie to JaCoCo
