@@ -77,8 +77,9 @@ This project supports these types of expressions:
 
 All characters _case-insensitive_, eg, `d6` and `D6` are the same roll.
 
-Whitespace in a dice expression is supported **only** around `+` and `-` 
-operators.
+Whitespace is supported **only**:
+- At start or end of the whole expression
+- Around the `+` and `-` operators.
 
 Note that this is _not_ a general calculator so `1 + 2` will not work.
 

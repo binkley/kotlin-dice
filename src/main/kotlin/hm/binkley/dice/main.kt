@@ -184,6 +184,9 @@ internal val demoExpressions = arrayOf(
     "4d6l3" to 6,
     "4d6L3" to 6,
     "3d6+2d4" to 17,
+    "3d6 +2d4" to 17, // whitespace
+    "3d6+ 2d4" to 17, // whitespace
+    "3d6 + 2d4" to 17, // whitespace
     "d%" to 66,
     // Constant seed keeps the roll constant, so z% is one less than d%
     "z%" to 65,
