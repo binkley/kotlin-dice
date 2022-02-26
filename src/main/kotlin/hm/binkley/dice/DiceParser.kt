@@ -245,19 +245,14 @@ open class DiceParser(
 
     @Generated // Lie to JaCoCo
     internal open fun rememberAddOrSubtract() = Sequence(
-        arithmeticWhitespace(),
+        ignoreWhitespace(),
         FirstOf(
             Ch('+'),
             Ch('-')
         ),
         push(matchAddOrSubtract()),
-        arithmeticWhitespace()
+        ignoreWhitespace()
     )
-
-    /** See https://github.com/sirthias/parboiled/wiki/Handling-Whitespace. */
-    internal open fun arithmeticWhitespace() =
-        // Note that Kotlin does not have an `\f` escape
-        ZeroOrMore(AnyOf(" \t\u000c"))
 
     internal fun matchAddOrSubtract() = if ("+" == match()) 1 else -1
 
@@ -277,4 +272,9 @@ open class DiceParser(
     )
 
     internal fun matchAdjustment() = match().toInt()
+
+    /** See https://github.com/sirthias/parboiled/wiki/Handling-Whitespace. */
+    internal open fun ignoreWhitespace() =
+        // Note that Kotlin does not have an `\f` escape
+        ZeroOrMore(AnyOf("\t\u000c "))
 }
