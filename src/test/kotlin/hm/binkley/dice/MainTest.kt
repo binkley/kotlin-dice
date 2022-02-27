@@ -94,13 +94,26 @@ RESULT -> 10
         @Test
         fun `should fail with 1-liner if command line is bad`() {
             val (exitCode, out, err) = runWithCapture {
-                mainWithFixedSeed("3d6", "3d6x")
+                mainWithFixedSeed("3d6", "3dd")
             }
 
             exitCode shouldBe 1
             out shouldBeAfterTrimming "3d6 10"
             err shouldBeAfterTrimming """
-Unexpected 'x' (character #4) in '3d6x'
+Unexpected 'd' (at position 3) in '3dd'
+"""
+        }
+
+        @Test
+        fun `should fail with 1-liner if command line is incomplete`() {
+            val (exitCode, out, err) = runWithCapture {
+                mainWithFixedSeed("3d6", "3d")
+            }
+
+            exitCode shouldBe 1
+            out shouldBeAfterTrimming "3d6 10"
+            err shouldBeAfterTrimming """
+Unexpected end of expression in '3d'
 """
         }
     }
@@ -148,21 +161,6 @@ Unexpected 'x' (character #4) in '3d6x'
                 exitCode shouldBe 0
                 out.shouldBeEmpty()
                 err.shouldBeEmpty()
-            }
-        }
-
-        @Test
-        fun `should fail with 1-liner if STDIN is bad`() {
-            withTextFromSystemIn("3d6", "3d6x").execute {
-                val (exitCode, out, err) = runWithCapture {
-                    mainWithFixedSeed()
-                }
-
-                exitCode shouldBe 1
-                out shouldBeAfterTrimming "3d6 10"
-                err shouldBeAfterTrimming """
-Unexpected 'x' (character #4) in '3d6x'
-"""
             }
         }
     }

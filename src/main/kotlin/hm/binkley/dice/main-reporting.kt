@@ -5,16 +5,26 @@ import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.errors.ErrorUtils.printParseError
 import org.parboiled.errors.InvalidInputError
 import org.parboiled.errors.ParseError
+import org.parboiled.support.Chars.EOI
 import org.parboiled.support.ParsingResult
 
 internal class BadExpressionException(errors: List<ParseError>) :
     Exception(errors.joinToString("\n") { it: ParseError ->
         if (it is InvalidInputError) {
+            val at = it.startIndex
             with(it.inputBuffer) {
-                val at = it.startIndex
-                val char = charAt(at - 1)
-                val expression = extractLine(getPosition(at).line)
-                "Unexpected '$char' (character #$at) in '$expression'"
+                val char = charAt(at)
+                val position = getPosition(at)
+                val where = position.column
+                val expression = extractLine(position.line)
+                if (EOI == char)
+                    """
+Unexpected end of expression in '$expression'
+                    """.trimIndent()
+                else
+                    """
+Unexpected '$char' (at position $where) in '$expression'
+                    """.trimIndent()
             }
         } else printParseError(it)
     })
