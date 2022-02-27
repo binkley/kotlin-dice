@@ -169,7 +169,7 @@ private fun rollFromArguments(
     reporter: MainReporter,
 ) {
     for (argument in arguments)
-        if (0 != rollIt(argument, random, reporter)) break
+        rollIt(argument, random, reporter)
 }
 
 private fun rollFromStdin(
@@ -189,7 +189,7 @@ internal fun rollFromLines(
         when {
             null == line -> return
             line.isEmpty() -> continue
-            else -> if (0 != rollIt(line, random, reporter)) return
+            else -> rollIt(line, random, reporter)
         }
     } while (true)
 }
@@ -212,11 +212,10 @@ private fun rollIt(
     expression: String,
     random: Random,
     reporter: MainReporter,
-): Int {
+) {
     reporter.preRoll()
     val result = roll(expression, random, reporter)
     reporter.display(result)
-    return result.parseErrors.size
 }
 
 /**
@@ -247,6 +246,8 @@ internal val demoExpressions = arrayOf(
     "3d6-1" to 9, // subtracting adjustment
     "10d3!" to 20,
     "10d3!*2" to 40, // double after exploding
+    "10d3!x2" to 40, // synonym for times
+    "10d3!X2" to 40, // synonym for times
     "10d3!2" to 49,
     "4d6h3" to 10,
     "4d6H3" to 10,

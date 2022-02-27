@@ -281,11 +281,14 @@
                                 <rule>
                                     <limits>
                                         <limit>
-                                            <!--
-  TODO: Work around issue between JaCoCo and Kotlin.  JaCoCo is not seeing
-        branches in some cases, and can struggle with SAM
-                                            -->
-                                            <minimum>98%</minimum>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>99%</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>100%</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

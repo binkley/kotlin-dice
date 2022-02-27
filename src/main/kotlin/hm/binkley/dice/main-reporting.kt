@@ -100,6 +100,4 @@ private fun verboseRolling(action: RollAction) = with(action) {
     println(defaultColorScheme(AUTO).string("@|faint,italic $message|@"))
 }
 
-private fun println(message: Any?) = kotlin.io.println(
-    if (message is String) AUTO.text(message) else message
-)
+private fun println(message: String) = println(AUTO.text(message))

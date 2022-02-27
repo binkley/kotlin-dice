@@ -13,14 +13,26 @@ import org.parboiled.parserunners.ReportingParseRunner
 import org.parboiled.support.ParsingResult
 import kotlin.random.Random
 
-/** Parses a dice expression, rolls, and returns the result. */
+/**
+ * Parses a dice expression, rolls, and returns the result, keeping the
+ * reporter in final position usable as a lambda.
+ */
 fun roll(
     expression: String,
-    random: Random = Random,
+    random: Random,
     reporter: RollReporter,
 ): ParsingResult<Int> = ReportingParseRunner<Int>(
     createParser(DiceParser::class.java, random, reporter).diceExpression()
 ).run(expression)
+
+/**
+ * Convenience using the default RNG keeping the reporter in final position
+ * usable as a lambda.
+ */
+fun roll(
+    expression: String,
+    reporter: RollReporter,
+) = roll(expression, Random, reporter)
 
 /**
  * A dice expression evaluator.

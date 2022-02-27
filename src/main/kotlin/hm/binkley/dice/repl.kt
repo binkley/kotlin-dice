@@ -24,6 +24,8 @@ internal fun rollFromRepl(
             val colorScheme = defaultColorScheme(AUTO)
             while (true) try {
                 rollFromLines(random, reporter) {
+                    // TODO: JaCoCo says the lambda is untested, and does not
+                    //       apply the @Generated from function scope
                     replReader.readLine(readerPrompt)
                 }
             } catch (e: DiceException) {

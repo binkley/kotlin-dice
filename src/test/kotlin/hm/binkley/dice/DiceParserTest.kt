@@ -25,4 +25,12 @@ internal class DiceParserTest {
                 }
             }
     }
+
+    @Test
+    fun `should use default RNG`() {
+        val result = roll("1d1") { }
+
+        result.resultValue shouldBe 1
+        result.parseErrors.shouldBeEmpty()
+    }
 }

@@ -14,7 +14,7 @@ private typealias ReportType = (DiceExpression, Int) -> RollAction
  * instances
  */
 data class Roller(
-    val expression: DiceExpression,
+    private val expression: DiceExpression,
     /** The RNG.  Tests use `stableSeedForEachTest()` for reproducibility. */
     private val random: Random,
     /** Reports on individual roll outcomes for feedback. */
