@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.Options.Color.auto
 import lombok.Generated
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -26,7 +27,7 @@ fun main(args: Array<String>) {
     val options = Options()
     val forceColorIfRequested =
         IExecutionStrategy { parseResult ->
-            if (options.color) System.setProperty("picocli.ansi", "true")
+            options.color.install()
             RunLast().execute(parseResult)
         }
 
@@ -34,6 +35,7 @@ fun main(args: Array<String>) {
         CommandLine(options)
             .setExecutionExceptionHandler(simpleExceptionReporting)
             .setExecutionStrategy(forceColorIfRequested)
+            .setOverwrittenOptionsAllowed(true) // Dups use last occurrence
             .execute(*args)
     )
 }
@@ -61,14 +63,30 @@ Exit codes:
 )
 @Generated // Lie to JaCoCo
 private class Options : Runnable {
+    @Suppress("EnumEntryName", "unused")
+    enum class Color(private val ansi: String?) {
+        always("true"),
+        auto(null),
+        never("false");
+
+        fun install() {
+            when (ansi) {
+                null -> System.clearProperty("picocli.ansi")
+                else -> System.setProperty("picocli.ansi", ansi)
+            }
+        }
+    }
+
     /** @todo Support GNU `--color[=WHEN]` */
     @Option(
-        description = ["Force color output",
+        description = ["Choose color output (\${COMPLETION-CANDIDATES})",
             "The demo, command-line arguments, and piped input default to no color",
             "The REPL defaults to color based on terminal support"],
         names = ["-C", "--color"],
+        paramLabel = "WHEN",
+
     )
-    var color = false
+    var color = auto
 
     @Option(
         description = ["Run the demo; ignore arguments."],
@@ -105,7 +123,7 @@ private class Options : Runnable {
 
     @Parameters(
         description = ["Dice expressions to roll",
-            "If none provided, prompt user interactively"],
+            "If provided no expressions, prompt user interactively"],
         paramLabel = "EXPRESSION",
     )
     var arguments: List<String> = emptyList()

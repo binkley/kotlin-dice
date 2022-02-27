@@ -9,6 +9,7 @@ import org.parboiled.errors.InvalidInputError
 import org.parboiled.errors.ParseError
 import org.parboiled.support.Chars.EOI
 import org.parboiled.support.ParsingResult
+import picocli.CommandLine.Help.Ansi
 
 internal class BadExpressionException(errors: List<ParseError>) :
     Exception(errors.joinToString("\n") {
@@ -53,49 +54,44 @@ sealed class MainReporter(
         if (minimum > resultValue)
             throw RollTooLowException(minimum, resultValue)
 
-        displayExpression(collectContent(inputBuffer).trim(), resultValue)
+        val expression = collectContent(inputBuffer).trim()
+        println(toDisplay(expression, resultValue))
     }
 
-    protected abstract fun displayExpression(expression: String, roll: Int)
+    protected abstract fun toDisplay(expression: String, roll: Int): String
 }
 
-internal class PlainReporter(
-    minimum: Int
-) : MainReporter(minimum) {
-    override fun displayExpression(expression: String, roll: Int) {
-        // TODO: Colorize the result with picocli
-        println("$expression $roll")
-    }
+internal class PlainReporter(minimum: Int) : MainReporter(minimum) {
+    override fun toDisplay(expression: String, roll: Int) =
+        "$expression @|bold,green $roll|@"
 
     override fun onRoll(action: RollAction) = Unit
 }
 
 @Generated // Lie to Lombok
-internal class VerboseReporter(
-    minimum: Int
-) : MainReporter(minimum) {
-    override fun displayExpression(expression: String, roll: Int) {
-        // TODO: Colorize the result with picocli
-        println("$expression -> $roll")
-    }
+internal class VerboseReporter(minimum: Int) : MainReporter(minimum) {
+    override fun toDisplay(expression: String, roll: Int) =
+        "$expression -> @|bold,green $roll|@"
 
     override fun onRoll(action: RollAction) = verboseRolling(action)
 }
 
-/** @todo Colorize when asked */
 private fun verboseRolling(action: RollAction) = with(action) {
     val die = when (dieBase) {
         ONE -> "d$dieSides"
         ZERO -> "z$dieSides"
     }
-    println(
-        when (this) {
-            is PlainRoll -> "roll($die) -> $roll"
-            is PlainReroll -> "reroll($die) -> $roll"
-            is ExplodedRoll -> "!roll($die: exploded $explodeHigh) -> $roll"
-            is ExplodedReroll ->
-                "!reroll($die: exploded $explodeHigh) -> $roll"
-            is DroppedRoll -> "drop($die) -> $roll"
-        }
-    )
+    val message = when (this) {
+        is PlainRoll -> "roll($die) -> $roll"
+        is PlainReroll -> "reroll($die) -> $roll"
+        is ExplodedRoll -> "!roll($die: exploded $explodeHigh) -> $roll"
+        is ExplodedReroll ->
+            "!reroll($die: exploded $explodeHigh) -> $roll"
+        is DroppedRoll -> "drop($die) -> $roll"
+    }
+    println("@|italic $message|@")
 }
+
+private fun println(message: Any?) = kotlin.io.println(
+    if (message is String) Ansi.AUTO.text(message) else message
+)

@@ -10,6 +10,7 @@ import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotBeEmpty
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import picocli.CommandLine.Help.Ansi
 
 internal class MainTest {
     @Nested
@@ -67,40 +68,33 @@ internal class MainTest {
         @Test
         fun `should roll dice from command line in color`() {
             val (exitCode, out, err) = runWithCapture {
-                mainWithFixedSeed("--color", "3d6")
+                mainWithFixedSeed("--color=always", "3d6")
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming "3d6 10"
+            out shouldBeAfterTrimming Ansi.ON.string("3d6 @|bold,green 10|@")
             err.shouldBeEmpty()
         }
 
         @Test
         fun `should roll dice from command line verbosely and in color`() {
             val (exitCode, out, err) = runWithCapture {
-                mainWithFixedSeed("--verbose", "--color", "3d6")
+                mainWithFixedSeed("--verbose", "--color=always", "3d6")
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming """
-roll(d6) -> 4
-roll(d6) -> 1
-roll(d6) -> 5
-3d6 -> 10
-"""
+            out shouldBeAfterTrimming Ansi.ON.string("""
+@|italic roll(d6) -> 4|@
+@|italic roll(d6) -> 1|@
+@|italic roll(d6) -> 5|@
+3d6 -> @|bold,green 10|@
+""")
             err.shouldBeEmpty()
         }
     }
 
     @Nested
     inner class Errors {
-        init {
-            // Force color off in tests
-            // TODO: Why is this needed?  Adding an execution strategy
-            //       causes color on for unclear reasons
-            System.setProperty("picocli.ansi", "false")
-        }
-
         @Test
         fun `should fail with 1-liner if command line is bad`() {
             val (exitCode, out, err) = runWithCapture {
@@ -202,7 +196,7 @@ Unexpected end in '3d'
         @Test
         fun `should run demo in color`() {
             val (exitCode, out, err) = runWithCapture {
-                mainWithFixedSeed("--demo", "--color")
+                mainWithFixedSeed("--demo", "--color=always")
             }
 
             exitCode shouldBe 0
@@ -213,7 +207,7 @@ Unexpected end in '3d'
         @Test
         fun `should run demo verbosely and in color`() {
             val (exitCode, out, err) = runWithCapture {
-                mainWithFixedSeed("--demo", "--color", "--verbose")
+                mainWithFixedSeed("--demo", "--color=always", "--verbose")
             }
 
             exitCode shouldBe 0
@@ -267,6 +261,7 @@ Unexpected end in '3d'
 
 private fun mainWithFixedSeed(vararg cmdLine: String) = main(
     arrayOf(
+        "--color=never", // Force color off for testing
         "--seed=${FIXED_SEED}", // Hard-coded for reproducibility
         *cmdLine,
     )
