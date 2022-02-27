@@ -21,10 +21,10 @@ internal fun selectMainReporter(
     else UncoloredVerboseReporter(minimum)
 } else PlainReporter(minimum)
 
-class RollTooLowException(
+internal class RollTooLowException(
     minimum: Int,
     roll: Int,
-) : RuntimeException(
+) : Exception(
     "Roll result $roll is below the minimum result of $minimum"
 )
 
