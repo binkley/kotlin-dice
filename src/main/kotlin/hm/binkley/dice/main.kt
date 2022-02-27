@@ -25,7 +25,7 @@ private val simpleParseErrorReporting =
     IExecutionExceptionHandler { ex, commandLine, _ ->
         with(commandLine) {
             err.println(colorScheme.errorText(ex.message))
-            1
+            commandSpec.exitCodeOnExecutionException()// 1
         }
     }
 
