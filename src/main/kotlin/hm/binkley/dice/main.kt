@@ -77,13 +77,14 @@ private class Options : Runnable {
         }
     }
 
-    /** @todo Support GNU `--color[=WHEN]` */
     @Option(
         description = ["Choose color output (\${COMPLETION-CANDIDATES})",
             "The demo, command-line arguments, and piped input default to no color",
             "The REPL defaults to color based on terminal support"],
         names = ["-C", "--color"],
         paramLabel = "WHEN",
+        arity = "0..1",
+        fallbackValue = "always",
 
     )
     var color = auto

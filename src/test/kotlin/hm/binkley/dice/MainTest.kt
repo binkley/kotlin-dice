@@ -68,6 +68,7 @@ internal class MainTest {
         @Test
         fun `should roll dice from command line in color`() {
             val (exitCode, out, err) = runWithCapture {
+                // Force color with option parameter
                 mainWithFixedSeed("--color=always", "3d6")
             }
 
@@ -79,16 +80,19 @@ internal class MainTest {
         @Test
         fun `should roll dice from command line verbosely and in color`() {
             val (exitCode, out, err) = runWithCapture {
-                mainWithFixedSeed("--verbose", "--color=always", "3d6")
+                // Force color with fallback 'always' parameter value
+                mainWithFixedSeed("-C", "--verbose", "3d6")
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming Ansi.ON.string("""
+            out shouldBeAfterTrimming Ansi.ON.string(
+                """
 @|italic roll(d6) -> 4|@
 @|italic roll(d6) -> 1|@
 @|italic roll(d6) -> 5|@
 3d6 -> @|bold,green 10|@
-""")
+"""
+            )
             err.shouldBeEmpty()
         }
     }
@@ -126,8 +130,6 @@ Unexpected end in '3d'
     inner class StandardInput {
         @Test
         fun `should roll dice from STDIN`() {
-            // TODO: This is ugly needing to hack the environment for testing :(
-//        withEnvironmentVariable("TERM", "dumb").execute {
             withTextFromSystemIn("3d6").execute {
                 val (exitCode, out, err) = runWithCapture {
                     mainWithFixedSeed()
@@ -196,6 +198,7 @@ Unexpected end in '3d'
         @Test
         fun `should run demo in color`() {
             val (exitCode, out, err) = runWithCapture {
+                // Force color with option parameter
                 mainWithFixedSeed("--demo", "--color=always")
             }
 
@@ -207,7 +210,8 @@ Unexpected end in '3d'
         @Test
         fun `should run demo verbosely and in color`() {
             val (exitCode, out, err) = runWithCapture {
-                mainWithFixedSeed("--demo", "--color=always", "--verbose")
+                // Force color with fallback 'always' parameter value
+                mainWithFixedSeed("-C", "--demo", "--verbose")
             }
 
             exitCode shouldBe 0
