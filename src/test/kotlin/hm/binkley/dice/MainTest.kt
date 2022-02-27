@@ -92,17 +92,15 @@ RESULT -> 10
         }
 
         @Test
-        fun `should fail if command line is bad`() {
+        fun `should fail with 1-liner if command line is bad`() {
             val (exitCode, out, err) = runWithCapture {
-                mainWithFixedSeed("3d6", "x")
+                mainWithFixedSeed("3d6", "3d6x")
             }
 
             exitCode shouldBe 1
             out shouldBeAfterTrimming "3d6 10"
             err shouldBeAfterTrimming """
-Invalid input 'x', expected diceExpression (line 1, pos 1):
-x
-^
+Unexpected 'x' (character #4) in '3d6x'
 """
         }
     }
@@ -154,8 +152,8 @@ x
         }
 
         @Test
-        fun `should fail if STDIN is bad`() {
-            withTextFromSystemIn("3d6", "x").execute {
+        fun `should fail with 1-liner if STDIN is bad`() {
+            withTextFromSystemIn("3d6", "3d6x").execute {
                 val (exitCode, out, err) = runWithCapture {
                     mainWithFixedSeed()
                 }
@@ -163,9 +161,7 @@ x
                 exitCode shouldBe 1
                 out shouldBeAfterTrimming "3d6 10"
                 err shouldBeAfterTrimming """
-Invalid input 'x', expected diceExpression (line 1, pos 1):
-x
-^
+Unexpected 'x' (character #4) in '3d6x'
 """
             }
         }

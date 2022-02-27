@@ -3,13 +3,20 @@ package hm.binkley.dice
 import lombok.Generated
 import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.errors.ErrorUtils.printParseError
+import org.parboiled.errors.InvalidInputError
 import org.parboiled.errors.ParseError
 import org.parboiled.support.ParsingResult
 
 internal class BadExpressionException(errors: List<ParseError>) :
-    Exception(errors.joinToString("\n") {
-        // TODO: Friendlier 1-liner formatting
-        printParseError(it)
+    Exception(errors.joinToString("\n") { it: ParseError ->
+        if (it is InvalidInputError) {
+            with(it.inputBuffer) {
+                val at = it.startIndex
+                val char = charAt(at - 1)
+                val expression = extractLine(getPosition(at).line)
+                "Unexpected '$char' (character #$at) in '$expression'"
+            }
+        } else printParseError(it)
     })
 
 internal fun selectMainReporter(
