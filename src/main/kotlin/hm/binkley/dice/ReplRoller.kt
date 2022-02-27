@@ -10,10 +10,6 @@ import org.jline.terminal.TerminalBuilder
 import java.lang.System.err
 import kotlin.random.Random
 
-/**
- * @todo The 130 exit code got lost in refactoring: hitting ^C (SIGINT) not
- *       longer correctly exits the REPL with status code 130
- */
 @Generated // Lie to JaCoCo
 class ReplRoller(
     random: Random,
@@ -34,7 +30,7 @@ class ReplRoller(
                     err.println(colorScheme.errorText(e.message))
                 }
             } catch (e: UserInterruptException) {
-                return // TODO: return 130 - Shells return 130 on SIGINT
+                throw e // Let main() handle this for the right exit code
             } catch (e: EndOfFileException) {
                 return
             }

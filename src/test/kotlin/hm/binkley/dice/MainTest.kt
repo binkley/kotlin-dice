@@ -8,8 +8,12 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotBeEmpty
+import org.jline.reader.UserInterruptException
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import picocli.CommandLine.Command
+import picocli.CommandLine.Model.CommandSpec
+import picocli.CommandLine.ParseResult
 
 internal class MainTest {
     @Nested
@@ -124,6 +128,20 @@ Unexpected 'd' (at position 3) in '3dd'
             err shouldBeAfterTrimming """
 Unexpected end in '3d'
 """
+        }
+
+        @Test
+        fun `should exit on interrupt the same as shells`() {
+            @Command
+            class Immaterial
+
+            val exitCode = simpleExceptionHandling.handleExecutionException(
+                UserInterruptException("I was typing somethi^C"),
+                picocli.CommandLine(Immaterial()),
+                ParseResult.builder(CommandSpec.create()).build(),
+            )
+
+            exitCode shouldBe 130
         }
     }
 

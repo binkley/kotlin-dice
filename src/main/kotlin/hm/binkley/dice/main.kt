@@ -2,6 +2,7 @@ package hm.binkley.dice
 
 import hm.binkley.dice.Options.Color.auto
 import lombok.Generated
+import org.jline.reader.UserInterruptException
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.IExecutionExceptionHandler
@@ -16,13 +17,6 @@ const val PROGRAM_NAME = "roll"
 
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>) {
-    val simpleExceptionReporting =
-        IExecutionExceptionHandler { ex, commandLine, _ ->
-            with(commandLine) {
-                err.println(colorScheme.errorText(ex.message))
-                commandSpec.exitCodeOnExecutionException()// 1
-            }
-        }
     val options = Options()
     val forceColorIfRequested =
         IExecutionStrategy { parseResult ->
@@ -32,12 +26,24 @@ fun main(args: Array<String>) {
 
     exitProcess(
         CommandLine(options)
-            .setExecutionExceptionHandler(simpleExceptionReporting)
+            .setExecutionExceptionHandler(simpleExceptionHandling)
             .setExecutionStrategy(forceColorIfRequested)
             .setOverwrittenOptionsAllowed(true) // Dups use last occurrence
             .execute(*args)
     )
 }
+
+val simpleExceptionHandling =
+    IExecutionExceptionHandler { ex, commandLine, _ ->
+        when (ex) {
+            // Special case for the REPL - shells return 130 on SIGINT
+            is UserInterruptException -> 130
+            else -> with(commandLine) {
+                err.println(colorScheme.errorText(ex.message))
+                commandSpec.exitCodeOnExecutionException()// 1
+            }
+        }
+    }
 
 @Command(
     name = PROGRAM_NAME,
