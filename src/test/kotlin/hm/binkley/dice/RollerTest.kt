@@ -18,6 +18,8 @@ internal class RollerTest {
         }
 
         val roller = Roller(
+            random = stableSeedForEachTest(),
+            reporting = assertOnRoll,
             ParsedDice(
                 dieSides = 6,
                 dieBase = ONE,
@@ -26,9 +28,7 @@ internal class RollerTest {
                 keepCount = 3,
                 explodeHigh = 4,
                 multiply = 2,
-            ),
-            random = stableSeedForEachTest(),
-            reporting = assertOnRoll
+            )
         )
         roller.rollDice()
     }

@@ -14,11 +14,11 @@ private typealias ReportType = (DiceExpression, Int) -> RolledDice
  * instances
  */
 data class Roller(
-    private val expression: DiceExpression,
     /** The RNG.  Tests use `stableSeedForEachTest()` for reproducibility. */
     private val random: Random,
     /** Reports on individual roll outcomes for feedback. */
     private val reporting: RollReporter,
+    private val expression: DiceExpression,
 ) {
     fun rollDice() = with(expression) {
         val rolls = generateSequence {
@@ -58,14 +58,17 @@ data class Roller(
         return explosions
     }
 
-    private fun rollPlain() = rollAndTrack(::PlainRoll, ::PlainReroll)
+    private fun rollPlain() = rollAndReport(
+        ::PlainRoll,
+        ::PlainReroll
+    )
 
-    private fun rollExplosion() = rollAndTrack(
+    private fun rollExplosion() = rollAndReport(
         ::ExplodedRoll,
         ::ExplodedReroll
     )
 
-    private fun rollAndTrack(
+    private fun rollAndReport(
         onRoll: ReportType, onReroll: ReportType,
     ) = with(expression) {
         var roll = rollDie()
