@@ -150,13 +150,15 @@ private class Options : Runnable {
         val random = if (null == seed) Random.Default else Random(seed!!)
         val reporter = selectMainReporter(minimum, verbose)
 
-        when {
-            demo -> rollForDemo(random, reporter)
+        val roller = when {
+            demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
-                rollFromCommandLine(arguments, random, reporter)
-            null == System.console() -> rollFromStdin(random, reporter)
-            else -> rollFromRepl(prompt, random, reporter)
+                CommandLineRoller(random, reporter, arguments)
+            null == System.console() -> StdinRoller(random, reporter)
+            else -> ReplRoller(random, reporter, prompt)
         }
+
+        roller.rollAndReport()
     }
 }
 
