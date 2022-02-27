@@ -66,8 +66,8 @@ This project supports these types of expressions:
 ```
 
 - N - number of dice, default 1
-- B - either a literal 'd' (1 to D based) or 'z' (0 to D-1 based)
-- D - sides on the die, or '%' for percentile dice (same as using 100)
+- B - either a literal 'd' (dice are 1 to D) or 'z' (dice are 0 to D-1)
+- D - sides on the die, or '%' for percentile dice (100-sided dice)
 - R - reroll dice this or lower, eg, reroll 1s
 - K - keep the highest ('h') or ('l') the lowest rolls
 - ! - explode the dice; default explosion is on max die value
@@ -75,7 +75,7 @@ This project supports these types of expressions:
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
 
-All characters _case-insensitive_, eg, `d6` and `D6` are the same roll.
+All characters _case-insensitive_, eg, `d6` and `D6` are the same expression.
 
 Whitespace is supported **only**:
 - At start or end of the whole expression

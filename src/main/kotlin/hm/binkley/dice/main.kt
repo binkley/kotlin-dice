@@ -25,7 +25,7 @@ Examples:
   @|bold roll|@
      Start the interactive dice rolling prompt.
   @|bold roll|@ <@|italic expression|@>
-     Print result of dice expresion, and exit.
+     Print result of dice expression, and exit.
   echo @|italic <expression>|@ | @|bold roll|@
      Print result of STDIN as a dice expression, and exit.
 
@@ -52,6 +52,13 @@ private class Options : Callable<Int> {
         names = ["--demo"],
     )
     var demo = false
+
+    @Option(
+        description = ["Fail results below a minimum."],
+        names = ["-m", "--minimum"],
+        paramLabel = "MINIMUM",
+    )
+    var minimum = Int.MIN_VALUE
 
     @Option(
         description = ["Change the interactive prompt from '\uD83C\uDFB2 '."],
@@ -82,21 +89,20 @@ private class Options : Callable<Int> {
 
     override fun call(): Int {
         infix fun Boolean.inColor(inColor: Boolean): MainReporter =
-            selectMainReporter(this, inColor)
+            selectMainReporter(minimum, this, inColor)
 
         // TODO: Why does Kotlin require non-null assertion?
         if (null != seed) random = Random(seed!!)
 
         // TODO: Pass reporters to "roll" methods
-        return if (demo) {
+        return if (demo)
             rollForDemo(verbose inColor color)
-        } else if (arguments.isNotEmpty()) {
+        else if (arguments.isNotEmpty())
             rollFromArguments(arguments, verbose inColor color)
-        } else if (null == System.console()) {
+        else if (null == System.console())
             rollFromStdin(verbose inColor color)
-        } else {
+        else
             rollFromRepl(prompt, verbose inColor true)
-        }
     }
 }
 
@@ -168,6 +174,8 @@ internal val demoExpressions = arrayOf(
     "z6" to 3,
     "Z6" to 3,
     "z6x2" to 6,
+    "1d1" to 1,
+    "1z1" to 0,
     "3d6" to 10,
     "3D6" to 10,
     "1d1" to 1, // check boundary

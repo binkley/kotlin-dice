@@ -8,26 +8,41 @@ import org.parboiled.errors.ParseError
 import org.parboiled.support.ParsingResult
 import java.lang.System.err
 
-internal fun selectMainReporter(verbose: Boolean, colored: Boolean)
-        : MainReporter {
-    return if (verbose) {
-        if (colored) ColoredVerboseReporter
-        else UncoloredVerboseReporter
-    } else {
-        if (colored) ColoredPlainReporter
-        else UncoloredPlainReporter
-    }
+internal fun selectMainReporter(
+    minimum: Int,
+    verbose: Boolean,
+    colored: Boolean
+): MainReporter = when (verbose to colored) {
+    true to true -> ColoredVerboseReporter(minimum)
+    true to false -> UncoloredVerboseReporter(minimum)
+    false to true -> ColoredPlainReporter(minimum)
+    else /* false to false */ -> UncoloredPlainReporter(minimum)
 }
 
-sealed interface MainReporter : RollReporter {
-    fun display(result: ParsingResult<Int>)
+class RollTooLowException(
+    minimum: Int,
+    roll: Int,
+) : RuntimeException(
+    "Roll result $roll is below the minimum result of $minimum"
+)
+
+sealed class MainReporter(
+    private val minimum: Int
+) : RollReporter {
+    abstract fun display(result: ParsingResult<Int>)
 
     val ParsingResult<Int>.expression: String
         get() = collectContent(inputBuffer)
-    val ParsingResult<Int>.roll: Int get() = resultValue
+    val ParsingResult<Int>.roll: Int
+        get() =
+            if (minimum > resultValue)
+                throw RollTooLowException(minimum, resultValue)
+            else resultValue
 }
 
-internal object UncoloredPlainReporter : MainReporter {
+internal class UncoloredPlainReporter(
+    minimum: Int
+) : MainReporter(minimum) {
     override fun onRoll(action: RollAction) = Unit
 
     override fun display(result: ParsingResult<Int>) {
@@ -39,8 +54,10 @@ internal object UncoloredPlainReporter : MainReporter {
     }
 }
 
-@Generated // Lie to Lombok
-internal object ColoredPlainReporter : MainReporter {
+@Generated // Lie to JaCoCo
+internal class ColoredPlainReporter(
+    minimum: Int
+) : MainReporter(minimum) {
     override fun onRoll(action: RollAction) = Unit
 
     override fun display(result: ParsingResult<Int>) {
@@ -52,7 +69,9 @@ internal object ColoredPlainReporter : MainReporter {
     }
 }
 
-internal object UncoloredVerboseReporter : MainReporter {
+internal class UncoloredVerboseReporter(
+    minimum: Int
+) : MainReporter(minimum) {
     override fun onRoll(action: RollAction) = verboseRolling(action)
 
     override fun display(result: ParsingResult<Int>) {
@@ -65,7 +84,9 @@ internal object UncoloredVerboseReporter : MainReporter {
 }
 
 @Generated // Lie to Lombok
-internal object ColoredVerboseReporter : MainReporter {
+internal class ColoredVerboseReporter(
+    minimum: Int
+) : MainReporter(minimum) {
     override fun onRoll(action: RollAction) = verboseRolling(action)
 
     override fun display(result: ParsingResult<Int>) {

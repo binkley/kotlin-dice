@@ -234,6 +234,31 @@ x
             err.shouldBeEmpty()
         }
     }
+
+    @Nested
+    inner class MinimalRolls {
+        @Test
+        fun `should roll below 0`() {
+            val (exitCode, out, err) = runWithCapture {
+                mainWithFixedSeed("1z1-1")
+            }
+
+            exitCode shouldBe 0
+            out shouldBeAfterTrimming "1z1-1 -1"
+            err.shouldBeEmpty()
+        }
+
+        @Test
+        fun `should fail below 0`() {
+            val (exitCode, out, err) = runWithCapture {
+                mainWithFixedSeed("--minimum=0", "1z1-1")
+            }
+
+            exitCode shouldBe 1
+            out.shouldBeEmpty()
+            err.shouldNotBeEmpty()
+        }
+    }
 }
 
 private fun mainWithFixedSeed(vararg cmdLine: String) = main(
