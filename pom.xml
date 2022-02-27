@@ -172,6 +172,14 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${kotlin.version}</version>
+                <!-- TODO: Fail on warnings when kapt behaves and stops
+                           upsetting the compiler with dup source roots
+                <configuration>
+                    <args>
+                        <arg>-Werror</arg>
+                    </args>
+                </configuration>
+                -->
                 <executions>
                     <execution>
                         <id>kapt</id>
