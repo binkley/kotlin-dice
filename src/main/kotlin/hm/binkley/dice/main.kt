@@ -58,7 +58,7 @@ val simpleExceptionHandling =
         """
 @|bold,underline Input modes:|@
   @|bold roll|@
-     Start the interactive dice rolling prompt.
+     Start the interactive dice rolling prompt (REPL)
   @|bold roll|@ <@|italic expression(s)|@>
      Print result of dice expression(s), and exit.
   echo @|italic <expression(s)>|@ | @|bold roll|@
@@ -79,9 +79,10 @@ val simpleExceptionHandling =
      @|bold 2d4|@ -> @|bold,green 7|@
 
 @|bold,underline Exit codes:|@
-  @|bold 0|@ - Successful completion
-  @|bold 1|@ - Bad dice expression
-  @|bold 2|@ - Bad program usage"""
+  @|bold   0|@ - Successful completion
+  @|bold   1|@ - Bad dice expression
+  @|bold   2|@ - Bad program usage
+  @|bold 130|@ - REPL interrupted (SIGINT)"""
     ],
 )
 @Generated // Lie to JaCoCo
