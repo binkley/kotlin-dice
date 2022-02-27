@@ -79,8 +79,8 @@ private class Options : Runnable {
 
     @Option(
         description = ["Choose color output (\${COMPLETION-CANDIDATES})",
-            "The demo, command-line arguments, and piped input default to no color",
-            "The REPL defaults to color based on terminal support"],
+            "If specified without a WHEN, it uses '\${FALLBACK-VALUE}'",
+            "Without this option, color is used if at a tty"],
         names = ["-C", "--color"],
         paramLabel = "WHEN",
         arity = "0..1",
