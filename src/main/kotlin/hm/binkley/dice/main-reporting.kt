@@ -9,7 +9,7 @@ import org.parboiled.support.Chars.EOI
 import org.parboiled.support.ParsingResult
 
 internal class BadExpressionException(errors: List<ParseError>) :
-    Exception(errors.joinToString("\n") { it: ParseError ->
+    Exception(errors.joinToString("\n") {
         if (it is InvalidInputError) oneLinerFor(it)
         else printParseError(it)
     })
@@ -30,12 +30,10 @@ private fun oneLinerFor(error: InvalidInputError): String {
 
 internal fun selectMainReporter(
     minimum: Int,
-    verbose: Boolean,
-    colored: Boolean
-): MainReporter = if (verbose) {
-    if (colored) ColoredVerboseReporter(minimum)
-    else UncoloredVerboseReporter(minimum)
-} else PlainReporter(minimum)
+    verbose: Boolean
+): MainReporter =
+    if (verbose) VerboseReporter(minimum)
+    else PlainReporter(minimum)
 
 internal class RollTooLowException(
     minimum: Int,
@@ -75,22 +73,10 @@ internal class PlainReporter(
     override fun onRoll(action: RollAction) = Unit
 }
 
-internal interface VerboseReporter // Marker
-
-internal class UncoloredVerboseReporter(
-    minimum: Int
-) : MainReporter(minimum), VerboseReporter {
-    override fun displayExpression(expression: String, roll: Int) {
-        println("RESULT -> $roll")
-    }
-
-    override fun onRoll(action: RollAction) = verboseRolling(action)
-}
-
 @Generated // Lie to Lombok
-internal class ColoredVerboseReporter(
+internal class VerboseReporter(
     minimum: Int
-) : MainReporter(minimum), VerboseReporter {
+) : MainReporter(minimum) {
     override fun displayExpression(expression: String, roll: Int) {
         // TODO: Colorize the result with picocli
         println("RESULT -> $roll")

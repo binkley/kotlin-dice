@@ -16,7 +16,7 @@ import kotlin.system.exitProcess
 internal const val PROGRAM_NAME = "roll"
 
 @Generated // Lie to JaCoCo -- use of exit confuses it
-fun main(args: Array<String>): Unit {
+fun main(args: Array<String>) {
     val simpleExceptionReporting =
         IExecutionExceptionHandler { ex, commandLine, _ ->
             with(commandLine) {
@@ -112,22 +112,15 @@ private class Options : Callable<Int> {
     var arguments: List<String> = emptyList()
 
     override fun call(): Int {
-        // TODO: Something less "cute" and more readable
-        infix fun Boolean.inColor(inColor: Boolean): MainReporter =
-            selectMainReporter(minimum, this, inColor)
-
         // TODO: Why does Kotlin require non-null assertion?
         if (null != seed) random = Random(seed!!)
 
-        // TODO: Pass reporters to "roll" methods
+        val reporter = selectMainReporter(minimum, verbose)
         return when {
-            demo -> rollForDemo(verbose inColor color)
-            arguments.isNotEmpty() -> rollFromArguments(
-                arguments,
-                verbose inColor color
-            )
-            null == System.console() -> rollFromStdin(verbose inColor color)
-            else -> rollFromRepl(prompt, verbose inColor true)
+            demo -> rollForDemo(reporter)
+            arguments.isNotEmpty() -> rollFromArguments(arguments, reporter)
+            null == System.console() -> rollFromStdin(reporter)
+            else -> rollFromRepl(prompt, reporter)
         }
     }
 }
