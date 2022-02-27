@@ -113,7 +113,7 @@ Unexpected 'd' (at position 3) in '3dd'
             exitCode shouldBe 1
             out shouldBeAfterTrimming "3d6 10"
             err shouldBeAfterTrimming """
-Unexpected end of expression in '3d'
+Unexpected end in '3d'
 """
         }
     }

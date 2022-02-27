@@ -10,24 +10,23 @@ import org.parboiled.support.ParsingResult
 
 internal class BadExpressionException(errors: List<ParseError>) :
     Exception(errors.joinToString("\n") { it: ParseError ->
-        if (it is InvalidInputError) {
-            val at = it.startIndex
-            with(it.inputBuffer) {
-                val char = charAt(at)
-                val position = getPosition(at)
-                val where = position.column
-                val expression = extractLine(position.line)
-                if (EOI == char)
-                    """
-Unexpected end of expression in '$expression'
-                    """.trimIndent()
-                else
-                    """
-Unexpected '$char' (at position $where) in '$expression'
-                    """.trimIndent()
-            }
-        } else printParseError(it)
+        if (it is InvalidInputError) oneLinerFor(it)
+        else printParseError(it)
     })
+
+private fun oneLinerFor(error: InvalidInputError): String {
+    val at = error.startIndex
+    with(error.inputBuffer) {
+        val char = charAt(at)
+        val position = getPosition(at)
+        val where = position.column
+        val expression = extractLine(position.line)
+        return if (EOI == char)
+            "Unexpected end in '$expression'"
+        else
+            "Unexpected '$char' (at position $where) in '$expression'"
+    }
+}
 
 internal fun selectMainReporter(
     minimum: Int,
