@@ -97,7 +97,7 @@ private fun verboseRolling(action: RollAction) = with(action) {
         is DroppedRoll -> "drop($die) -> $roll"
     }
 
-    println(defaultColorScheme(AUTO).string("@|faint $message|@"))
+    println(defaultColorScheme(AUTO).string("@|faint,italic $message|@"))
 }
 
 private fun println(message: Any?) = kotlin.io.println(

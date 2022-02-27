@@ -88,9 +88,9 @@ internal class MainTest {
             out shouldBeAfterTrimming AUTO.string(
                 """
 ---
-@|faint roll(d6) -> 4|@
-@|faint roll(d6) -> 1|@
-@|faint roll(d6) -> 5|@
+@|faint,italic roll(d6) -> 4|@
+@|faint,italic roll(d6) -> 1|@
+@|faint,italic roll(d6) -> 5|@
 @|bold 3d6|@ -> @|bold,green 10|@
 """
             )
