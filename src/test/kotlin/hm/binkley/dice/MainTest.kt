@@ -90,6 +90,16 @@ RESULT -> 10
 """
             err.shouldBeEmpty()
         }
+    }
+
+    @Nested
+    inner class Errors {
+        init {
+            // Force color off in tests
+            // TODO: Why is this needed?  Adding an execution strategy
+            //       causes color on for unclear reasons
+            System.setProperty("picocli.ansi", "false")
+        }
 
         @Test
         fun `should fail with 1-liner if command line is bad`() {

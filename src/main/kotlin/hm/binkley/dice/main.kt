@@ -4,8 +4,10 @@ import lombok.Generated
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.IExecutionExceptionHandler
+import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
+import picocli.CommandLine.RunLast
 import java.lang.System.err
 import java.util.concurrent.Callable
 import kotlin.random.Random
@@ -14,20 +16,28 @@ import kotlin.system.exitProcess
 internal const val PROGRAM_NAME = "roll"
 
 @Generated // Lie to JaCoCo -- use of exit confuses it
-fun main(args: Array<String>): Unit =
+fun main(args: Array<String>): Unit {
+    val simpleExceptionReporting =
+        IExecutionExceptionHandler { ex, commandLine, _ ->
+            with(commandLine) {
+                err.println(colorScheme.errorText(ex.message))
+                commandSpec.exitCodeOnExecutionException()// 1
+            }
+        }
+    val options = Options()
+    val forceColorIfRequested =
+        IExecutionStrategy { parseResult ->
+            if (options.color) System.setProperty("picocli.ansi", "true")
+            RunLast().execute(parseResult)
+        }
+
     exitProcess(
-        CommandLine(Options())
-            .setExecutionExceptionHandler(simpleParseErrorReporting)
+        CommandLine(options)
+            .setExecutionExceptionHandler(simpleExceptionReporting)
+            .setExecutionStrategy(forceColorIfRequested)
             .execute(*args)
     )
-
-private val simpleParseErrorReporting =
-    IExecutionExceptionHandler { ex, commandLine, _ ->
-        with(commandLine) {
-            err.println(colorScheme.errorText(ex.message))
-            commandSpec.exitCodeOnExecutionException()// 1
-        }
-    }
+}
 
 @Command(
     name = PROGRAM_NAME,
@@ -102,6 +112,7 @@ private class Options : Callable<Int> {
     var arguments: List<String> = emptyList()
 
     override fun call(): Int {
+        // TODO: Something less "cute" and more readable
         infix fun Boolean.inColor(inColor: Boolean): MainReporter =
             selectMainReporter(minimum, this, inColor)
 
@@ -109,14 +120,15 @@ private class Options : Callable<Int> {
         if (null != seed) random = Random(seed!!)
 
         // TODO: Pass reporters to "roll" methods
-        return if (demo)
-            rollForDemo(verbose inColor color)
-        else if (arguments.isNotEmpty())
-            rollFromArguments(arguments, verbose inColor color)
-        else if (null == System.console())
-            rollFromStdin(verbose inColor color)
-        else
-            rollFromRepl(prompt, verbose inColor true)
+        return when {
+            demo -> rollForDemo(verbose inColor color)
+            arguments.isNotEmpty() -> rollFromArguments(
+                arguments,
+                verbose inColor color
+            )
+            null == System.console() -> rollFromStdin(verbose inColor color)
+            else -> rollFromRepl(prompt, verbose inColor true)
+        }
     }
 }
 
