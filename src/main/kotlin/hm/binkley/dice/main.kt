@@ -9,7 +9,6 @@ import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.RunLast
 import java.lang.System.err
-import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
@@ -39,6 +38,8 @@ fun main(args: Array<String>) {
     )
 }
 
+private var random: Random = Random.Default
+
 @Command(
     name = PROGRAM_NAME,
     mixinStandardHelpOptions = true,
@@ -61,7 +62,7 @@ Exit codes:
     ],
 )
 @Generated // Lie to JaCoCo
-private class Options : Callable<Int> {
+private class Options : Runnable {
     /** @todo Support GNU `--color[=WHEN]` */
     @Option(
         description = ["Force color output",
@@ -111,12 +112,12 @@ private class Options : Callable<Int> {
     )
     var arguments: List<String> = emptyList()
 
-    override fun call(): Int {
+    override fun run() {
         // TODO: Why does Kotlin require non-null assertion?
         if (null != seed) random = Random(seed!!)
 
         val reporter = selectMainReporter(minimum, verbose)
-        return when {
+        when {
             demo -> rollForDemo(reporter)
             arguments.isNotEmpty() -> rollFromArguments(arguments, reporter)
             null == System.console() -> rollFromStdin(reporter)
@@ -127,12 +128,9 @@ private class Options : Callable<Int> {
 
 private fun rollFromArguments(
     arguments: List<String>, reporter: MainReporter
-): Int {
-    for (argument in arguments) {
-        val result = rollIt(argument, reporter)
-        if (0 != result) return result
-    }
-    return 0
+) {
+    for (argument in arguments)
+        if (0 != rollIt(argument, reporter)) break
 }
 
 private fun rollFromStdin(reporter: MainReporter) =
@@ -140,21 +138,18 @@ private fun rollFromStdin(reporter: MainReporter) =
 
 private typealias ReadLine = () -> String?
 
-internal fun rollFromLines(reporter: MainReporter, readLine: ReadLine): Int {
+internal fun rollFromLines(reporter: MainReporter, readLine: ReadLine) {
     do {
         val line = readLine()
         when {
-            null == line -> return 0
+            null == line -> return
             line.isEmpty() -> continue
-            else -> {
-                val result = rollIt(line, reporter)
-                if (0 != result) return result
-            }
+            else -> if (0 != rollIt(line, reporter)) return
         }
     } while (true)
 }
 
-private fun rollForDemo(reporter: MainReporter): Int {
+private fun rollForDemo(reporter: MainReporter) {
     for ((expression, _) in demoExpressions) {
         if (reporter is VerboseReporter)
             println("---")
@@ -166,11 +161,7 @@ private fun rollForDemo(reporter: MainReporter): Int {
     }
 
     println("DONE")
-
-    return 0
 }
-
-private var random: Random = Random.Default
 
 private fun rollIt(expression: String, reporter: MainReporter): Int {
     val result = roll(expression, random, reporter)
