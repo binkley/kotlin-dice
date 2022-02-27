@@ -9,7 +9,7 @@ import org.parboiled.matchers.ActionMatcher
 import org.parboiled.support.MatcherPath
 import org.parboiled.support.MatcherPath.Element
 
-internal class BadExpressionExceptionTest {
+internal class DiceExceptionTest {
     @Test
     fun `should use default formatter for action errors`() {
         val input = "abcdef"

@@ -2,7 +2,7 @@ package hm.binkley.dice
 
 import kotlin.random.Random
 
-private typealias ReportType = (DiceExpression, Int) -> RollAction
+private typealias ReportType = (DiceExpression, Int) -> RolledDice
 
 /**
  * Represents rolling dice of a given `d` number of sides, eg, d12, and
@@ -81,5 +81,5 @@ data class Roller(
         random.nextInt(0, dieSides) + dieBase.value
     }
 
-    private fun report(action: RollAction) = reporting.onRoll(action)
+    private fun report(dice: RolledDice) = reporting.onRoll(dice)
 }

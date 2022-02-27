@@ -18,7 +18,7 @@ internal class RollerTest {
         }
 
         val roller = Roller(
-            DiceExpression(
+            ParsedDice(
                 dieSides = 6,
                 dieBase = ONE,
                 diceCount = 7,

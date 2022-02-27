@@ -69,7 +69,7 @@ open class DiceParser(
      *       Use of `!!` is not needed if the code were more explicit on
      *       builder pattern
      */
-    fun toDiceExpression() = DiceExpression(
+    private fun toParsedDice() = ParsedDice(
         dieSides = dieSides!!,
         dieBase = dieBase!!,
         diceCount = diceCount!!,
@@ -244,7 +244,7 @@ open class DiceParser(
 
     internal fun rollTheDice(): Boolean {
         return push(
-            Roller(toDiceExpression(), random, reporter).rollDice()
+            Roller(toParsedDice(), random, reporter).rollDice()
         )
     }
 
@@ -293,3 +293,14 @@ open class DiceParser(
         // Note that Kotlin does not have an `\f` escape
         ZeroOrMore(AnyOf("\t\u000c "))
 }
+
+/** Represent the parsed data from a dice expression. */
+data class ParsedDice(
+    override val dieBase: DieBase,
+    override val dieSides: Int,
+    override val diceCount: Int,
+    override val rerollLow: Int,
+    override val keepCount: Int,
+    override val explodeHigh: Int,
+    override val multiply: Int,
+) : DiceExpression
