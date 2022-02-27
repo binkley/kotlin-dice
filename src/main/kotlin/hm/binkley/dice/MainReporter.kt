@@ -6,7 +6,7 @@ import lombok.Generated
 import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.support.ParsingResult
 
-internal fun selectMainReporter(
+fun selectMainReporter(
     minimum: Int,
     verbose: Boolean,
 ): MainReporter =
@@ -29,7 +29,7 @@ sealed class MainReporter(private val minimum: Int) : RollReporter {
     protected abstract fun toDisplay(expression: String, roll: Int): String
 }
 
-internal class PlainReporter(
+class PlainReporter(
     minimum: Int
 ) : MainReporter(minimum) {
     override fun onRoll(dice: RolledDice) = Unit
@@ -40,7 +40,7 @@ internal class PlainReporter(
 }
 
 @Generated // Lie to Lombok
-internal class VerboseReporter(minimum: Int) : MainReporter(minimum) {
+class VerboseReporter(minimum: Int) : MainReporter(minimum) {
     override fun onRoll(dice: RolledDice) = verboseRolling(dice)
     override fun preRoll() = println("---")
 

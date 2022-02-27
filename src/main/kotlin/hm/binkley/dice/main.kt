@@ -12,7 +12,7 @@ import picocli.CommandLine.RunLast
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
-internal const val PROGRAM_NAME = "roll"
+const val PROGRAM_NAME = "roll"
 
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>) {
@@ -164,7 +164,7 @@ private class Options : Runnable {
  * Used by both demo and testing.
  * The second value is the expectation given a seed of 1 used in testing.
  */
-internal val demoExpressions = arrayOf(
+val demoExpressions = arrayOf(
     "d6" to 4,
     " d6" to 4, // whitespace
     "d6 " to 4, // whitespace

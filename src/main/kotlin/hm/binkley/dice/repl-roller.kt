@@ -11,7 +11,7 @@ import java.lang.System.err
 import kotlin.random.Random
 
 @Generated // Lie to JaCoCo
-internal fun rollFromRepl(
+fun rollFromRepl(
     readerPrompt: String?,
     random: Random,
     reporter: MainReporter,

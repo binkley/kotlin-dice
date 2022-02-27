@@ -5,20 +5,20 @@ import picocli.CommandLine.Help.defaultColorScheme
 import java.lang.System.err
 import kotlin.random.Random
 
-internal val colorScheme = defaultColorScheme(AUTO)
+val colorScheme = defaultColorScheme(AUTO)
 
-internal fun rollFromCommandLine(
+fun rollFromCommandLine(
     arguments: List<String>,
     random: Random,
     reporter: MainReporter,
 ) = arguments.forEach { rollIt(it, random, reporter) }
 
-internal fun rollFromStdin(
+fun rollFromStdin(
     random: Random,
     reporter: MainReporter,
 ) = rollFromLines(random, reporter) { readLine() }
 
-internal fun rollForDemo(
+fun rollForDemo(
     random: Random,
     reporter: MainReporter,
 ) {
@@ -42,7 +42,7 @@ private fun rollIt(
     reporter.display(result)
 }
 
-internal fun rollFromLines(
+fun rollFromLines(
     random: Random,
     reporter: MainReporter,
     nextLine: () -> String?,

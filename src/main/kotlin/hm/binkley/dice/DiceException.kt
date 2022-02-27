@@ -5,9 +5,9 @@ import org.parboiled.errors.InvalidInputError
 import org.parboiled.errors.ParseError
 import org.parboiled.support.Chars
 
-internal sealed class DiceException(message: String) : Exception(message)
+sealed class DiceException(message: String) : Exception(message)
 
-internal class BadExpressionException(errors: List<ParseError>) :
+class BadExpressionException(errors: List<ParseError>) :
     DiceException(errors.joinToString("\n") {
         if (it is InvalidInputError) oneLinerFor(it)
         else printParseError(it)
@@ -27,7 +27,7 @@ private fun oneLinerFor(error: InvalidInputError): String {
     }
 }
 
-internal class RollTooLowException(
+class RollTooLowException(
     minimum: Int,
     roll: Int,
 ) : DiceException(
