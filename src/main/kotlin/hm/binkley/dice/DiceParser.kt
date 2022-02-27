@@ -58,9 +58,9 @@ open class DiceParser(
      *       builder pattern
      */
     fun toDiceExpression() = DiceExpression(
-        d = d!!,
+        dieSides = d!!,
         dieBase = dieBase!!,
-        n = n!!,
+        diceCount = n!!,
         reroll = reroll!!,
         keep = keep!!,
         explode = explode!!,
@@ -155,7 +155,7 @@ open class DiceParser(
 
     internal fun recordRerollLow(): Boolean {
         reroll = when (val match = match()) {
-            "" -> 0
+            "" -> Int.MIN_VALUE
             else -> match.substring(1).toInt()
         }
         return true

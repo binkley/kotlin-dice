@@ -81,10 +81,10 @@ internal object ColoredVerboseReporter : MainReporter {
 private fun verboseRolling(action: RollAction) {
     println(
         when (action) {
-            is PlainRoll -> "roll(d${action.d}) -> ${action.roll}"
-            is PlainReroll -> "reroll(d${action.d}) -> ${action.roll}"
-            is ExplodedRoll -> "!roll(d${action.d}: exploding on ${action.explode}) -> ${action.roll}"
-            is ExplodedReroll -> "!reroll(d${action.d}: exploding on ${action.explode}) -> ${action.roll}"
+            is PlainRoll -> "roll(d${action.dieSides}) -> ${action.roll}"
+            is PlainReroll -> "reroll(d${action.dieSides}) -> ${action.roll}"
+            is ExplodedRoll -> "!roll(d${action.dieSides}: exploding on ${action.explode}) -> ${action.roll}"
+            is ExplodedReroll -> "!reroll(d${action.dieSides}: exploding on ${action.explode}) -> ${action.roll}"
             is DroppedRoll -> "drop -> ${action.roll}"
         }
     )

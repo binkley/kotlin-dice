@@ -170,6 +170,8 @@ internal val demoExpressions = arrayOf(
     "z6x2" to 6,
     "3d6" to 10,
     "3D6" to 10,
+    "1d1" to 1, // check boundary
+    "1z1" to 0, // check boundary
     "3d6+1" to 11, // adding adjustment
     "3d6+ 1" to 11, // whitespace
     "3d6 +1" to 11, // whitespace

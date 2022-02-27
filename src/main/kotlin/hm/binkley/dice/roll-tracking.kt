@@ -12,9 +12,9 @@ sealed class RollAction(
     private val expression: DiceExpression,
     val roll: Int,
 ) {
-    val d: Int get() = expression.d
     val dieBase: DieBase get() = expression.dieBase
-    val n: Int get() = expression.n
+    val dieSides: Int get() = expression.dieSides
+    val diceCount: Int get() = expression.diceCount
     val reroll: Int get() = expression.reroll
     val keep: Int get() = expression.keep
     val explode: Int get() = expression.explode

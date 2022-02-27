@@ -6,6 +6,12 @@ package hm.binkley.dice
  * _eg_, 0-5 for "z6", equal to one less than the equivalent physical dice.
  */
 enum class DieBase {
-    ZERO,
-    ONE,
+    ZERO {
+        override val value: Int = 0
+    },
+    ONE {
+        override val value: Int = 1
+    };
+
+    abstract val value: Int
 }

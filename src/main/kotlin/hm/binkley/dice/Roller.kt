@@ -1,7 +1,5 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.DieBase.ONE
-import hm.binkley.dice.DieBase.ZERO
 import kotlin.random.Random
 
 private typealias ReportType = (DiceExpression, Int) -> RollAction
@@ -22,31 +20,30 @@ data class Roller(
     /** Reports on individual roll outcomes for feedback. */
     private val reporting: RollReporter,
 ) {
-    fun rollDice(): Int {
+    fun rollDice() = with(expression) {
         val rolls = generateSequence {
             rollPlain()
-        }.take(expression.n).toList().sorted()
+        }.take(diceCount).toList().sorted()
 
         val kept =
-            if (expression.keep < 0) rolls.keepLowest()
+            if (keep < 0) rolls.keepLowest()
             else rolls.keepHighest()
 
-        return (kept.sum() + kept.rollExplosions().sum()) *
-                expression.multiply
+        (kept.sum() + kept.rollExplosions().sum()) * multiply
     }
 
-    private fun List<Int>.keepLowest(): List<Int> {
-        subList(-expression.keep, expression.n).forEach {
-            report(DroppedRoll(expression, it))
+    private fun List<Int>.keepLowest() = with(expression) {
+        subList(-keep, diceCount).forEach {
+            report(DroppedRoll(this, it))
         }
-        return subList(0, -expression.keep)
+        subList(0, -keep)
     }
 
-    private fun List<Int>.keepHighest(): List<Int> {
-        subList(0, expression.n - expression.keep).forEach {
-            report(DroppedRoll(expression, it))
+    private fun List<Int>.keepHighest() = with(expression) {
+        subList(0, diceCount - keep).forEach {
+            report(DroppedRoll(this, it))
         }
-        return subList(expression.n - expression.keep, expression.n)
+        subList(diceCount - keep, diceCount)
     }
 
     private fun List<Int>.rollExplosions(): List<Int> {
@@ -70,22 +67,18 @@ data class Roller(
 
     private fun rollAndTrack(
         onRoll: ReportType, onReroll: ReportType,
-    ): Int {
+    ) = with(expression) {
         var roll = rollDie()
-        report(onRoll(expression, roll))
-        while (roll <= expression.reroll) {
+        report(onRoll(this, roll))
+        while (roll <= reroll) {
             roll = rollDie()
-            report(onReroll(expression, roll))
+            report(onReroll(this, roll))
         }
-        return roll
+        roll
     }
 
-    private fun rollDie(): Int {
-        val roll = random.nextInt(0, expression.d)
-        return when (expression.dieBase) {
-            ZERO -> roll
-            ONE -> roll + 1
-        }
+    private fun rollDie() = with(expression) {
+        random.nextInt(0, dieSides) + dieBase.value
     }
 
     private fun report(action: RollAction) = reporting.onRoll(action)

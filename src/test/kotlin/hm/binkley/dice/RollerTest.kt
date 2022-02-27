@@ -8,9 +8,9 @@ internal class RollerTest {
     @Test
     fun `should report roll details`() {
         val assertOnRoll = RollReporter {
-            it.d shouldBe 6
+            it.dieSides shouldBe 6
             it.dieBase shouldBe ONE
-            it.n shouldBe 7
+            it.diceCount shouldBe 7
             it.reroll shouldBe 2
             it.keep shouldBe 3
             it.explode shouldBe 4
@@ -19,9 +19,9 @@ internal class RollerTest {
 
         val roller = Roller(
             DiceExpression(
-                d = 6,
+                dieSides = 6,
                 dieBase = ONE,
-                n = 7,
+                diceCount = 7,
                 reroll = 2,
                 keep = 3,
                 explode = 4,
