@@ -177,21 +177,21 @@ private fun rollFromStdin(
     reporter: MainReporter,
 ) = rollFromLines(random, reporter) { readLine() }
 
-private typealias ReadLine = () -> String?
+private typealias NextLine = () -> String?
 
 internal fun rollFromLines(
     random: Random,
     reporter: MainReporter,
-    readLine: ReadLine,
+    nextLine: NextLine,
 ) {
-    do {
-        val line = readLine()
+    while (true) {
+        val line = nextLine()
         when {
             null == line -> return
             line.isEmpty() -> continue
             else -> rollIt(line, random, reporter)
         }
-    } while (true)
+    }
 }
 
 private fun rollForDemo(
