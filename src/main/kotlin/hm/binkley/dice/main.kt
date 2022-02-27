@@ -13,7 +13,14 @@ internal const val PROGRAM_NAME = "roll"
 
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
-    exitProcess(CommandLine(Options()).execute(*args))
+    exitProcess(CommandLine(Options())
+        .setExecutionExceptionHandler { ex, commandLine, _ ->
+            with(commandLine) {
+                err.println(colorScheme.errorText(ex.message))
+                1
+            }
+        }
+        .execute(*args))
 
 @Command(
     name = PROGRAM_NAME,

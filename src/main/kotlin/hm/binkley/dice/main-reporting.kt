@@ -1,12 +1,15 @@
 package hm.binkley.dice
 
 import lombok.Generated
-import org.fusesource.jansi.Ansi.ansi
 import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.errors.ErrorUtils.printParseError
 import org.parboiled.errors.ParseError
 import org.parboiled.support.ParsingResult
-import java.lang.System.err
+
+internal class BadDiceExpressionException(errors: List<ParseError>) :
+    Exception(errors.joinToString("\n") {
+        printParseError(it)
+    })
 
 internal fun selectMainReporter(
     minimum: Int,
@@ -29,11 +32,17 @@ class RollTooLowException(
 sealed class MainReporter(
     private val minimum: Int
 ) : RollReporter {
-    abstract fun display(result: ParsingResult<Int>)
+    fun display(result: ParsingResult<Int>): Unit = with(result) {
+        if (!result.hasErrors())
+            displayExpression(expression, roll)
+        throw BadDiceExpressionException(parseErrors)
+    }
 
-    val ParsingResult<Int>.expression: String
-        get() = collectContent(inputBuffer)
-    val ParsingResult<Int>.roll: Int
+    abstract fun displayExpression(expression: String, roll: Int)
+
+    private val ParsingResult<Int>.expression: String
+        get() = collectContent(inputBuffer).trim()
+    private val ParsingResult<Int>.roll: Int
         get() =
             if (minimum > resultValue)
                 throw RollTooLowException(minimum, resultValue)
@@ -43,59 +52,43 @@ sealed class MainReporter(
 internal class UncoloredPlainReporter(
     minimum: Int
 ) : MainReporter(minimum) {
-    override fun onRoll(action: RollAction) = Unit
-
-    override fun display(result: ParsingResult<Int>) {
-        if (!result.hasErrors())
-            println("${result.expression.trim()} ${result.roll}")
-        else result.parseErrors.forEach {
-            displayErrorUncolored(it)
-        }
+    override fun displayExpression(expression: String, roll: Int) {
+        println("$expression $roll")
     }
+
+    override fun onRoll(action: RollAction) = Unit
 }
 
 @Generated // Lie to JaCoCo
 internal class ColoredPlainReporter(
     minimum: Int
 ) : MainReporter(minimum) {
-    override fun onRoll(action: RollAction) = Unit
-
-    override fun display(result: ParsingResult<Int>) {
-        if (!result.hasErrors())
-            println("${result.expression.trim()} ${result.roll}")
-        else result.parseErrors.forEach {
-            displayErrorColored(it)
-        }
+    override fun displayExpression(expression: String, roll: Int) {
+        println("$expression $roll")
     }
+
+    override fun onRoll(action: RollAction) = Unit
 }
 
 internal class UncoloredVerboseReporter(
     minimum: Int
 ) : MainReporter(minimum) {
-    override fun onRoll(action: RollAction) = verboseRolling(action)
-
-    override fun display(result: ParsingResult<Int>) {
-        if (!result.hasErrors())
-            println("RESULT -> ${result.roll}")
-        else result.parseErrors.forEach {
-            displayErrorUncolored(it)
-        }
+    override fun displayExpression(expression: String, roll: Int) {
+        println("RESULT -> $roll")
     }
+
+    override fun onRoll(action: RollAction) = verboseRolling(action)
 }
 
 @Generated // Lie to Lombok
 internal class ColoredVerboseReporter(
     minimum: Int
 ) : MainReporter(minimum) {
-    override fun onRoll(action: RollAction) = verboseRolling(action)
-
-    override fun display(result: ParsingResult<Int>) {
-        if (!result.hasErrors())
-            println("RESULT -> ${result.roll}")
-        else result.parseErrors.forEach {
-            displayErrorColored(it)
-        }
+    override fun displayExpression(expression: String, roll: Int) {
+        println("RESULT -> $roll")
     }
+
+    override fun onRoll(action: RollAction) = verboseRolling(action)
 }
 
 /** @todo Colorize when asked */
@@ -110,12 +103,3 @@ private fun verboseRolling(action: RollAction) {
         }
     )
 }
-
-private fun displayErrorUncolored(error: ParseError) =
-    err.println(printParseError(error))
-
-@Generated // Lie to Lombok
-private fun displayErrorColored(error: ParseError) =
-    err.println(
-        ansi().bold().fgRed().a(printParseError(error)).reset().toString()
-    )
