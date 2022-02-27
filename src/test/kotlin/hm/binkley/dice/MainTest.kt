@@ -86,7 +86,7 @@ internal class MainTest {
 roll(d6) -> 4
 roll(d6) -> 1
 roll(d6) -> 5
-RESULT -> 10
+3d6 -> 10
 """
             err.shouldBeEmpty()
         }

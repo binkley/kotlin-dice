@@ -15,9 +15,9 @@ sealed class RollAction(
     val dieBase: DieBase get() = expression.dieBase
     val dieSides: Int get() = expression.dieSides
     val diceCount: Int get() = expression.diceCount
-    val reroll: Int get() = expression.rerollLow
-    val keep: Int get() = expression.keepCount
-    val explode: Int get() = expression.explodeHigh
+    val rerollLow: Int get() = expression.rerollLow
+    val keepCount: Int get() = expression.keepCount
+    val explodeHigh: Int get() = expression.explodeHigh
     val multiply: Int get() = expression.multiply
 }
 

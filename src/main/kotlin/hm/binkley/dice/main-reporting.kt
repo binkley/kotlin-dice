@@ -1,5 +1,7 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.DieBase.ONE
+import hm.binkley.dice.DieBase.ZERO
 import lombok.Generated
 import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.errors.ErrorUtils.printParseError
@@ -28,13 +30,6 @@ private fun oneLinerFor(error: InvalidInputError): String {
     }
 }
 
-internal fun selectMainReporter(
-    minimum: Int,
-    verbose: Boolean
-): MainReporter =
-    if (verbose) VerboseReporter(minimum)
-    else PlainReporter(minimum)
-
 internal class RollTooLowException(
     minimum: Int,
     roll: Int,
@@ -42,31 +37,33 @@ internal class RollTooLowException(
     "Roll result $roll is below the minimum result of $minimum"
 )
 
+internal fun selectMainReporter(
+    minimum: Int,
+    verbose: Boolean
+): MainReporter =
+    if (verbose) VerboseReporter(minimum)
+    else PlainReporter(minimum)
+
 sealed class MainReporter(
     private val minimum: Int
 ) : RollReporter {
-    fun display(result: ParsingResult<Int>): Unit = with(result) {
-        if (result.hasErrors())
+    fun display(result: ParsingResult<Int>) = with(result) {
+        if (hasErrors())
             throw BadExpressionException(parseErrors)
+        if (minimum > resultValue)
+            throw RollTooLowException(minimum, resultValue)
 
-        displayExpression(expression, roll)
+        displayExpression(collectContent(inputBuffer).trim(), resultValue)
     }
 
-    abstract fun displayExpression(expression: String, roll: Int)
-
-    private val ParsingResult<Int>.expression: String
-        get() = collectContent(inputBuffer).trim()
-    private val ParsingResult<Int>.roll: Int
-        get() =
-            if (minimum > resultValue)
-                throw RollTooLowException(minimum, resultValue)
-            else resultValue
+    protected abstract fun displayExpression(expression: String, roll: Int)
 }
 
 internal class PlainReporter(
     minimum: Int
 ) : MainReporter(minimum) {
     override fun displayExpression(expression: String, roll: Int) {
+        // TODO: Colorize the result with picocli
         println("$expression $roll")
     }
 
@@ -79,21 +76,26 @@ internal class VerboseReporter(
 ) : MainReporter(minimum) {
     override fun displayExpression(expression: String, roll: Int) {
         // TODO: Colorize the result with picocli
-        println("RESULT -> $roll")
+        println("$expression -> $roll")
     }
 
     override fun onRoll(action: RollAction) = verboseRolling(action)
 }
 
 /** @todo Colorize when asked */
-private fun verboseRolling(action: RollAction) {
+private fun verboseRolling(action: RollAction) = with(action) {
+    val die = when (dieBase) {
+        ONE -> "d$dieSides"
+        ZERO -> "z$dieSides"
+    }
     println(
-        when (action) {
-            is PlainRoll -> "roll(d${action.dieSides}) -> ${action.roll}"
-            is PlainReroll -> "reroll(d${action.dieSides}) -> ${action.roll}"
-            is ExplodedRoll -> "!roll(d${action.dieSides}: exploding on ${action.explode}) -> ${action.roll}"
-            is ExplodedReroll -> "!reroll(d${action.dieSides}: exploding on ${action.explode}) -> ${action.roll}"
-            is DroppedRoll -> "drop -> ${action.roll}"
+        when (this) {
+            is PlainRoll -> "roll($die) -> $roll"
+            is PlainReroll -> "reroll($die) -> $roll"
+            is ExplodedRoll -> "!roll($die: exploded $explodeHigh) -> $roll"
+            is ExplodedReroll ->
+                "!reroll($die: exploded $explodeHigh) -> $roll"
+            is DroppedRoll -> "drop($die) -> $roll"
         }
     )
 }

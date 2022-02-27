@@ -11,9 +11,9 @@ internal class RollerTest {
             it.dieSides shouldBe 6
             it.dieBase shouldBe ONE
             it.diceCount shouldBe 7
-            it.reroll shouldBe 2
-            it.keep shouldBe 3
-            it.explode shouldBe 4
+            it.rerollLow shouldBe 2
+            it.keepCount shouldBe 3
+            it.explodeHigh shouldBe 4
             it.multiply shouldBe 2
         }
 
