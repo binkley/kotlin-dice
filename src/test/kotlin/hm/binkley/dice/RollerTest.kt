@@ -22,7 +22,7 @@ internal class RollerTest {
                 dieSides = 6,
                 dieBase = ONE,
                 diceCount = 7,
-                reroll = 2,
+                rerollLow = 2,
                 keep = 3,
                 explode = 4,
                 multiply = 2,

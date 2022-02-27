@@ -26,7 +26,7 @@ data class DiceExpression(
      *
      * @todo Syntax and support for comparisons other than less-than-or-equal
      */
-    val reroll: Int,
+    val rerollLow: Int,
     /**
      * Which rolls to keep:
      * * If positive, keep the highest values (ie, top N die rolls)

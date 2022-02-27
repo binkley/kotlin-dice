@@ -70,7 +70,7 @@ data class Roller(
     ) = with(expression) {
         var roll = rollDie()
         report(onRoll(this, roll))
-        while (roll <= reroll) {
+        while (roll <= rerollLow) {
             roll = rollDie()
             report(onReroll(this, roll))
         }

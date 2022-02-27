@@ -44,7 +44,7 @@ open class DiceParser(
     private var n: Int? = null
     private var dieBase: DieBase? = null
     private var d: Int? = null
-    private var reroll: Int? = null
+    private var rerollLow: Int? = null
     private var keep: Int? = null
     private var explode: Int? = null
     private var multiply: Int? = null
@@ -61,7 +61,7 @@ open class DiceParser(
         dieSides = d!!,
         dieBase = dieBase!!,
         diceCount = n!!,
-        reroll = reroll!!,
+        rerollLow = rerollLow!!,
         keep = keep!!,
         explode = explode!!,
         multiply = multiply!!,
@@ -154,7 +154,7 @@ open class DiceParser(
     )
 
     internal fun recordRerollLow(): Boolean {
-        reroll = when (val match = match()) {
+        rerollLow = when (val match = match()) {
             "" -> Int.MIN_VALUE
             else -> match.substring(1).toInt()
         }
