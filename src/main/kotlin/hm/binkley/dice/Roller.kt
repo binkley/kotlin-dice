@@ -26,31 +26,31 @@ data class Roller(
         }.take(diceCount).toList().sorted()
 
         val kept =
-            if (keep < 0) rolls.keepLowest()
+            if (keepCount < 0) rolls.keepLowest()
             else rolls.keepHighest()
 
         (kept.sum() + kept.rollExplosions().sum()) * multiply
     }
 
     private fun List<Int>.keepLowest() = with(expression) {
-        subList(-keep, diceCount).forEach {
+        subList(-keepCount, diceCount).forEach {
             report(DroppedRoll(this, it))
         }
-        subList(0, -keep)
+        subList(0, -keepCount)
     }
 
     private fun List<Int>.keepHighest() = with(expression) {
-        subList(0, diceCount - keep).forEach {
+        subList(0, diceCount - keepCount).forEach {
             report(DroppedRoll(this, it))
         }
-        subList(diceCount - keep, diceCount)
+        subList(diceCount - keepCount, diceCount)
     }
 
     private fun List<Int>.rollExplosions(): List<Int> {
         val explosions = mutableListOf<Int>()
         forEach {
             var roll = it
-            while (roll >= expression.explode) {
+            while (roll >= expression.explodeHigh) {
                 roll = rollExplosion()
                 explosions += roll
             }

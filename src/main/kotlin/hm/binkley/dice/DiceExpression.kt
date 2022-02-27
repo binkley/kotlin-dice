@@ -21,7 +21,7 @@ data class DiceExpression(
     /**
      * Reroll low rolls.
      * This is not the same as "dropping" dice, as rolling continues to
-     * meet [diceCount] (or possibly more dice with [explode]).
+     * meet [diceCount] (or possibly more dice with [explodeHigh]).
      * The default is to reroll no dice.
      *
      * @todo Syntax and support for comparisons other than less-than-or-equal
@@ -34,12 +34,12 @@ data class DiceExpression(
      * * If zero, keep all values regardless of die roll
      * The default is to discard no rolls.
      */
-    val keep: Int,
+    val keepCount: Int,
     /**
      * Continue rolling more dice while the roll is this value or greater.
      * The default is to explode no rolls.
      */
-    val explode: Int,
+    val explodeHigh: Int,
 
     /**
      * Multiply the dice rolls, or the final dice result.

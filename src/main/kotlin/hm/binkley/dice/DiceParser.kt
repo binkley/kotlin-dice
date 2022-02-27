@@ -41,12 +41,12 @@ open class DiceParser(
 ) : BaseParser<Int>() {
     // These properties define the current roll expression.  They are mutable
     // as the parser processes the input expression a piece at a time
-    private var n: Int? = null
     private var dieBase: DieBase? = null
-    private var d: Int? = null
+    private var dieSides: Int? = null
+    private var diceCount: Int? = null
     private var rerollLow: Int? = null
-    private var keep: Int? = null
-    private var explode: Int? = null
+    private var keepCount: Int? = null
+    private var explodeHigh: Int? = null
     private var multiply: Int? = null
 
     /**
@@ -58,12 +58,12 @@ open class DiceParser(
      *       builder pattern
      */
     fun toDiceExpression() = DiceExpression(
-        dieSides = d!!,
+        dieSides = dieSides!!,
         dieBase = dieBase!!,
-        diceCount = n!!,
+        diceCount = diceCount!!,
         rerollLow = rerollLow!!,
-        keep = keep!!,
-        explode = explode!!,
+        keepCount = keepCount!!,
+        explodeHigh = explodeHigh!!,
         multiply = multiply!!,
     )
 
@@ -96,7 +96,7 @@ open class DiceParser(
     )
 
     internal fun recordRollCount(): Boolean {
-        n = matchOrDefault("1").toInt()
+        diceCount = matchOrDefault("1").toInt()
         return true
     }
 
@@ -134,7 +134,7 @@ open class DiceParser(
     )
 
     internal fun recordDieSide(): Boolean {
-        d = when (val match = match()) {
+        dieSides = when (val match = match()) {
             "%" -> 100
             else -> match.toInt() // must be a positive integer from parsing
         }
@@ -177,12 +177,12 @@ open class DiceParser(
 
     internal fun recordKeepFewer(): Boolean {
         val match = match()
-        keep = when {
+        keepCount = when {
             match.startsWith('h') || match.startsWith('H') ->
                 match.substring(1).toInt()
             match.startsWith('l') || match.startsWith('L') ->
                 -match.substring(1).toInt()
-            else -> n!!
+            else -> diceCount!!
         }
         return true
     }
@@ -197,10 +197,10 @@ open class DiceParser(
     )
 
     internal fun recordExplode(): Boolean {
-        explode = when (val match = match()) {
-            "" -> d!! + 1 // d6 explodes on 7, meaning, no exploding
+        explodeHigh = when (val match = match()) {
+            "" -> dieSides!! + 1 // d6 explodes on 7, meaning, no exploding
             // TODO: JaCoCo is not seeing "!" getting matched
-            "!" -> d!! // d6 explodes on 6
+            "!" -> dieSides!! // d6 explodes on 6
             else -> match.substring(1).toInt()
         }
         return true
