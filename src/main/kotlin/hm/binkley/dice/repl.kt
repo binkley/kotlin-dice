@@ -8,10 +8,12 @@ import org.jline.reader.LineReaderBuilder
 import org.jline.reader.UserInterruptException
 import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
+import kotlin.random.Random
 
 @Generated // Lie to JaCoCo
 internal fun rollFromRepl(
     readerPrompt: String?,
+    random: Random,
     reporter: MainReporter,
 ): Int {
     AnsiConsole.systemInstall()
@@ -19,7 +21,7 @@ internal fun rollFromRepl(
         val (terminal, replReader) = repl()
         terminal.use { // Terminals need closing to reset the external terminal
             try {
-                while (true) rollFromLines(reporter) {
+                while (true) rollFromLines(random, reporter) {
                     replReader.readLine(readerPrompt)
                 }
             } catch (e: UserInterruptException) {

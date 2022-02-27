@@ -38,8 +38,6 @@ fun main(args: Array<String>) {
     )
 }
 
-private var random: Random = Random.Default
-
 @Command(
     name = PROGRAM_NAME,
     mixinStandardHelpOptions = true,
@@ -114,47 +112,59 @@ private class Options : Runnable {
 
     override fun run() {
         // TODO: Why does Kotlin require non-null assertion?
-        if (null != seed) random = Random(seed!!)
-
+        val random = if (null == seed) Random.Default else Random(seed!!)
         val reporter = selectMainReporter(minimum, verbose)
+
         when {
-            demo -> rollForDemo(reporter)
-            arguments.isNotEmpty() -> rollFromArguments(arguments, reporter)
-            null == System.console() -> rollFromStdin(reporter)
-            else -> rollFromRepl(prompt, reporter)
+            demo -> rollForDemo(random, reporter)
+            arguments.isNotEmpty() ->
+                rollFromArguments(arguments, random, reporter)
+            null == System.console() -> rollFromStdin(random, reporter)
+            else -> rollFromRepl(prompt, random, reporter)
         }
     }
 }
 
 private fun rollFromArguments(
-    arguments: List<String>, reporter: MainReporter
+    arguments: List<String>,
+    random: Random,
+    reporter: MainReporter,
 ) {
     for (argument in arguments)
-        if (0 != rollIt(argument, reporter)) break
+        if (0 != rollIt(argument, random, reporter)) break
 }
 
-private fun rollFromStdin(reporter: MainReporter) =
-    rollFromLines(reporter) { readLine() }
+private fun rollFromStdin(
+    random: Random,
+    reporter: MainReporter,
+) = rollFromLines(random, reporter) { readLine() }
 
 private typealias ReadLine = () -> String?
 
-internal fun rollFromLines(reporter: MainReporter, readLine: ReadLine) {
+internal fun rollFromLines(
+    random: Random,
+    reporter: MainReporter,
+    readLine: ReadLine,
+) {
     do {
         val line = readLine()
         when {
             null == line -> return
             line.isEmpty() -> continue
-            else -> if (0 != rollIt(line, reporter)) return
+            else -> if (0 != rollIt(line, random, reporter)) return
         }
     } while (true)
 }
 
-private fun rollForDemo(reporter: MainReporter) {
+private fun rollForDemo(
+    random: Random,
+    reporter: MainReporter,
+) {
     for ((expression, _) in demoExpressions) {
         if (reporter is VerboseReporter)
             println("---")
         try {
-            rollIt(expression, reporter)
+            rollIt(expression, random, reporter)
         } catch (e: BadExpressionException) {
             err.println(e.message)
         }
@@ -163,12 +173,14 @@ private fun rollForDemo(reporter: MainReporter) {
     println("DONE")
 }
 
-private fun rollIt(expression: String, reporter: MainReporter): Int {
+private fun rollIt(
+    expression: String,
+    random: Random,
+    reporter: MainReporter,
+): Int {
     val result = roll(expression, random, reporter)
-
     reporter.display(result)
-
-    return if (!result.hasErrors()) 0 else 1
+    return result.parseErrors.size
 }
 
 /**
