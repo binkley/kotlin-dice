@@ -9,8 +9,6 @@ import org.parboiled.errors.InvalidInputError
 import org.parboiled.errors.ParseError
 import org.parboiled.support.Chars.EOI
 import org.parboiled.support.ParsingResult
-import picocli.CommandLine.Help.Ansi.AUTO
-import picocli.CommandLine.Help.defaultColorScheme
 
 internal open class DiceException(message: String) : Exception(message)
 
@@ -97,7 +95,8 @@ private fun verboseRolling(action: RollAction) = with(action) {
         is DroppedRoll -> "drop($die) -> $roll"
     }
 
-    println(defaultColorScheme(AUTO).string("@|faint,italic $message|@"))
+    println(colorScheme.string("@|faint,italic $message|@"))
 }
 
-private fun println(message: String) = println(AUTO.text(message))
+private fun println(message: String) =
+    kotlin.io.println(colorScheme.string(message))

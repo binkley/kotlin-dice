@@ -4,14 +4,11 @@ import hm.binkley.dice.Options.Color.auto
 import lombok.Generated
 import picocli.CommandLine
 import picocli.CommandLine.Command
-import picocli.CommandLine.Help.Ansi.AUTO
-import picocli.CommandLine.Help.defaultColorScheme
 import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.RunLast
-import java.lang.System.err
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
@@ -156,66 +153,11 @@ private class Options : Runnable {
         when {
             demo -> rollForDemo(random, reporter)
             arguments.isNotEmpty() ->
-                rollFromArguments(arguments, random, reporter)
+                rollFromCommandLine(arguments, random, reporter)
             null == System.console() -> rollFromStdin(random, reporter)
             else -> rollFromRepl(prompt, random, reporter)
         }
     }
-}
-
-private fun rollFromArguments(
-    arguments: List<String>,
-    random: Random,
-    reporter: MainReporter,
-) {
-    for (argument in arguments)
-        rollIt(argument, random, reporter)
-}
-
-private fun rollFromStdin(
-    random: Random,
-    reporter: MainReporter,
-) = rollFromLines(random, reporter) { readLine() }
-
-private typealias NextLine = () -> String?
-
-internal fun rollFromLines(
-    random: Random,
-    reporter: MainReporter,
-    nextLine: NextLine,
-) {
-    while (true) {
-        val line = nextLine()
-        when {
-            null == line -> return
-            line.isEmpty() -> continue
-            else -> rollIt(line, random, reporter)
-        }
-    }
-}
-
-private fun rollForDemo(
-    random: Random,
-    reporter: MainReporter,
-) {
-    for ((expression, _) in demoExpressions)
-        try {
-            rollIt(expression, random, reporter)
-        } catch (e: DiceException) {
-            err.println(defaultColorScheme(AUTO).errorText(e.message))
-        }
-
-    println(AUTO.string("@|bold DONE|@"))
-}
-
-private fun rollIt(
-    expression: String,
-    random: Random,
-    reporter: MainReporter,
-) {
-    reporter.preRoll()
-    val result = roll(expression, random, reporter)
-    reporter.display(result)
 }
 
 /**

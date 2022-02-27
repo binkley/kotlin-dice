@@ -10,7 +10,6 @@ import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotBeEmpty
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import picocli.CommandLine.Help.Ansi.AUTO
 
 internal class MainTest {
     @Nested
@@ -73,7 +72,8 @@ internal class MainTest {
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming AUTO.string("3d6 @|bold,green 10|@")
+            out shouldBeAfterTrimming
+                    colorScheme.string("3d6 @|bold,green 10|@")
             err.shouldBeEmpty()
         }
 
@@ -85,7 +85,7 @@ internal class MainTest {
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming AUTO.string(
+            out shouldBeAfterTrimming colorScheme.string(
                 """
 ---
 @|faint,italic roll(d6) -> 4|@
@@ -204,7 +204,7 @@ Unexpected end in '3d'
             }
 
             exitCode shouldBe 0
-            out.shouldEndWith(AUTO.string("@|bold DONE|@\n"))
+            out.shouldEndWith(colorScheme.string("@|bold DONE|@\n"))
             err.shouldNotBeEmpty()
         }
 
@@ -216,7 +216,7 @@ Unexpected end in '3d'
             }
 
             exitCode shouldBe 0
-            out.shouldEndWith(AUTO.string("@|bold DONE|@\n"))
+            out.shouldEndWith(colorScheme.string("@|bold DONE|@\n"))
             err.shouldNotBeEmpty()
         }
     }

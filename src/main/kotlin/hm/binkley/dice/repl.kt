@@ -7,8 +7,6 @@ import org.jline.reader.LineReaderBuilder
 import org.jline.reader.UserInterruptException
 import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
-import picocli.CommandLine.Help.Ansi.AUTO
-import picocli.CommandLine.Help.defaultColorScheme
 import java.lang.System.err
 import kotlin.random.Random
 
@@ -21,7 +19,6 @@ internal fun rollFromRepl(
     val (terminal, replReader) = repl()
     terminal.use { // Terminals need closing to reset the external terminal
         try {
-            val colorScheme = defaultColorScheme(AUTO)
             while (true) try {
                 rollFromLines(random, reporter) {
                     // TODO: JaCoCo says the lambda is untested, and does not
