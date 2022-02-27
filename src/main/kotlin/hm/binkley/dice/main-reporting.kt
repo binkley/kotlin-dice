@@ -6,8 +6,9 @@ import org.parboiled.errors.ErrorUtils.printParseError
 import org.parboiled.errors.ParseError
 import org.parboiled.support.ParsingResult
 
-internal class BadDiceExpressionException(errors: List<ParseError>) :
+internal class BadExpressionException(errors: List<ParseError>) :
     Exception(errors.joinToString("\n") {
+        // TODO: Friendlier 1-liner formatting
         printParseError(it)
     })
 
@@ -15,12 +16,10 @@ internal fun selectMainReporter(
     minimum: Int,
     verbose: Boolean,
     colored: Boolean
-): MainReporter = when (verbose to colored) {
-    true to true -> ColoredVerboseReporter(minimum)
-    true to false -> UncoloredVerboseReporter(minimum)
-    false to true -> ColoredPlainReporter(minimum)
-    else /* false to false */ -> UncoloredPlainReporter(minimum)
-}
+): MainReporter = if (verbose) {
+    if (colored) ColoredVerboseReporter(minimum)
+    else UncoloredVerboseReporter(minimum)
+} else PlainReporter(minimum)
 
 class RollTooLowException(
     minimum: Int,
@@ -33,9 +32,9 @@ sealed class MainReporter(
     private val minimum: Int
 ) : RollReporter {
     fun display(result: ParsingResult<Int>): Unit = with(result) {
-        if (!result.hasErrors())
-            displayExpression(expression, roll)
-        throw BadDiceExpressionException(parseErrors)
+        if (result.hasErrors()) throw BadExpressionException(parseErrors)
+
+        displayExpression(expression, roll)
     }
 
     abstract fun displayExpression(expression: String, roll: Int)
@@ -49,7 +48,7 @@ sealed class MainReporter(
             else resultValue
 }
 
-internal class UncoloredPlainReporter(
+internal class PlainReporter(
     minimum: Int
 ) : MainReporter(minimum) {
     override fun displayExpression(expression: String, roll: Int) {
@@ -59,20 +58,11 @@ internal class UncoloredPlainReporter(
     override fun onRoll(action: RollAction) = Unit
 }
 
-@Generated // Lie to JaCoCo
-internal class ColoredPlainReporter(
-    minimum: Int
-) : MainReporter(minimum) {
-    override fun displayExpression(expression: String, roll: Int) {
-        println("$expression $roll")
-    }
-
-    override fun onRoll(action: RollAction) = Unit
-}
+internal interface VerboseReporter // Marker
 
 internal class UncoloredVerboseReporter(
     minimum: Int
-) : MainReporter(minimum) {
+) : MainReporter(minimum), VerboseReporter {
     override fun displayExpression(expression: String, roll: Int) {
         println("RESULT -> $roll")
     }
@@ -83,8 +73,9 @@ internal class UncoloredVerboseReporter(
 @Generated // Lie to Lombok
 internal class ColoredVerboseReporter(
     minimum: Int
-) : MainReporter(minimum) {
+) : MainReporter(minimum), VerboseReporter {
     override fun displayExpression(expression: String, roll: Int) {
+        // TODO: Colorize the result with picocli
         println("RESULT -> $roll")
     }
 

@@ -5,6 +5,7 @@ import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
+import java.lang.System.err
 import java.util.concurrent.Callable
 import kotlin.random.Random
 import kotlin.system.exitProcess
@@ -143,16 +144,17 @@ internal fun rollFromLines(reporter: MainReporter, readLine: ReadLine): Int {
 }
 
 private fun rollForDemo(reporter: MainReporter): Int {
-    for (expression in demoExpressions) {
-        // TODO: Teach [MainReporter] about verbosity, else a method there
-        if (reporter is UncoloredVerboseReporter
-            || reporter is ColoredVerboseReporter
-        )
+    for ((expression, _) in demoExpressions) {
+        if (reporter is VerboseReporter)
             println("---")
-        rollIt(expression.first, reporter)
+        try {
+            rollIt(expression, reporter)
+        } catch (e: BadExpressionException) {
+            err.println(e.message)
+        }
     }
 
-    println("DONE") // Show that bad expression did not throw
+    println("DONE")
 
     return 0
 }
