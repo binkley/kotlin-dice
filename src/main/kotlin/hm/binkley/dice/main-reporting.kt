@@ -43,14 +43,12 @@ internal class RollTooLowException(
 
 internal fun selectMainReporter(
     minimum: Int,
-    verbose: Boolean
+    verbose: Boolean,
 ): MainReporter =
     if (verbose) VerboseReporter(minimum)
     else PlainReporter(minimum)
 
-sealed class MainReporter(
-    private val minimum: Int
-) : RollReporter {
+sealed class MainReporter(private val minimum: Int) : RollReporter {
     fun display(result: ParsingResult<Int>) = with(result) {
         if (hasErrors())
             throw BadExpressionException(parseErrors)
@@ -61,22 +59,28 @@ sealed class MainReporter(
         println(toDisplay(expression, resultValue))
     }
 
+    abstract fun preRoll()
+
     protected abstract fun toDisplay(expression: String, roll: Int): String
 }
 
-internal class PlainReporter(minimum: Int) : MainReporter(minimum) {
+internal class PlainReporter(
+    minimum: Int
+) : MainReporter(minimum) {
+    override fun onRoll(action: RollAction) = Unit
+    override fun preRoll() = Unit
+
     override fun toDisplay(expression: String, roll: Int) =
         "$expression @|bold,green $roll|@"
-
-    override fun onRoll(action: RollAction) = Unit
 }
 
 @Generated // Lie to Lombok
 internal class VerboseReporter(minimum: Int) : MainReporter(minimum) {
-    override fun toDisplay(expression: String, roll: Int) =
-        "$expression -> @|bold,green $roll|@"
-
     override fun onRoll(action: RollAction) = verboseRolling(action)
+    override fun preRoll() = println("---")
+
+    override fun toDisplay(expression: String, roll: Int) =
+        "@|bold $expression|@ -> @|bold,green $roll|@"
 }
 
 private fun verboseRolling(action: RollAction) = with(action) {
@@ -93,7 +97,7 @@ private fun verboseRolling(action: RollAction) = with(action) {
         is DroppedRoll -> "drop($die) -> $roll"
     }
 
-    println(defaultColorScheme(AUTO).stackTraceText(message))
+    println(defaultColorScheme(AUTO).string("@|faint $message|@"))
 }
 
 private fun println(message: Any?) = kotlin.io.println(

@@ -10,7 +10,7 @@ import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotBeEmpty
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import picocli.CommandLine.Help.Ansi
+import picocli.CommandLine.Help.Ansi.AUTO
 
 internal class MainTest {
     @Nested
@@ -73,7 +73,7 @@ internal class MainTest {
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming Ansi.ON.string("3d6 @|bold,green 10|@")
+            out shouldBeAfterTrimming AUTO.string("3d6 @|bold,green 10|@")
             err.shouldBeEmpty()
         }
 
@@ -85,12 +85,13 @@ internal class MainTest {
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming Ansi.ON.string(
+            out shouldBeAfterTrimming AUTO.string(
                 """
-@|italic roll(d6) -> 4|@
-@|italic roll(d6) -> 1|@
-@|italic roll(d6) -> 5|@
-3d6 -> @|bold,green 10|@
+---
+@|faint roll(d6) -> 4|@
+@|faint roll(d6) -> 1|@
+@|faint roll(d6) -> 5|@
+@|bold 3d6|@ -> @|bold,green 10|@
 """
             )
             err.shouldBeEmpty()
@@ -203,7 +204,7 @@ Unexpected end in '3d'
             }
 
             exitCode shouldBe 0
-            out.shouldEndWith("DONE\n")
+            out.shouldEndWith(AUTO.string("@|bold DONE|@\n"))
             err.shouldNotBeEmpty()
         }
 
@@ -215,7 +216,7 @@ Unexpected end in '3d'
             }
 
             exitCode shouldBe 0
-            out.shouldEndWith("DONE\n")
+            out.shouldEndWith(AUTO.string("@|bold DONE|@\n"))
             err.shouldNotBeEmpty()
         }
     }

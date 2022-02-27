@@ -4,6 +4,8 @@ import hm.binkley.dice.Options.Color.auto
 import lombok.Generated
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.Help.Ansi.AUTO
+import picocli.CommandLine.Help.defaultColorScheme
 import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.Option
@@ -42,23 +44,41 @@ fun main(args: Array<String>) {
 
 @Command(
     name = PROGRAM_NAME,
+    description = ["Roll dice expressions."],
     mixinStandardHelpOptions = true,
     version = ["dice 0-SNAPSHOT"],
+    synopsisHeading = "@|bold,underline Usage:|@%n",
+    descriptionHeading = "%n@|bold,underline Description:|@%n",
+    optionListHeading = "%n@|bold,underline Options:|@%n",
+    parameterListHeading = "%n@|bold,underline Parameters:|@%n",
     footer = [
         """
-Examples:
+@|bold,underline Input modes:|@
   @|bold roll|@
      Start the interactive dice rolling prompt.
-  @|bold roll|@ <@|italic expression|@>
-     Print result of dice expression, and exit.
-  echo @|italic <expression>|@ | @|bold roll|@
-     Print result of STDIN as a dice expression, and exit.
+  @|bold roll|@ <@|italic expression(s)|@>
+     Print result of dice expression(s), and exit.
+  echo @|italic <expression(s)>|@ | @|bold roll|@
+     Print result of dice expression(s) read from STDIN, and exit.
 
-Exit codes:
+@|bold,underline Output examples:|@
+  @|bold roll --seed=1 2d4 2d4|@ (normal)
+     2d4 @|bold,green 4|@
+     2d4 @|bold,green 7|@
+  @|bold roll --seed=1 --verbose 2d4 2d4|@ (verbose)
+     ---
+     @|faint,italic roll(d4) -> 1|@
+     @|faint,italic roll(d4) -> 3|@
+     @|bold 2d4|@ -> @|bold,green 4|@
+     ---
+     @|faint,italic roll(d4) -> 4|@
+     @|faint,italic roll(d4) -> 3|@
+     @|bold 2d4|@ -> @|bold,green 7|@
+
+@|bold,underline Exit codes:|@
   @|bold 0|@ - Successful completion
   @|bold 1|@ - Bad dice expression
-  @|bold 2|@ - Bad program usage
-        """
+  @|bold 2|@ - Bad program usage"""
     ],
 )
 @Generated // Lie to JaCoCo
@@ -85,7 +105,6 @@ private class Options : Runnable {
         paramLabel = "WHEN",
         arity = "0..1",
         fallbackValue = "always",
-
     )
     var color = auto
 
@@ -179,17 +198,14 @@ private fun rollForDemo(
     random: Random,
     reporter: MainReporter,
 ) {
-    for ((expression, _) in demoExpressions) {
-        if (reporter is VerboseReporter)
-            println("---")
+    for ((expression, _) in demoExpressions)
         try {
             rollIt(expression, random, reporter)
-        } catch (e: BadExpressionException) {
-            err.println(e.message)
+        } catch (e: DiceException) {
+            err.println(defaultColorScheme(AUTO).errorText(e.message))
         }
-    }
 
-    println("DONE")
+    println(AUTO.string("@|bold DONE|@"))
 }
 
 private fun rollIt(
@@ -197,6 +213,7 @@ private fun rollIt(
     random: Random,
     reporter: MainReporter,
 ): Int {
+    reporter.preRoll()
     val result = roll(expression, random, reporter)
     reporter.display(result)
     return result.parseErrors.size
