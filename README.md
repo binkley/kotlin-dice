@@ -8,9 +8,9 @@
 [![vulnerabilities](https://snyk.io/test/github/binkley/kotlin-dice/badge.svg)](https://snyk.io/test/github/binkley/kotlin-dice)
 [![license](https://img.shields.io/badge/license-Public%20Domain-blue.svg)](http://unlicense.org/)
 
-A dice expression has these parts:
+A complete dice expression has these parts:
 
-- 1 or more dice expressions, added/subtracted together
+- 1 or more individual dice expressions, added/subtracted together
 - An optional adjustment, added/subtracted at the end
 
 The smallest dice expression is just a die type, eg, `d6` meaning roll a 
@@ -18,9 +18,9 @@ single, regular 6-sided die.  See
 [_Dice Expression Syntax_](#dice-expression-syntax) and
 [_Examples_](#examples), below, for more interesting expressions.
 
-Try `./roll --demo` for a demonstration, or `./roll --demo --verbose` to 
-see more in how dice expressions work. Running `./roll` prompts presents 
-you an interactive prompt for entering and evaluating dice expressions.
+Try `./roll --demo` for a demonstration, or `./roll --demo --verbose` to
+see more in how dice expressions work. Running `./roll` presents you an 
+interactive prompt for entering and evaluating dice expressions.
 
 ## Table of contents
 
@@ -75,13 +75,14 @@ This project supports these types of expressions:
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
 
-All characters _case-insensitive_, eg, `d6` and `D6` are the same expression.
+All characters are _case-insensitive_, eg, `d6` and `D6` are the same 
+expression.
 
 Whitespace is supported **only**:
-- At start or end of the whole expression
-- Around the `+` and `-` operators.
+- At start or end of the complete expression
+- Around the `+` and `-` operators between single dice expressions
 
-Note that this is _not_ a general calculator so `1 + 2` will not work.
+Note this is _not_ a general calculator so `1 + 2` will not work.
 
 See [TODO](#todo) for further improvements.
 
@@ -102,20 +103,20 @@ The [demo examples](./src/main/kotlin/hm/binkley/dice/main.kt) (look at
 
 ## Code conventions
 
-At each top-level part of a dice expression parse (eg, die side), the parser 
+At each top-level part of a dice expression parse (eg, die sides), the parser 
 saves a local value internally.  By the end of the dice expression, this
 includes:
 
-- Die side, ie, number of sides on a die (ex: d4)
+- Die sides, ie, number of sides on a die (ex: d4)
 - Roll count, or 1 if none specified; ie, number of dice to roll
-- Reroll value, or 0 if none specified; rolls of this value or lower are
-  rerolled
+- Reroll low, or the value of the lowest face on a die if no value is 
+  provided: rolls of this value or lower are rerolled
 - Dice to keep, or "roll count" if none specified; a positive number is
   keep highest, a negative number is keep lowest
-- Explosion limit, or "die side + 1" if none specified
+- Explosion limit, or "die sides + 1" if none specified
 - Adjustment, or 0 when none specified
 
-The parser still used a stack for some cases:
+The parser uses a stack for some cases:
 
 - The final result of the dice expression
 - Tracking and applying `+`/`-` sign (add/subtract)
@@ -125,17 +126,19 @@ The parser still used a stack for some cases:
 
 Multiple modes of operation:
 
-- Support-type flags, such as `--help` should have colorized output
-- Testing -- test main and the modes when possible without hosing streams
-- REPL -- full colorizing and keyboard controls (_eg_, `Ctrl-a`, _et al_)
-- Rolls on the command line -- no colorizing, just print to STDOUT
-- Rolls from STDIN (ie, pipe, etc) -- no colorizing, just print to STDOUT
+- Support-type flags, such as `--help` have colorized output
+- Testing -- tests include `main()` as well as supporting code
+- REPL -- typical keyboard operations (_eg_, `Ctrl-a`, _et al_)
+- Rolls on the command line
+- Rolls from STDIN (ie, pipe, etc)
+- Use of color and formatting unless requested not to do so
+- Simple output (the default) or verbose output as dice roll
 
-In these, distinguish STDOUT from STDERR.  Think of scripting use cases.
+Remember to distinguish STDOUT and STDERR, helpful when using `./roll` in 
+scripts.
 
 ## TODO
 
-* Error messages for bad input are **cryptic**
 * Support divisors of rolls, ie, a syntax for `2d6/2`
 * Support `floor`, `ceil`, etc., to round rolls down/up
 * Reroll should support options other than low rolls
