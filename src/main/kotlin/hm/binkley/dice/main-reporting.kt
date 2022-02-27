@@ -32,7 +32,8 @@ sealed class MainReporter(
     private val minimum: Int
 ) : RollReporter {
     fun display(result: ParsingResult<Int>): Unit = with(result) {
-        if (result.hasErrors()) throw BadExpressionException(parseErrors)
+        if (result.hasErrors())
+            throw BadExpressionException(parseErrors)
 
         displayExpression(expression, roll)
     }
