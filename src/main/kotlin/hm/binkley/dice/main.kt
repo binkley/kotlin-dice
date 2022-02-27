@@ -10,6 +10,7 @@ import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.RunLast
+import java.lang.System.err
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
@@ -18,11 +19,10 @@ const val PROGRAM_NAME = "roll"
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>) {
     val options = Options()
-    val forceColorIfRequested =
-        IExecutionStrategy { parseResult ->
-            options.color.install()
-            RunLast().execute(parseResult)
-        }
+    val forceColorIfRequested = IExecutionStrategy { parseResult ->
+        options.color.install()
+        RunLast().execute(parseResult)
+    }
 
     exitProcess(
         CommandLine(options)
@@ -38,9 +38,9 @@ val simpleExceptionHandling =
         when (ex) {
             // Special case for the REPL - shells return 130 on SIGINT
             is UserInterruptException -> 130
-            else -> with(commandLine) {
+            else -> {
                 err.println(colorScheme.errorText(ex.message))
-                commandSpec.exitCodeOnExecutionException()// 1
+                commandLine.commandSpec.exitCodeOnExecutionException()// 1
             }
         }
     }

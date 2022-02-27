@@ -21,11 +21,9 @@ class ReplRoller(
         terminal.use { // Terminals need closing to reset the external terminal
             try {
                 while (true) try {
-                    rollFromLines(random, reporter) {
-                        // TODO: JaCoCo says the lambda is untested, and does not
-                        //       apply the @Generated from function scope
-                        replReader.readLine(prompt)
-                    }
+                    // TODO: JaCoCo says the lambda is untested, and does not
+                    //       apply the @Generated from function scope
+                    rollFromLines { replReader.readLine(prompt) }
                 } catch (e: DiceException) {
                     err.println(colorScheme.errorText(e.message))
                 }

@@ -12,6 +12,23 @@ sealed class MainRoller(
     protected val reporter: MainReporter,
 ) {
     abstract fun rollAndReport()
+
+    protected fun rollFromLines(nextLine: () -> String?) {
+        while (true) {
+            val line = nextLine()
+            when {
+                null == line -> return
+                line.isEmpty() -> continue
+                else -> rollIt(line)
+            }
+        }
+    }
+
+    protected fun rollIt(expression: String) {
+        reporter.preRoll()
+        val result = roll(expression, random, reporter)
+        reporter.display(result)
+    }
 }
 
 class CommandLineRoller(
@@ -19,16 +36,14 @@ class CommandLineRoller(
     reporter: MainReporter,
     private val arguments: List<String>,
 ) : MainRoller(random, reporter) {
-    override fun rollAndReport() =
-        arguments.forEach { rollIt(random, reporter, it) }
+    override fun rollAndReport() = arguments.forEach { rollIt(it) }
 }
 
 class StdinRoller(
     random: Random,
     reporter: MainReporter,
 ) : MainRoller(random, reporter) {
-    override fun rollAndReport() =
-        rollFromLines(random, reporter) { readLine() }
+    override fun rollAndReport() = rollFromLines { readLine() }
 }
 
 class DemoRoller(
@@ -38,36 +53,11 @@ class DemoRoller(
     override fun rollAndReport() {
         for ((expression, _) in demoExpressions)
             try {
-                rollIt(random, reporter, expression)
+                rollIt(expression)
             } catch (e: DiceException) {
                 err.println(colorScheme.errorText(e.message))
             }
 
         println(colorScheme.string("@|bold DONE|@"))
-    }
-}
-
-private fun rollIt(
-    random: Random,
-    reporter: MainReporter,
-    expression: String,
-) {
-    reporter.preRoll()
-    val result = roll(expression, random, reporter)
-    reporter.display(result)
-}
-
-fun rollFromLines(
-    random: Random,
-    reporter: MainReporter,
-    nextLine: () -> String?,
-) {
-    while (true) {
-        val line = nextLine()
-        when {
-            null == line -> return
-            line.isEmpty() -> continue
-            else -> rollIt(random, reporter, line)
-        }
     }
 }
