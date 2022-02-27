@@ -3,6 +3,7 @@ package hm.binkley.dice
 import lombok.Generated
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import java.lang.System.err
@@ -14,14 +15,19 @@ internal const val PROGRAM_NAME = "roll"
 
 @Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>): Unit =
-    exitProcess(CommandLine(Options())
-        .setExecutionExceptionHandler { ex, commandLine, _ ->
-            with(commandLine) {
-                err.println(colorScheme.errorText(ex.message))
-                1
-            }
+    exitProcess(
+        CommandLine(Options())
+            .setExecutionExceptionHandler(simpleParseErrorReporting)
+            .execute(*args)
+    )
+
+private val simpleParseErrorReporting =
+    IExecutionExceptionHandler { ex, commandLine, _ ->
+        with(commandLine) {
+            err.println(colorScheme.errorText(ex.message))
+            1
         }
-        .execute(*args))
+    }
 
 @Command(
     name = PROGRAM_NAME,
