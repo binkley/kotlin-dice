@@ -9,10 +9,13 @@ import org.parboiled.errors.InvalidInputError
 import org.parboiled.errors.ParseError
 import org.parboiled.support.Chars.EOI
 import org.parboiled.support.ParsingResult
-import picocli.CommandLine.Help.Ansi
+import picocli.CommandLine.Help.Ansi.AUTO
+import picocli.CommandLine.Help.defaultColorScheme
+
+internal open class DiceException(message: String) : Exception(message)
 
 internal class BadExpressionException(errors: List<ParseError>) :
-    Exception(errors.joinToString("\n") {
+    DiceException(errors.joinToString("\n") {
         if (it is InvalidInputError) oneLinerFor(it)
         else printParseError(it)
     })
@@ -34,7 +37,7 @@ private fun oneLinerFor(error: InvalidInputError): String {
 internal class RollTooLowException(
     minimum: Int,
     roll: Int,
-) : Exception(
+) : DiceException(
     "Roll result $roll is below the minimum result of $minimum"
 )
 
@@ -89,9 +92,10 @@ private fun verboseRolling(action: RollAction) = with(action) {
             "!reroll($die: exploded $explodeHigh) -> $roll"
         is DroppedRoll -> "drop($die) -> $roll"
     }
-    println("@|italic $message|@")
+
+    println(defaultColorScheme(AUTO).stackTraceText(message))
 }
 
 private fun println(message: Any?) = kotlin.io.println(
-    if (message is String) Ansi.AUTO.text(message) else message
+    if (message is String) AUTO.text(message) else message
 )
