@@ -12,7 +12,7 @@
     <properties>
         <!-- @formatter:off -->
         <atrium.version>0.17.0</atrium.version>
-        <dependency-check-maven.version>6.5.2</dependency-check-maven.version>
+        <dependency-check-maven.version>7.0.0</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.19.1</detekt-maven-plugin.version>
         <java.charset>UTF-8</java.charset>
         <!-- Java version is held back by parboiled -->
