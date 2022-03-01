@@ -2,7 +2,6 @@ package hm.binkley.dice
 
 import hm.binkley.dice.DieBase.ONE
 import hm.binkley.dice.DieBase.ZERO
-import lombok.Generated
 import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.support.ParsingResult
 
@@ -29,9 +28,7 @@ sealed class MainReporter(private val minimum: Int) : RollReporter {
     protected abstract fun toDisplay(expression: String, roll: Int): String
 }
 
-class PlainReporter(
-    minimum: Int
-) : MainReporter(minimum) {
+class PlainReporter(minimum: Int) : MainReporter(minimum) {
     override fun onRoll(dice: RolledDice) = Unit
     override fun preRoll() = Unit
 
@@ -39,7 +36,6 @@ class PlainReporter(
         "$expression @|bold,green $roll|@"
 }
 
-@Generated // Lie to Lombok
 class VerboseReporter(minimum: Int) : MainReporter(minimum) {
     override fun onRoll(dice: RolledDice) = verboseRolling(dice)
     override fun preRoll() = println("---")

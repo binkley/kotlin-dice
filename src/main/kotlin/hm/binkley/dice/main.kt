@@ -1,7 +1,6 @@
 package hm.binkley.dice
 
 import hm.binkley.dice.Options.Color.auto
-import lombok.Generated
 import org.jline.reader.UserInterruptException
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -16,7 +15,6 @@ import kotlin.system.exitProcess
 
 const val PROGRAM_NAME = "roll"
 
-@Generated // Lie to JaCoCo -- use of exit confuses it
 fun main(args: Array<String>) {
     val options = Options()
     val forceColorIfRequested = IExecutionStrategy { parseResult ->
@@ -85,7 +83,6 @@ val simpleExceptionHandling =
   @|bold 130|@ - REPL interrupted (SIGINT)"""
     ],
 )
-@Generated // Lie to JaCoCo
 private class Options : Runnable {
     @Suppress("EnumEntryName", "unused")
     enum class Color(private val ansi: String?) {
