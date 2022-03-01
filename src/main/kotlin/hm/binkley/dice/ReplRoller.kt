@@ -36,10 +36,6 @@ class ReplRoller(
     }
 }
 
-/**
- * @todo This may be better expressed a lazy property, however JaCoCo does not
- *       grok that, and `@Generated` doesn't work on properties
- */
 @Generated // Lie to JaCoCo
 private fun repl(): Pair<Terminal, LineReader> {
     val terminal = TerminalBuilder.builder()
