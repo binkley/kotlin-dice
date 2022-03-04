@@ -9,7 +9,6 @@ import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.RunLast
-import java.lang.System.err
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
@@ -24,24 +23,26 @@ fun main(args: Array<String>) {
 
     exitProcess(
         CommandLine(options)
-            .setExecutionExceptionHandler(simpleExceptionHandling)
+            .setExecutionExceptionHandler(exceptionHandling)
             .setExecutionStrategy(forceColorIfRequested)
             .setOverwrittenOptionsAllowed(true) // Dups use last occurrence
             .execute(*args)
     )
 }
 
-val simpleExceptionHandling =
-    IExecutionExceptionHandler { ex, commandLine, _ ->
-        when (ex) {
-            // Special case for the REPL - shells return 130 on SIGINT
-            is UserInterruptException -> 130
-            else -> {
-                err.println(colorScheme.errorText(ex.message))
-                commandLine.commandSpec.exitCodeOnExecutionException() // 1
-            }
+val exceptionHandling = IExecutionExceptionHandler { ex, commandLine, _ ->
+    when (ex) {
+        // Special case for the REPL - shells return 130 on SIGINT
+        is UserInterruptException -> 130
+        else -> {
+            if (commandLine.getCommand<Options>().debug)
+                commandLine.err.println(colorScheme.richStackTraceString(ex))
+            else
+                commandLine.err.println(colorScheme.errorText(ex.message))
+            commandLine.commandSpec.exitCodeOnExecutionException() // 1
         }
     }
+}
 
 @Command(
     name = PROGRAM_NAME,
@@ -112,6 +113,13 @@ private class Options : Runnable {
     var color = auto
 
     @Option(
+        description = ["Verbose and with developer output (INTERNAL)."],
+        names = ["--debug"],
+        hidden = true,
+    )
+    var debug = false
+
+    @Option(
         description = ["Run the demo; ignore arguments."],
         names = ["--demo"],
     )
@@ -154,6 +162,8 @@ private class Options : Runnable {
     var arguments: List<String> = emptyList()
 
     override fun run() {
+        if (debug) verbose = true
+
         // TODO: Why does Kotlin require non-null assertion?
         val random = if (null == seed) Random.Default else Random(seed!!)
         val reporter = selectMainReporter(minimum, verbose)

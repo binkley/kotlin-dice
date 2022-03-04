@@ -8,6 +8,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotBeEmpty
+import io.kotest.matchers.string.shouldStartWith
 import org.jline.reader.UserInterruptException
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -141,11 +142,32 @@ Unexpected end in '3d'
         }
 
         @Test
+        fun `should show stack trace when failing debuggingly`() {
+            val (exitCode, out, err) = runWithCapture {
+                mainWithFixedSeed("--debug", "3d6", "3d")
+            }
+
+            exitCode shouldBe 1
+            out shouldBeAfterTrimming """
+---
+roll(d6) -> 4
+roll(d6) -> 1
+roll(d6) -> 5
+3d6 -> 10
+---                
+"""
+            err.shouldStartWith("""
+hm.binkley.dice.BadExpressionException: Unexpected end in '3d'
+	at hm.binkley.dice.MainReporter.display(MainReporter.kt:18)
+""".trimIndent())
+        }
+
+        @Test
         fun `should exit on interrupt the same as shells`() {
             @Command
             class Immaterial
 
-            val exitCode = simpleExceptionHandling.handleExecutionException(
+            val exitCode = exceptionHandling.handleExecutionException(
                 UserInterruptException("I was typing somethi^C"),
                 picocli.CommandLine(Immaterial()),
                 ParseResult.builder(CommandSpec.create()).build(),
