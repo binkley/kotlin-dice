@@ -42,6 +42,17 @@ internal class MainTest {
             out.shouldNotBeEmpty()
             err.shouldBeEmpty()
         }
+
+        @Test
+        fun `should show copyright`() {
+            val (exitCode, out, err) = runWithCapture {
+                mainWithFixedSeed("--copyright")
+            }
+
+            exitCode shouldBe 0
+            out.shouldNotBeEmpty()
+            err.shouldBeEmpty()
+        }
     }
 
     @Nested
@@ -170,10 +181,11 @@ roll(d6) -> 5
 ---                
 """
             // TODO: assertion is sensitive to MainReporter line numbers
-            err.shouldStartWith("""
+            err.shouldStartWith(
+                """
 hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 	at hm.binkley.dice.MainReporter.display(MainReporter.kt:14)
-""".trimIndent()
+                """.trimIndent()
             )
         }
 

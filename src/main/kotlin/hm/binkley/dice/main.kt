@@ -17,15 +17,25 @@ const val PROGRAM_NAME = "roll"
 
 fun main(args: Array<String>) {
     val options = Options()
-    val forceColorIfRequested = IExecutionStrategy { parseResult ->
+    val processSpecialOptions = IExecutionStrategy special@{ parseResult ->
+        // TODO: How to get Picocli to do these for me?
+        if (options.copyright) {
+            options.javaClass
+                .classLoader
+                .getResourceAsStream("META-INF/LICENSE")
+                .copyTo(System.out)
+            return@special 0
+        }
+
         options.color.install()
+
         RunLast().execute(parseResult)
     }
 
     exitProcess(
         CommandLine(options)
             .setExecutionExceptionHandler(exceptionHandling)
-            .setExecutionStrategy(forceColorIfRequested)
+            .setExecutionStrategy(processSpecialOptions)
             // Use last value for repeated options (ie, `--color`)
             .setOverwrittenOptionsAllowed(true)
             .execute(*args)
@@ -153,6 +163,12 @@ private class Options : Runnable {
         hidden = true,
     )
     var debug = false
+
+    @Option(
+        description = ["Print copyright and exit."],
+        names = ["--copyright"],
+    )
+    var copyright = false
 
     @Option(
         description = ["Run the demo; ignore arguments."],
