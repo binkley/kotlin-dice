@@ -156,9 +156,10 @@ roll(d6) -> 5
 3d6 -> 10
 ---                
 """
+            // TODO: assertion is sensitive to MainReporter line numbers
             err.shouldStartWith("""
 hm.binkley.dice.BadExpressionException: Unexpected end in '3d'
-	at hm.binkley.dice.MainReporter.display(MainReporter.kt:18)
+	at hm.binkley.dice.MainReporter.display(MainReporter.kt:14)
 """.trimIndent())
         }
 
@@ -272,18 +273,46 @@ hm.binkley.dice.BadExpressionException: Unexpected end in '3d'
     }
 
     @Nested
-    inner class Whitespace {
+    inner class Outputs {
         @Test
-        fun `should trim dice expression`() {
+        fun `should normalize result output`() {
             val (exitCode, out, err) = runWithCapture {
-                mainWithFixedSeed(" 3d6 + 1 ")
+                mainWithFixedSeed(
+                    "3d6+1",
+                    " 3d6+1",
+                    "3d6+1 ",
+                    "3d6 +1",
+                    "3d6+ 1",
+                    "3d6 + 1",
+                    " 3d6 + 1 ",
+                )
             }
 
             exitCode shouldBe 0
-            // NOT trimmed by test.  If main broken, might be:
-            // - " 3d6 + 1  11\n"
-            // - "3d6+1 11\n"
-            out shouldBe "3d6 + 1 11\n"
+            out shouldBeAfterTrimming """
+3d6+1 11
+3d6+1 12
+3d6+1 10
+3d6+1 9
+3d6+1 13
+3d6+1 13
+3d6+1 19
+""".trimIndent()
+            err.shouldBeEmpty()
+        }
+
+        @Test
+        fun `should not normalize result output when verbose`() {
+            val (exitCode, out, err) = runWithCapture {
+                mainWithFixedSeed("--verbose", " 1d1 + 1 ")
+            }
+
+            exitCode shouldBe 0
+            out shouldBeAfterTrimming """
+---
+roll(d1) -> 1
+ 1d1 + 1  -> 2
+""".trimIndent()
             err.shouldBeEmpty()
         }
     }

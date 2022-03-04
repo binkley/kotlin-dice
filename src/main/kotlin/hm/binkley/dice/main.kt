@@ -166,7 +166,7 @@ private class Options : Runnable {
 
         // TODO: Why does Kotlin require non-null assertion?
         val random = if (null == seed) Random.Default else Random(seed!!)
-        val reporter = selectMainReporter(minimum, verbose)
+        val reporter = MainReporter.new(minimum, verbose)
 
         val roller = when {
             demo -> DemoRoller(random, reporter)
