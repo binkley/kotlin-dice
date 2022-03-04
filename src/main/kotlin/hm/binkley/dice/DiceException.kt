@@ -8,10 +8,12 @@ import org.parboiled.support.Chars
 sealed class DiceException(message: String) : Exception(message)
 
 class BadExpressionException(errors: List<ParseError>) :
-    DiceException(errors.joinToString("\n") {
-        if (it is InvalidInputError) oneLinerFor(it)
-        else printParseError(it)
-    })
+    DiceException(
+        errors.joinToString("\n") {
+            if (it is InvalidInputError) oneLinerFor(it)
+            else printParseError(it)
+        }
+    )
 
 private fun oneLinerFor(error: InvalidInputError): String {
     val at = error.startIndex

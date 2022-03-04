@@ -33,7 +33,7 @@ class PlainReporter(minimum: Int) : MainReporter(minimum) {
     override fun preRoll() = Unit
 
     override fun toDisplay(expression: String, roll: Int) =
-        "$expression @|bold,green $roll|@"
+        "$expression @|fg_green,bold $roll|@"
 }
 
 class VerboseReporter(minimum: Int) : MainReporter(minimum) {
@@ -41,7 +41,7 @@ class VerboseReporter(minimum: Int) : MainReporter(minimum) {
     override fun preRoll() = println("---")
 
     override fun toDisplay(expression: String, roll: Int) =
-        "@|bold $expression|@ -> @|bold,green $roll|@"
+        "@|bold $expression|@ -> @|fg_green,bold $roll|@"
 }
 
 private fun verboseRolling(dice: RolledDice) = with(dice) {

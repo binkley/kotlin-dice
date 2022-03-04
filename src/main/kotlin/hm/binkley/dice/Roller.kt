@@ -69,7 +69,8 @@ data class Roller(
     )
 
     private fun rollAndReport(
-        onRoll: ReportType, onReroll: ReportType,
+        onRoll: ReportType,
+        onReroll: ReportType,
     ) = with(expression) {
         var roll = rollDie()
         report(onRoll(this, roll))

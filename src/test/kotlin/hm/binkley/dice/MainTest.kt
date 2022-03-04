@@ -76,7 +76,7 @@ internal class MainTest {
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming "3d6 @|bold,green 10|@".colored
+            out shouldBeAfterTrimming "3d6 @|fg_green,bold 10|@".colored
             err.shouldBeEmpty()
         }
 
@@ -93,7 +93,7 @@ internal class MainTest {
 @|faint,italic roll(d6) -> 4|@
 @|faint,italic roll(d6) -> 1|@
 @|faint,italic roll(d6) -> 5|@
-@|bold 3d6|@ -> @|bold,green 10|@
+@|bold 3d6|@ -> @|fg_green,bold 10|@
 """.colored
             err.shouldBeEmpty()
         }
@@ -134,10 +134,10 @@ Unexpected end in '3d'
             }
 
             exitCode shouldBe 1
-            out shouldBeAfterTrimming "3d6 @|bold,green 10|@".colored
-            // NB -- order of red,bold and bold,red matters
+            out shouldBeAfterTrimming "3d6 @|fg_green,bold 10|@".colored
+            // NB -- order of fg_red,bold and bold,fg_red matters
             err shouldBeAfterTrimming
-                    "@|red,bold Unexpected end in '3d'|@".colored
+                    "@|fg_red,bold Unexpected end in '3d'|@".colored
         }
 
         @Test
@@ -295,7 +295,7 @@ Unexpected end in '3d'
 private fun mainWithFixedSeed(vararg cmdLine: String) = main(
     arrayOf(
         "--color=never", // Force color off for testing
-        "--seed=${FIXED_SEED}", // Hard-coded for reproducibility
+        "--seed=$FIXED_SEED", // Hard-coded for reproducibility
         *cmdLine,
     )
 )

@@ -38,7 +38,7 @@ val simpleExceptionHandling =
             is UserInterruptException -> 130
             else -> {
                 err.println(colorScheme.errorText(ex.message))
-                commandLine.commandSpec.exitCodeOnExecutionException()// 1
+                commandLine.commandSpec.exitCodeOnExecutionException() // 1
             }
         }
     }
@@ -64,17 +64,17 @@ val simpleExceptionHandling =
 
 @|bold,underline Output examples:|@
   @|bold roll --seed=1 2d4 2d4|@ (normal)
-     2d4 @|bold,green 4|@
-     2d4 @|bold,green 7|@
+     2d4 @|fg_green,bold 4|@
+     2d4 @|fg_green,bold 7|@
   @|bold roll --seed=1 --verbose 2d4 2d4|@ (verbose)
      ---
      @|faint,italic roll(d4) -> 1|@
      @|faint,italic roll(d4) -> 3|@
-     @|bold 2d4|@ -> @|bold,green 4|@
+     @|bold 2d4|@ -> @|fg_green,bold 4|@
      ---
      @|faint,italic roll(d4) -> 4|@
      @|faint,italic roll(d4) -> 3|@
-     @|bold 2d4|@ -> @|bold,green 7|@
+     @|bold 2d4|@ -> @|fg_green,bold 7|@
 
 @|bold,underline Exit codes:|@
   @|bold   0|@ - Successful completion
@@ -99,9 +99,11 @@ private class Options : Runnable {
     }
 
     @Option(
-        description = ["Choose color output (\${COMPLETION-CANDIDATES})",
+        description = [
+            "Choose color output (\${COMPLETION-CANDIDATES})",
             "If specified without a WHEN, it uses '\${FALLBACK-VALUE}'",
-            "Without this option, color is used if at a tty"],
+            "Without this option, color is used if at a tty"
+        ],
         names = ["-C", "--color"],
         paramLabel = "WHEN",
         arity = "0..1",
@@ -143,8 +145,10 @@ private class Options : Runnable {
     var verbose = false
 
     @Parameters(
-        description = ["Dice expressions to roll",
-            "If provided no expressions, prompt user interactively"],
+        description = [
+            "Dice expressions to roll",
+            "If provided no expressions, prompt user interactively"
+        ],
         paramLabel = "EXPRESSION",
     )
     var arguments: List<String> = emptyList()
