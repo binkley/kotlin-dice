@@ -128,6 +128,19 @@ Unexpected end in '3d'
         }
 
         @Test
+        fun `should fail in color`() {
+            val (exitCode, out, err) = runWithCapture {
+                mainWithFixedSeed("--color=always", "3d6", "3d")
+            }
+
+            exitCode shouldBe 1
+            out shouldBeAfterTrimming "3d6 @|bold,green 10|@".colored
+            // NB -- order of red,bold and bold,red matters
+            err shouldBeAfterTrimming
+                    "@|red,bold Unexpected end in '3d'|@".colored
+        }
+
+        @Test
         fun `should exit on interrupt the same as shells`() {
             @Command
             class Immaterial
