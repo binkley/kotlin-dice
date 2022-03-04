@@ -4,11 +4,13 @@ import com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrNormalized
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
 import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotBeEmpty
 import io.kotest.matchers.string.shouldStartWith
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.jline.reader.UserInterruptException
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -111,7 +113,7 @@ internal class MainTest {
             exitCode shouldBe 1
             out shouldBeAfterTrimming "3d6 10"
             err shouldBeAfterTrimming """
-Unexpected 'd' (at position 3) in '3dd'
+Unexpected 'd' (at position 3) in dice expression '3dd'
 """
         }
 
@@ -124,7 +126,7 @@ Unexpected 'd' (at position 3) in '3dd'
             exitCode shouldBe 1
             out shouldBeAfterTrimming "3d6 10"
             err shouldBeAfterTrimming """
-Unexpected end in '3d'
+Incomplete dice expression '3d'
 """
         }
 
@@ -138,7 +140,7 @@ Unexpected end in '3d'
             out shouldBeAfterTrimming "3d6 @|fg_green,bold 10|@".colored
             // NB -- order of fg_red,bold and bold,fg_red matters
             err shouldBeAfterTrimming
-                    "@|fg_red,bold Unexpected end in '3d'|@".colored
+                    "@|fg_red,bold Incomplete dice expression '3d'|@".colored
         }
 
         @Test
@@ -158,23 +160,43 @@ roll(d6) -> 5
 """
             // TODO: assertion is sensitive to MainReporter line numbers
             err.shouldStartWith("""
-hm.binkley.dice.BadExpressionException: Unexpected end in '3d'
+hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 	at hm.binkley.dice.MainReporter.display(MainReporter.kt:14)
 """.trimIndent())
         }
 
+        @Command
+        inner class Immaterial
+        private val commandLine = picocli.CommandLine(Immaterial())
+        private val parseResult =
+            ParseResult.builder(CommandSpec.create()).build()
+
         @Test
         fun `should exit on interrupt the same as shells`() {
-            @Command
-            class Immaterial
-
             val exitCode = exceptionHandling.handleExecutionException(
                 UserInterruptException("I was typing somethi^C"),
-                picocli.CommandLine(Immaterial()),
-                ParseResult.builder(CommandSpec.create()).build(),
+                commandLine,
+                parseResult,
             )
 
             exitCode shouldBe 130
+        }
+
+        @Test
+        fun `should let framework handle unknown exceptions`() {
+            @Command
+            class Immaterial
+
+            val ex = NullPointerException("Did I forget something?")
+            val thrown = shouldThrow<NullPointerException> {
+                exceptionHandling.handleExecutionException(
+                    ex,
+                    commandLine,
+                    parseResult,
+                )
+            }
+
+            thrown shouldBeSameInstanceAs ex
         }
     }
 

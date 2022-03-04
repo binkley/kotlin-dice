@@ -18,14 +18,14 @@ class BadExpressionException(errors: List<ParseError>) :
 private fun oneLinerFor(error: InvalidInputError): String {
     val at = error.startIndex
     with(error.inputBuffer) {
-        val char = charAt(at)
+        val ch = charAt(at)
         val position = getPosition(at)
         val where = position.column
         val expression = extractLine(position.line)
-        return if (Chars.EOI == char)
-            "Unexpected end in '$expression'"
+        return if (Chars.EOI == ch)
+            "Incomplete dice expression '$expression'"
         else
-            "Unexpected '$char' (at position $where) in '$expression'"
+            "Unexpected '$ch' (at position $where) in dice expression '$expression'"
     }
 }
 

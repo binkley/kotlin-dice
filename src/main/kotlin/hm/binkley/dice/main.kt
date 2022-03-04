@@ -32,15 +32,18 @@ fun main(args: Array<String>) {
 
 val exceptionHandling = IExecutionExceptionHandler { ex, commandLine, _ ->
     when (ex) {
-        // Special case for the REPL - shells return 130 on SIGINT
-        is UserInterruptException -> 130
-        else -> {
+        // User-friendly error message
+        is DiceException -> {
             if (commandLine.getCommand<Options>().debug)
                 commandLine.err.println(colorScheme.richStackTraceString(ex))
             else
                 commandLine.err.println(colorScheme.errorText(ex.message))
             commandLine.commandSpec.exitCodeOnExecutionException() // 1
         }
+        // Special case for the REPL - shells return 130 on SIGINT
+        is UserInterruptException -> 130
+        // Unknown exceptions fall back to Picolo default handling
+        else -> throw ex
     }
 }
 
