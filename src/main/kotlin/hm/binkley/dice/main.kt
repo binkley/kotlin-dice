@@ -4,6 +4,7 @@ import hm.binkley.dice.Options.Color.auto
 import org.jline.reader.UserInterruptException
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.Help.Ansi.AUTO
 import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.Option
@@ -25,7 +26,8 @@ fun main(args: Array<String>) {
         CommandLine(options)
             .setExecutionExceptionHandler(exceptionHandling)
             .setExecutionStrategy(forceColorIfRequested)
-            .setOverwrittenOptionsAllowed(true) // Dups use last occurrence
+            // Use last value for repeated options (ie, `--color`)
+            .setOverwrittenOptionsAllowed(true)
             .execute(*args)
     )
 }
@@ -36,8 +38,15 @@ val exceptionHandling = IExecutionExceptionHandler { ex, commandLine, _ ->
         is DiceException -> {
             if (commandLine.getCommand<Options>().debug)
                 commandLine.err.println(colorScheme.richStackTraceString(ex))
-            else
-                commandLine.err.println(colorScheme.errorText(ex.message))
+            else {
+                val interactive = AUTO.enabled()
+                // GNU standards prefix errors with program name to aid in
+                // debugging failed scripts, etc.
+                val prefix = if (interactive) "" else "$PROGRAM_NAME: "
+                commandLine.err.println(
+                    colorScheme.errorText(prefix + ex.message)
+                )
+            }
             commandLine.commandSpec.exitCodeOnExecutionException() // 1
         }
         // Special case for the REPL - shells return 130 on SIGINT
@@ -88,11 +97,28 @@ val exceptionHandling = IExecutionExceptionHandler { ex, commandLine, _ ->
     ],
 )
 private class Options : Runnable {
+    /**
+     * Arguments to the `--color` flag based on GNU standards.
+     * The enum name is identical to the argument and case-sensitive.
+     * Example: `--color=always`.
+     */
     @Suppress("EnumEntryName", "unused")
     enum class Color(private val ansi: String?) {
+        // Force color
         always("true"),
+        yes("true"),
+        force("true"),
+
+        // Guess for color
         auto(null),
-        never("false");
+        tty(null),
+        `if-tty`(null),
+
+        // Disable color
+        never("false"),
+        no("false"),
+        none("false"),
+        ;
 
         fun install() {
             when (ansi) {
@@ -201,8 +227,8 @@ val demoExpressions = arrayOf(
     "1z1" to 0,
     "3d6" to 10,
     "3D6" to 10,
-    "1d1" to 1, // check boundary
-    "1z1" to 0, // check boundary
+    "1d1" to 1, // check bounds
+    "1z1" to 0, // check bounds
     "3d6+1" to 11, // adding adjustment
     "3d6+ 1" to 11, // whitespace
     "3d6 +1" to 11, // whitespace

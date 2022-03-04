@@ -105,7 +105,7 @@ internal class MainTest {
     @Nested
     inner class Errors {
         @Test
-        fun `should fail with 1-liner if command line is bad`() {
+        fun `should fail gnuishly with 1-liner for bad expression`() {
             val (exitCode, out, err) = runWithCapture {
                 mainWithFixedSeed("3d6", "3dd")
             }
@@ -113,12 +113,12 @@ internal class MainTest {
             exitCode shouldBe 1
             out shouldBeAfterTrimming "3d6 10"
             err shouldBeAfterTrimming """
-Unexpected 'd' (at position 3) in dice expression '3dd'
+roll: Unexpected 'd' (at position 3) in dice expression '3dd'
 """
         }
 
         @Test
-        fun `should fail with 1-liner if command line is incomplete`() {
+        fun `should fail gnuishly with 1-liner for incomplete expression`() {
             val (exitCode, out, err) = runWithCapture {
                 mainWithFixedSeed("3d6", "3d")
             }
@@ -126,7 +126,7 @@ Unexpected 'd' (at position 3) in dice expression '3dd'
             exitCode shouldBe 1
             out shouldBeAfterTrimming "3d6 10"
             err shouldBeAfterTrimming """
-Incomplete dice expression '3d'
+roll: Incomplete dice expression '3d'
 """
         }
 
@@ -139,12 +139,13 @@ Incomplete dice expression '3d'
             exitCode shouldBe 1
             out shouldBeAfterTrimming "3d6 @|fg_green,bold 10|@".colored
             // NB -- order of fg_red,bold and bold,fg_red matters
-            err shouldBeAfterTrimming
-                    "@|fg_red,bold Incomplete dice expression '3d'|@".colored
+            err shouldBeAfterTrimming """
+@|fg_red,bold Incomplete dice expression '3d'|@
+""".colored
         }
 
         @Test
-        fun `should show stack trace when failing debuggingly`() {
+        fun `should fail debuggingly with stack trace`() {
             val (exitCode, out, err) = runWithCapture {
                 mainWithFixedSeed("--debug", "3d6", "3d")
             }
@@ -159,14 +160,17 @@ roll(d6) -> 5
 ---                
 """
             // TODO: assertion is sensitive to MainReporter line numbers
-            err.shouldStartWith("""
+            err.shouldStartWith(
+                """
 hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 	at hm.binkley.dice.MainReporter.display(MainReporter.kt:14)
-""".trimIndent())
+                """.trimIndent()
+            )
         }
 
         @Command
         inner class Immaterial
+
         private val commandLine = picocli.CommandLine(Immaterial())
         private val parseResult =
             ParseResult.builder(CommandSpec.create()).build()
@@ -319,7 +323,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 3d6+1 13
 3d6+1 13
 3d6+1 19
-""".trimIndent()
+            """.trimIndent()
             err.shouldBeEmpty()
         }
 
@@ -334,7 +338,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 ---
 roll(d1) -> 1
  1d1 + 1  -> 2
-""".trimIndent()
+            """.trimIndent()
             err.shouldBeEmpty()
         }
     }
