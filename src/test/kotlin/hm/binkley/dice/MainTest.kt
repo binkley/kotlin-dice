@@ -76,8 +76,7 @@ internal class MainTest {
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming
-                    colorScheme.string("3d6 @|bold,green 10|@")
+            out shouldBeAfterTrimming "3d6 @|bold,green 10|@".colored
             err.shouldBeEmpty()
         }
 
@@ -89,15 +88,13 @@ internal class MainTest {
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming colorScheme.string(
-                """
+            out shouldBeAfterTrimming """
 ---
 @|faint,italic roll(d6) -> 4|@
 @|faint,italic roll(d6) -> 1|@
 @|faint,italic roll(d6) -> 5|@
 @|bold 3d6|@ -> @|bold,green 10|@
-"""
-            )
+""".colored
             err.shouldBeEmpty()
         }
     }
@@ -222,7 +219,7 @@ Unexpected end in '3d'
             }
 
             exitCode shouldBe 0
-            out.shouldEndWith(colorScheme.string("@|bold DONE|@\n"))
+            out.shouldEndWith("@|bold DONE|@\n".colored)
             err.shouldNotBeEmpty()
         }
 
@@ -234,7 +231,7 @@ Unexpected end in '3d'
             }
 
             exitCode shouldBe 0
-            out.shouldEndWith(colorScheme.string("@|bold DONE|@\n"))
+            out.shouldEndWith("@|bold DONE|@\n".colored)
             err.shouldNotBeEmpty()
         }
     }
@@ -289,6 +286,8 @@ private fun mainWithFixedSeed(vararg cmdLine: String) = main(
         *cmdLine,
     )
 )
+
+private inline val String.colored get() = colorScheme.string(this)
 
 private infix fun String.shouldBeAfterTrimming(expected: String) =
     trimIndent().trim() shouldBe expected.trimIndent().trim()
