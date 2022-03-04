@@ -57,7 +57,7 @@ drawing inspiration from:
 
 - [_Dice Expressions_](https://wiki.rptools.info/index.php/Dice_Expressions)
 - [_Dice notation_](https://en.wikipedia.org/wiki/Dice_notation)
-- [_Sophie's Dice](https://sophiehoulden.com/dice/documentation/notation.html)
+- [_Sophie's Dice_](https://sophiehoulden.com/dice/documentation/notation.html)
 
 This project supports these types of expressions:
 
