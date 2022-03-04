@@ -67,7 +67,9 @@ internal class MainTest {
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming "3d6 10"
+            out shouldBeAfterTrimming """
+3d6 10
+"""
             err.shouldBeEmpty()
         }
 
@@ -79,7 +81,9 @@ internal class MainTest {
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming "3d6 @|fg_green,bold 10|@".colored
+            out shouldBeAfterTrimming """
+3d6 @|fg_green,bold 10|@
+""".colored
             err.shouldBeEmpty()
         }
 
@@ -111,7 +115,9 @@ internal class MainTest {
             }
 
             exitCode shouldBe 1
-            out shouldBeAfterTrimming "3d6 10"
+            out shouldBeAfterTrimming """
+3d6 10
+"""
             err shouldBeAfterTrimming """
 roll: Unexpected 'd' (at position 3) in dice expression '3dd'
 """
@@ -124,7 +130,9 @@ roll: Unexpected 'd' (at position 3) in dice expression '3dd'
             }
 
             exitCode shouldBe 1
-            out shouldBeAfterTrimming "3d6 10"
+            out shouldBeAfterTrimming """
+3d6 10
+"""
             err shouldBeAfterTrimming """
 roll: Incomplete dice expression '3d'
 """
@@ -137,7 +145,9 @@ roll: Incomplete dice expression '3d'
             }
 
             exitCode shouldBe 1
-            out shouldBeAfterTrimming "3d6 @|fg_green,bold 10|@".colored
+            out shouldBeAfterTrimming """
+3d6 @|fg_green,bold 10|@
+""".colored
             // NB -- order of fg_red,bold and bold,fg_red matters
             err shouldBeAfterTrimming """
 @|fg_red,bold Incomplete dice expression '3d'|@
@@ -160,11 +170,10 @@ roll(d6) -> 5
 ---                
 """
             // TODO: assertion is sensitive to MainReporter line numbers
-            err.shouldStartWith(
-                """
+            err.shouldStartWith("""
 hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 	at hm.binkley.dice.MainReporter.display(MainReporter.kt:14)
-                """.trimIndent()
+""".trimIndent()
             )
         }
 
@@ -214,7 +223,9 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
                 }
 
                 exitCode shouldBe 0
-                out shouldBeAfterTrimming "3d6 10"
+                out shouldBeAfterTrimming """
+3d6 10
+"""
                 err.shouldBeEmpty()
             }
         }
@@ -323,7 +334,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 3d6+1 13
 3d6+1 13
 3d6+1 19
-            """.trimIndent()
+"""
             err.shouldBeEmpty()
         }
 
@@ -338,7 +349,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 ---
 roll(d1) -> 1
  1d1 + 1  -> 2
-            """.trimIndent()
+"""
             err.shouldBeEmpty()
         }
     }
@@ -352,7 +363,9 @@ roll(d1) -> 1
             }
 
             exitCode shouldBe 0
-            out shouldBeAfterTrimming "1z1-1 -1"
+            out shouldBeAfterTrimming """
+1z1-1 -1
+"""
             err.shouldBeEmpty()
         }
 
@@ -364,6 +377,9 @@ roll(d1) -> 1
 
             exitCode shouldBe 1
             out.shouldBeEmpty()
+            err shouldBeAfterTrimming """
+roll: Roll result -1 is below the minimum result of 0
+"""
             err.shouldNotBeEmpty()
         }
     }
