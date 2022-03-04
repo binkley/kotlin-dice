@@ -42,14 +42,14 @@ class PlainReporter(minimum: Int, verbose: Boolean) :
 
 class VerboseReporter(minimum: Int, verbose: Boolean) :
     MainReporter(minimum, verbose) {
-    override fun onRoll(dice: RolledDice) = verboseRolling(dice)
+    override fun onRoll(dice: RolledDice) = traceRolls(dice)
     override fun preRoll() = println("---")
 
     override fun toDisplay(expression: String, roll: Int) =
         "@|bold $expression|@ -> @|fg_green,bold $roll|@"
 }
 
-private fun verboseRolling(dice: RolledDice) = with(dice) {
+private fun traceRolls(dice: RolledDice) = with(dice) {
     val die = when (dieBase) {
         ONE -> "d$dieSides"
         ZERO -> "z$dieSides"
