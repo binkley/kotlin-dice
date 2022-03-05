@@ -13,7 +13,7 @@ internal class DiceParserTest {
         for ((expression, expected, description) in demoExpressions)
             withClue("$expression ($description)") {
                 // Recreate each time to reset the seed each time
-                val dice = dice(stableSeedForEachTest()) {}
+                val dice = dice(stableSeedForEachTest())
                 val result = dice.roll(expression)
 
                 result.resultValue shouldBe expected
@@ -27,7 +27,7 @@ internal class DiceParserTest {
 
     @Test
     fun `should use default RNG`() {
-        val dice = dice {}
+        val dice = dice()
         val result = dice.roll("1d1")
 
         result.resultValue shouldBe 1
@@ -36,7 +36,7 @@ internal class DiceParserTest {
 
     @Test
     fun `should reuse existing dice parser`() {
-        val dice = dice(stableSeedForEachTest()) {}
+        val dice = dice(stableSeedForEachTest())
         // Complex expression to show state is reset
         dice.roll("100d3r1h99!+100d3r1l99!3-17")
         val result = dice.roll("d6")

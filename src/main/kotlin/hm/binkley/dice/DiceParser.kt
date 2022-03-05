@@ -26,12 +26,20 @@ import kotlin.random.Random
  */
 @BuildParseTree
 open class DiceParser(
-    private val random: Random, // TODO: RandomGenerator once on Java 17
+    private val random: Random,
     private val reporter: RollReporter,
 ) : BaseParser<Int>() {
     companion object {
-        fun dice(random: Random = Random, reporter: RollReporter) =
-            createParser(DiceParser::class.java, random, reporter)!!
+        /**
+         * Creates a new dice expression parser and roller.
+         *
+         * @param random an RNG, by default the system RNG
+         * @param reporter reports on each die roll, by default no reporting
+         */
+        fun dice(
+            random: Random = Random,
+            reporter: RollReporter = RollReporter { },
+        ) = createParser(DiceParser::class.java, random, reporter)!!
     }
 
     // These properties define the current roll expression.  They are mutable
