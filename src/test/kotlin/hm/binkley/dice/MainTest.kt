@@ -166,6 +166,23 @@ roll: Incomplete dice expression '3d'
         }
 
         @Test
+        fun `should fail gnuishly for REPL`() {
+            val (exitCode, out, err) = caputureRunWithInput(
+                "3d6",
+                "3d",
+            ) { mainWithFixedSeed("--test-repl", "3d6", "3d") }
+
+            exitCode shouldBe 1
+            // TODO: Why doesn't this have a COLORFUL_DIE_PROMPT?
+            out shouldBeAfterTrimming """
+3d6 10
+"""
+            err shouldBeAfterTrimming """
+roll: Incomplete dice expression '3d'
+"""
+        }
+
+        @Test
         fun `should fail in color`() {
             val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--color=always", "3d6", "3d")
@@ -239,7 +256,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
     }
 
     @Nested
-    inner class InPipeline {
+    inner class Pipeline {
         @Test
         fun `should roll dice from pipeline`() {
             val (exitCode, out, err) = caputureRunWithInput(
@@ -274,6 +291,40 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 
             exitCode shouldBe 0
             out.shouldBeEmpty()
+            err.shouldBeEmpty()
+        }
+    }
+
+    @Nested
+    inner class REPL {
+        @Test
+        fun `should roll dice from repl`() {
+            val (exitCode, out, err) = caputureRunWithInput(
+                "3d6"
+            ) { mainWithFixedSeed("--test-repl") }
+
+            exitCode shouldBe 0
+            out shouldBeAfterTrimming """
+${COLORFUL_DIE_PROMPT}3d6 10
+$COLORFUL_DIE_PROMPT
+"""
+            err.shouldBeEmpty()
+        }
+
+        @Test
+        fun `should do nothing if repl is just a blank line`() {
+            val (exitCode, out, err) = caputureRunWithInput(
+                ""
+            ) {
+                mainWithFixedSeed("--test-repl")
+            }
+
+            exitCode shouldBe 0
+            // NB -- since there was no output, there's no newline.
+            // It's a quirk of jline3 in this case
+            out shouldBeAfterTrimming """
+$COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
+"""
             err.shouldBeEmpty()
         }
     }

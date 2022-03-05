@@ -138,6 +138,13 @@ class Options : Runnable {
     var seed: Int? = null
 
     @Option(
+        description = ["Test terminal for the REPL (INTERNAL)."],
+        names = ["--test-repl"],
+        hidden = true,
+    )
+    var testRepl = false
+
+    @Option(
         description = ["Explain each die roll as it happens."],
         names = ["-v", "--verbose"],
     )
@@ -163,8 +170,14 @@ class Options : Runnable {
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
                 CommandLineRoller(random, reporter, arguments)
+            // Check --test-repl before checking for pipeline: there is no
+            // console in tests
+            testRepl -> ReplRoller(random,
+                reporter,
+                prompt,
+                ::testReplReader);
             null == System.console() -> StdinRoller(random, reporter)
-            else -> ReplRoller(random, reporter, prompt)
+            else -> ReplRoller(random, reporter, prompt, ::replReader)
         }
 
         roller.rollAndReport()

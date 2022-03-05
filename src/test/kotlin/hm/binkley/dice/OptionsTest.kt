@@ -25,16 +25,6 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set debug`() {
-        shouldChangeFromDefault(
-            Options::debug,
-            false,
-            true,
-            "--debug",
-        )
-    }
-
-    @Test
     fun `should set color with long flag`() {
         shouldChangeFromDefault(
             Options::color,
@@ -51,6 +41,16 @@ internal class OptionsTest {
             Color.auto,
             Color.always,
             "-C", "always"
+        )
+    }
+
+    @Test
+    fun `should set debug`() {
+        shouldChangeFromDefault(
+            Options::debug,
+            false,
+            true,
+            "--debug",
         )
     }
 
@@ -125,12 +125,12 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set seed with short flag`() {
+    fun `should set test repl`() {
         shouldChangeFromDefault(
-            Options::seed,
-            null,
-            1,
-            "-s", "1"
+            Options::testRepl,
+            false,
+            true,
+            "--test-repl"
         )
     }
 

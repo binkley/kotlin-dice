@@ -264,12 +264,12 @@
                                 <limit>
                                     <counter>LINE</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>99%</minimum>
+                                    <minimum>98%</minimum>
                                 </limit>
                                 <limit>
                                     <counter>BRANCH</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>96%</minimum>
+                                    <minimum>95%</minimum>
                                 </limit>
                             </limits>
                         </rule>
