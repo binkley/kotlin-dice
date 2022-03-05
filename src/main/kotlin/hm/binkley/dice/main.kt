@@ -4,7 +4,6 @@ import hm.binkley.dice.Options.Color.auto
 import org.jline.reader.UserInterruptException
 import picocli.CommandLine
 import picocli.CommandLine.Command
-import picocli.CommandLine.Help.Ansi.AUTO
 import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.Option
@@ -50,7 +49,7 @@ val exceptionHandling = IExecutionExceptionHandler { ex, commandLine, _ ->
             if (commandLine.getCommand<Options>().debug)
                 commandLine.err.println(colorScheme.richStackTraceString(ex))
             else {
-                val interactive = AUTO.enabled()
+                val interactive = null != System.console()
                 // GNU standards prefix errors with program name to aid in
                 // debugging failed scripts, etc.
                 val prefix = if (interactive) "" else "$PROGRAM_NAME: "
@@ -183,7 +182,6 @@ internal class Options : Runnable {
         paramLabel = "MINIMUM",
     )
     var minimum = Int.MIN_VALUE
-
 
     @Option(
         description = ["Change the interactive prompt from '$COLORFUL_DIE_PROMPT'."],

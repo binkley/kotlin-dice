@@ -5,9 +5,13 @@ import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.UserInterruptException
+import org.jline.terminal.Attributes.InputFlag.IGNCR
+import org.jline.terminal.Attributes.LocalFlag.ECHO
+import org.jline.terminal.Attributes.OutputFlag.OPOST
 import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
 import java.lang.System.err
+import java.util.EnumSet
 import kotlin.random.Random
 
 @Generated // Lie to JaCoCo
@@ -15,6 +19,7 @@ class ReplRoller(
     random: Random,
     reporter: MainReporter,
     private val prompt: String,
+    private val repl: () -> Pair<Terminal, LineReader> = ::repl,
 ) : MainRoller(random, reporter) {
     override fun rollAndReport() {
         val (terminal, replReader) = repl()
@@ -40,6 +45,7 @@ private fun repl(): Pair<Terminal, LineReader> {
     val terminal = TerminalBuilder.builder()
         .name(PROGRAM_NAME)
         .build()
+
     val replReader = LineReaderBuilder.builder()
         .terminal(terminal)
         .build()

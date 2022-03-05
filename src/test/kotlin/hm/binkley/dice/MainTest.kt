@@ -150,6 +150,23 @@ roll: Incomplete dice expression '3d'
         }
 
         @Test
+        fun `should fail gnuishly for pipeline`() {
+            withTextFromSystemIn("3d6", "3d").execute {
+                val (exitCode, out, err) = runWithCapture {
+                    mainWithFixedSeed("3d6", "3d")
+                }
+
+                exitCode shouldBe 1
+                out shouldBeAfterTrimming """
+3d6 10
+"""
+                err shouldBeAfterTrimming """
+roll: Incomplete dice expression '3d'
+"""
+            }
+        }
+
+        @Test
         fun `should fail in color`() {
             val (exitCode, out, err) = runWithCapture {
                 mainWithFixedSeed("--color=always", "3d6", "3d")
@@ -161,7 +178,7 @@ roll: Incomplete dice expression '3d'
 """.colored
             // NB -- order of fg_red,bold and bold,fg_red matters
             err shouldBeAfterTrimming """
-@|fg_red,bold Incomplete dice expression '3d'|@
+@|fg_red,bold roll: Incomplete dice expression '3d'|@
 """.colored
         }
 
@@ -226,9 +243,9 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
     }
 
     @Nested
-    inner class StandardInput {
+    inner class InPipeline {
         @Test
-        fun `should roll dice from STDIN`() {
+        fun `should roll dice from pipeline`() {
             withTextFromSystemIn("3d6").execute {
                 val (exitCode, out, err) = runWithCapture {
                     mainWithFixedSeed()
@@ -243,7 +260,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
         }
 
         @Test
-        fun `should do nothing if STDIN is empty`() {
+        fun `should do nothing if pipeline is empty`() {
             withTextFromSystemIn().execute {
                 val err = tapSystemErrNormalized {
                     val out = tapSystemOutNormalized {
@@ -259,7 +276,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
         }
 
         @Test
-        fun `should do nothing if STDIN is just a blank line`() {
+        fun `should do nothing if pipeline is just a blank line`() {
             withTextFromSystemIn("").execute {
                 val (exitCode, out, err) = runWithCapture {
                     mainWithFixedSeed()
