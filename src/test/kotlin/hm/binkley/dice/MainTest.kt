@@ -23,7 +23,7 @@ internal class MainTest {
     inner class BasicOptions {
         @Test
         fun `should show basic help`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--help")
             }
 
@@ -34,7 +34,7 @@ internal class MainTest {
 
         @Test
         fun `should show software version`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--version")
             }
 
@@ -45,7 +45,7 @@ internal class MainTest {
 
         @Test
         fun `should show copyright`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--copyright")
             }
 
@@ -59,7 +59,7 @@ internal class MainTest {
     inner class DefaultMain {
         @Test
         fun `should roll dice with a default RNG`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 main(arrayOf("3d6")) // Avoid the testing seed
             }
 
@@ -73,7 +73,7 @@ internal class MainTest {
     inner class CommandLine {
         @Test
         fun `should roll dice from command line`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("3d6")
             }
 
@@ -86,7 +86,7 @@ internal class MainTest {
 
         @Test
         fun `should roll dice from command line in color`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 // Force color with option parameter
                 mainWithFixedSeed("--color=always", "3d6")
             }
@@ -100,7 +100,7 @@ internal class MainTest {
 
         @Test
         fun `should roll dice from command line verbosely and in color`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 // Force color with fallback 'always' parameter value
                 mainWithFixedSeed("-C", "--verbose", "3d6")
             }
@@ -121,7 +121,7 @@ internal class MainTest {
     inner class Errors {
         @Test
         fun `should fail gnuishly with 1-liner for bad expression`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("3d6", "3dd")
             }
 
@@ -136,7 +136,7 @@ roll: Unexpected 'd' (at position 3) in dice expression '3dd'
 
         @Test
         fun `should fail gnuishly with 1-liner for incomplete expression`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("3d6", "3d")
             }
 
@@ -151,24 +151,23 @@ roll: Incomplete dice expression '3d'
 
         @Test
         fun `should fail gnuishly for pipeline`() {
-            withTextFromSystemIn("3d6", "3d").execute {
-                val (exitCode, out, err) = runWithCapture {
-                    mainWithFixedSeed("3d6", "3d")
-                }
+            val (exitCode, out, err) = caputureRunWithInput(
+                "3d6",
+                "3d",
+            ) { mainWithFixedSeed("3d6", "3d") }
 
-                exitCode shouldBe 1
-                out shouldBeAfterTrimming """
+            exitCode shouldBe 1
+            out shouldBeAfterTrimming """
 3d6 10
 """
-                err shouldBeAfterTrimming """
+            err shouldBeAfterTrimming """
 roll: Incomplete dice expression '3d'
 """
-            }
         }
 
         @Test
         fun `should fail in color`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--color=always", "3d6", "3d")
             }
 
@@ -184,7 +183,7 @@ roll: Incomplete dice expression '3d'
 
         @Test
         fun `should fail debuggingly with stack trace`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--debug", "3d6", "3d")
             }
 
@@ -226,9 +225,6 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should let framework handle unknown exceptions`() {
-            @Command
-            class Immaterial
-
             val ex = NullPointerException("Did I forget something?")
             val thrown = shouldThrow<NullPointerException> {
                 exceptionHandling.handleExecutionException(
@@ -246,46 +242,39 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
     inner class InPipeline {
         @Test
         fun `should roll dice from pipeline`() {
-            withTextFromSystemIn("3d6").execute {
-                val (exitCode, out, err) = runWithCapture {
-                    mainWithFixedSeed()
-                }
+            val (exitCode, out, err) = caputureRunWithInput(
+                "3d6"
+            ) { mainWithFixedSeed() }
 
-                exitCode shouldBe 0
-                out shouldBeAfterTrimming """
+            exitCode shouldBe 0
+            out shouldBeAfterTrimming """
 3d6 10
 """
-                err.shouldBeEmpty()
-            }
+            err.shouldBeEmpty()
         }
 
         @Test
         fun `should do nothing if pipeline is empty`() {
-            withTextFromSystemIn().execute {
-                val err = tapSystemErrNormalized {
-                    val out = tapSystemOutNormalized {
-                        val exitCode = catchSystemExit {
-                            mainWithFixedSeed()
-                        }
-                        exitCode shouldBe 0
-                    }
-                    out.shouldBeEmpty()
-                }
-                err.shouldBeEmpty()
+            val (exitCode, out, err) = caputureRunWithInput {
+                mainWithFixedSeed()
             }
+
+            exitCode shouldBe 0
+            out.shouldBeEmpty()
+            err.shouldBeEmpty()
         }
 
         @Test
         fun `should do nothing if pipeline is just a blank line`() {
-            withTextFromSystemIn("").execute {
-                val (exitCode, out, err) = runWithCapture {
-                    mainWithFixedSeed()
-                }
-
-                exitCode shouldBe 0
-                out.shouldBeEmpty()
-                err.shouldBeEmpty()
+            val (exitCode, out, err) = caputureRunWithInput(
+                ""
+            ) {
+                mainWithFixedSeed()
             }
+
+            exitCode shouldBe 0
+            out.shouldBeEmpty()
+            err.shouldBeEmpty()
         }
     }
 
@@ -293,7 +282,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
     inner class Demo {
         @Test
         fun `should run demo`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--demo")
             }
 
@@ -304,7 +293,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should run demo verbosely`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--demo", "--verbose")
             }
 
@@ -315,7 +304,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should run demo in color`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 // Force color with option parameter
                 mainWithFixedSeed("--demo", "--color=always")
             }
@@ -327,7 +316,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should run demo verbosely and in color`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 // Force color with fallback 'always' parameter value
                 mainWithFixedSeed("-C", "--demo", "--verbose")
             }
@@ -342,7 +331,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
     inner class Outputs {
         @Test
         fun `should normalize result output`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed(
                     "3d6+1",
                     " 3d6+1",
@@ -369,7 +358,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should not normalize result output when verbose`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--verbose", " 1d1 + 1 ")
             }
 
@@ -387,7 +376,7 @@ roll(d1) -> 1
     inner class MinimalRolls {
         @Test
         fun `should roll below 0`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("1z1-1")
             }
 
@@ -400,7 +389,7 @@ roll(d1) -> 1
 
         @Test
         fun `should fail below 0`() {
-            val (exitCode, out, err) = runWithCapture {
+            val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--minimum=0", "1z1-1")
             }
 
@@ -433,7 +422,7 @@ private infix fun String.shouldBeAfterTrimming(expected: String) =
  * _before_ trapping `System.exit`.; otherwise the exit bubbles out, and the
  * stream assertions do not run
  */
-private fun runWithCapture(main: () -> Unit): ShellOutcome {
+private fun captureRun(main: () -> Unit): ShellOutcome {
     var exitCode = -1
     var stdout = "BUG in test method"
     val stderr: String = tapSystemErrNormalized {
@@ -443,6 +432,15 @@ private fun runWithCapture(main: () -> Unit): ShellOutcome {
     }
 
     return ShellOutcome(exitCode, stdout, stderr)
+}
+
+private fun caputureRunWithInput(vararg lines: String, main: () -> Unit):
+        ShellOutcome {
+    var outcome = ShellOutcome(-1, "BUG", "BUG")
+    withTextFromSystemIn(*lines).execute {
+        outcome = captureRun(main)
+    }
+    return outcome
 }
 
 private data class ShellOutcome(
