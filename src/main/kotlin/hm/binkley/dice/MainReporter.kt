@@ -13,7 +13,7 @@ sealed class MainReporter(
         if (hasErrors())
             throw BadExpressionException(parseErrors)
         if (minimum > resultValue)
-            throw RollTooLowException(minimum, resultValue)
+            throw ResultTooLowException(minimum, resultValue)
 
         val input = collectContent(inputBuffer)
         val expression = if (verbose) input else normalize(input)

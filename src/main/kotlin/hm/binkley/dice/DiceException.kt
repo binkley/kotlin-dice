@@ -29,9 +29,9 @@ private fun oneLinerFor(error: InvalidInputError): String {
     }
 }
 
-class RollTooLowException(
+class ResultTooLowException(
     minimum: Int,
-    roll: Int,
+    result: Int,
 ) : DiceException(
-    "Roll result $roll is below the minimum result of $minimum"
+    "Result $result is below the minimum result of $minimum"
 )

@@ -447,7 +447,7 @@ roll(d1) -> 1
             exitCode shouldBe 1
             out.shouldBeEmpty()
             err shouldBeAfterTrimming """
-roll: Roll result -1 is below the minimum result of 0
+roll: Result -1 is below the minimum result of 0
 """
             err.shouldNotBeEmpty()
         }
