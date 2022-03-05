@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 internal class DiceParserTest {
     @Test
     fun `should parse and roll`() {
-        for ((expression, expected) in demoExpressions)
-            withClue(expression) {
+        for ((expression, expected, description) in demoExpressions)
+            withClue("$expression ($description)") {
                 val result = roll(
                     expression = expression,
                     random = stableSeedForEachTest(),
