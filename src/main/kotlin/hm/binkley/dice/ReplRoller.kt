@@ -27,20 +27,20 @@ class ReplRoller(
     newReplReader: () -> Pair<Terminal, LineReader>,
 ) : MainRoller(random, reporter) {
     private val terminal: Terminal
-    private val replReader: LineReader
+    private val lineReader: LineReader
 
     init {
-        val (terminal, replReader) = newReplReader()
+        val (terminal, lineReader) = newReplReader()
         this.terminal = terminal
-        this.replReader = replReader
+        this.lineReader = lineReader
     }
 
     override fun rollAndReport() {
         terminal.use { // Terminals need closing to reset the external terminal
             try {
                 while (true) try {
-                    // TODO: Untested and @Generated does compile for lambdas
-                    rollFromLines { replReader.readLine(prompt) }
+                    // TODO: Untested, and @Generated does compile for lambdas
+                    rollFromLines { lineReader.readLine(prompt) }
                 } catch (e: DiceException) {
                     err.println(colorScheme.errorText(e.message))
                 }
@@ -65,6 +65,12 @@ fun replReader(): Pair<Terminal, LineReader> {
     return terminal to replReader
 }
 
+/**
+ * The terminal builder wraps the streams in a way than hangs testing, even
+ * for a dumb terminal, and forcing use of a dumb terminal is challenging
+ * in the face of complex heuristic logic.
+ * See `ExternalTerminalTest` in the jline3 source for setting up attributes.
+ */
 fun testReplReader(): Pair<DumbTerminal, LineReader> {
     val terminal = DumbTerminal(
         PROGRAM_NAME,

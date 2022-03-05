@@ -150,7 +150,7 @@ roll: Incomplete dice expression '3d'
         }
 
         @Test
-        fun `should fail gnuishly for pipeline`() {
+        fun `should fail gnuishly for Stdin`() {
             val (exitCode, out, err) = caputureRunWithInput(
                 "3d6",
                 "3d",
@@ -166,19 +166,21 @@ roll: Incomplete dice expression '3d'
         }
 
         @Test
-        fun `should fail gnuishly for REPL`() {
+        fun `should fail for REPL`() {
             val (exitCode, out, err) = caputureRunWithInput(
                 "3d6",
                 "3d",
-            ) { mainWithFixedSeed("--test-repl", "3d6", "3d") }
+            ) { mainWithFixedSeed("--test-repl") }
 
-            exitCode shouldBe 1
-            // TODO: Why doesn't this have a COLORFUL_DIE_PROMPT?
+            exitCode shouldBe 0
+            // NB -- since there was no output, there's no newline.
+            // It's a quirk of jline3 in this case
             out shouldBeAfterTrimming """
-3d6 10
+${COLORFUL_DIE_PROMPT}3d6 10
+$COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
 """
             err shouldBeAfterTrimming """
-roll: Incomplete dice expression '3d'
+Incomplete dice expression '3d'
 """
         }
 
@@ -256,9 +258,9 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
     }
 
     @Nested
-    inner class Pipeline {
+    inner class Stdin {
         @Test
-        fun `should roll dice from pipeline`() {
+        fun `should roll dice from STDIN`() {
             val (exitCode, out, err) = caputureRunWithInput(
                 "3d6"
             ) { mainWithFixedSeed() }
@@ -271,7 +273,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
         }
 
         @Test
-        fun `should do nothing if pipeline is empty`() {
+        fun `should do nothing if STDIN is empty`() {
             val (exitCode, out, err) = caputureRunWithInput {
                 mainWithFixedSeed()
             }
@@ -282,7 +284,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
         }
 
         @Test
-        fun `should do nothing if pipeline is just a blank line`() {
+        fun `should do nothing if Stdin is just a blank line`() {
             val (exitCode, out, err) = caputureRunWithInput(
                 ""
             ) {
@@ -296,9 +298,9 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
     }
 
     @Nested
-    inner class REPL {
+    inner class Repl {
         @Test
-        fun `should roll dice from repl`() {
+        fun `should roll dice from REPL`() {
             val (exitCode, out, err) = caputureRunWithInput(
                 "3d6"
             ) { mainWithFixedSeed("--test-repl") }
@@ -312,7 +314,7 @@ $COLORFUL_DIE_PROMPT
         }
 
         @Test
-        fun `should do nothing if repl is just a blank line`() {
+        fun `should do nothing if REPL is just a blank line`() {
             val (exitCode, out, err) = caputureRunWithInput(
                 ""
             ) {
