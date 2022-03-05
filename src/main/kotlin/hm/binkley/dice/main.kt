@@ -22,11 +22,12 @@ fun main(args: Array<String>) {
         if (options.copyright) {
             options.javaClass
                 .classLoader
-                .getResourceAsStream("META-INF/LICENSE")
+                .getResourceAsStream("META-INF/LICENSE")!!
                 .copyTo(System.out)
             return@special 0
         }
 
+        // Run here rather than in Options so that --help respects the flag
         options.color.install()
 
         RunLast().execute(parseResult)
