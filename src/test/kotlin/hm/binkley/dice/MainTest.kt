@@ -4,6 +4,7 @@ import com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrNormalized
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
 import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
+import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
@@ -150,8 +151,8 @@ roll: Incomplete dice expression '3d'
         }
 
         @Test
-        fun `should fail gnuishly for Stdin`() {
-            val (exitCode, out, err) = caputureRunWithInput(
+        fun `should fail gnuishly for STDIN`() {
+            val (exitCode, out, err) = captureRunWithInput(
                 "3d6",
                 "3d",
             ) { mainWithFixedSeed("3d6", "3d") }
@@ -167,14 +168,13 @@ roll: Incomplete dice expression '3d'
 
         @Test
         fun `should fail for REPL`() {
-            val (exitCode, out, err) = caputureRunWithInput(
+            val (exitCode, out, err) = captureRunWithInput(
                 "3d6",
                 "3d",
             ) { mainWithFixedSeed("--test-repl") }
 
             exitCode shouldBe 0
-            // NB -- since there was no output, there's no newline.
-            // It's a quirk of jline3 in this case
+            // NB -- user typing <ENTER> supplies the newline
             out shouldBeAfterTrimming """
 ${COLORFUL_DIE_PROMPT}3d6 10
 $COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
@@ -261,7 +261,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
     inner class Stdin {
         @Test
         fun `should roll dice from STDIN`() {
-            val (exitCode, out, err) = caputureRunWithInput(
+            val (exitCode, out, err) = captureRunWithInput(
                 "3d6"
             ) { mainWithFixedSeed() }
 
@@ -274,7 +274,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should do nothing if STDIN is empty`() {
-            val (exitCode, out, err) = caputureRunWithInput {
+            val (exitCode, out, err) = captureRunWithInput {
                 mainWithFixedSeed()
             }
 
@@ -284,8 +284,8 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
         }
 
         @Test
-        fun `should do nothing if Stdin is just a blank line`() {
-            val (exitCode, out, err) = caputureRunWithInput(
+        fun `should do nothing if STDIN is just a blank line`() {
+            val (exitCode, out, err) = captureRunWithInput(
                 ""
             ) {
                 mainWithFixedSeed()
@@ -301,7 +301,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
     inner class Repl {
         @Test
         fun `should roll dice from REPL`() {
-            val (exitCode, out, err) = caputureRunWithInput(
+            val (exitCode, out, err) = captureRunWithInput(
                 "3d6"
             ) { mainWithFixedSeed("--test-repl") }
 
@@ -315,18 +315,31 @@ $COLORFUL_DIE_PROMPT
 
         @Test
         fun `should do nothing if REPL is just a blank line`() {
-            val (exitCode, out, err) = caputureRunWithInput(
+            val (exitCode, out, err) = captureRunWithInput(
                 ""
             ) {
                 mainWithFixedSeed("--test-repl")
             }
 
             exitCode shouldBe 0
-            // NB -- since there was no output, there's no newline.
-            // It's a quirk of jline3 in this case
+            // NB -- user typing <ENTER> supplies the newline
             out shouldBeAfterTrimming """
 $COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
 """
+            err.shouldBeEmpty()
+        }
+
+        @Test
+        fun `should roll dice from REPL in color`() {
+            val (exitCode, out, err) = captureRunWithInput(
+                "3d6"
+            ) { mainWithFixedSeed("--test-repl", "--color=always") }
+
+            exitCode shouldBe 0
+            out shouldBeAfterTrimming """
+${COLORFUL_DIE_PROMPT}3d6 @|fg_green,bold 10|@
+$COLORFUL_DIE_PROMPT
+""".colored
             err.shouldBeEmpty()
         }
     }
@@ -484,10 +497,13 @@ private fun captureRun(main: () -> Unit): ShellOutcome {
         }
     }
 
+    if (2 == exitCode)
+        fail("BUG: Test using bad flags for main()")
+
     return ShellOutcome(exitCode, stdout, stderr)
 }
 
-private fun caputureRunWithInput(vararg lines: String, main: () -> Unit):
+private fun captureRunWithInput(vararg lines: String, main: () -> Unit):
         ShellOutcome {
     var outcome = ShellOutcome(-1, "BUG", "BUG")
     withTextFromSystemIn(*lines).execute {
