@@ -68,7 +68,9 @@ fun replReader(): Pair<Terminal, LineReader> {
 /**
  * The terminal build hands the file descriptors for STDIN and STDOUT to the
  * constructor of dumb terminals, so cannot change them out for testing.
- * See `ExternalTerminalTest` in the jline3 source for setting up attributes.
+ * See
+ * [`ExternalTerminalTest`](https://github.com/jline/jline3/blob/master/reader/src/test/java/org/jline/terminal/impl/ExternalTerminalTest.java)
+ * in the jline3 source for setting up attributes.
  */
 fun testReplReader(): Pair<DumbTerminal, LineReader> {
     val terminal = DumbTerminal(
