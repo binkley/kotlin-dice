@@ -8,8 +8,8 @@ import kotlin.random.Random
 val colorScheme = defaultColorScheme(AUTO)
 
 sealed class MainRoller(
-    protected val random: Random,
-    protected val reporter: MainReporter,
+    private val random: Random,
+    private val reporter: MainReporter,
 ) {
     abstract fun rollAndReport()
 

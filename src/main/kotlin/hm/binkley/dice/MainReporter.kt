@@ -22,8 +22,8 @@ sealed class MainReporter(
 
     companion object {
         fun new(minimum: Int, verbose: Boolean) =
-            if (verbose) VerboseReporter(minimum, verbose)
-            else PlainReporter(minimum, verbose)
+            if (verbose) VerboseReporter(minimum)
+            else PlainReporter(minimum)
     }
 
     abstract fun preRoll()
@@ -31,8 +31,8 @@ sealed class MainReporter(
     protected abstract fun toDisplay(expression: String, roll: Int): String
 }
 
-class PlainReporter(minimum: Int, verbose: Boolean) :
-    MainReporter(minimum, verbose) {
+class PlainReporter(minimum: Int) :
+    MainReporter(minimum, false) {
     override fun onRoll(dice: RolledDice) = Unit
     override fun preRoll() = Unit
 
@@ -40,8 +40,8 @@ class PlainReporter(minimum: Int, verbose: Boolean) :
         "$expression @|fg_green,bold $roll|@"
 }
 
-class VerboseReporter(minimum: Int, verbose: Boolean) :
-    MainReporter(minimum, verbose) {
+class VerboseReporter(minimum: Int) :
+    MainReporter(minimum, true) {
     override fun onRoll(dice: RolledDice) = traceRolls(dice)
     override fun preRoll() = println("---")
 

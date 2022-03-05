@@ -1,9 +1,11 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.Options.Color.auto
+import hm.binkley.dice.ColorOption.auto
+import org.jline.terminal.Terminal
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
+import java.util.concurrent.Callable
 import kotlin.random.Random
 
 @Command(
@@ -52,38 +54,7 @@ import kotlin.random.Random
   @|bold 130|@ - REPL interrupted (SIGINT)"""
     ],
 )
-class Options : Runnable {
-    /**
-     * Arguments to the `--color` flag based on GNU standards.
-     * The enum name is identical to the argument and case-sensitive.
-     * Example: `--color=always`.
-     */
-    @Suppress("EnumEntryName", "unused")
-    enum class Color(private val ansi: Boolean?) {
-        // Force color
-        always(true),
-        yes(true),
-        force(true),
-
-        // Guess for color
-        auto(null),
-        tty(null),
-        `if-tty`(null),
-
-        // Disable color
-        never(false),
-        no(false),
-        none(false),
-        ;
-
-        fun install() {
-            when (ansi) {
-                null -> System.clearProperty("picocli.ansi")
-                else -> System.setProperty("picocli.ansi", "$ansi")
-            }
-        }
-    }
-
+class Options : Callable<Int> {
     @Option(
         description = [
             "Choose color output (\${COMPLETION-CANDIDATES})",
@@ -159,27 +130,36 @@ class Options : Runnable {
     )
     var arguments: List<String> = emptyList()
 
-    override fun run() {
+    override fun call(): Int {
+        // Handle copyright first so we can return 0 quickly
+        if (copyright) {
+            javaClass.classLoader
+                .getResourceAsStream("META-INF/LICENSE")!!
+                .copyTo(System.out)
+            return 0
+        }
+
         if (debug) verbose = true
 
         // TODO: Why does Kotlin require non-null assertion?
         val random = if (null == seed) Random else Random(seed!!)
         val reporter = MainReporter.new(minimum, verbose)
 
+        fun replRoller(newTerminal: () -> Terminal) =
+            ReplRoller(random, reporter, prompt, newTerminal)
+
         val roller = when {
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
                 CommandLineRoller(random, reporter, arguments)
-            // Check --test-repl before checking for pipeline: there is no
-            // console in tests
-            testRepl -> ReplRoller(random,
-                reporter,
-                prompt,
-                ::testReplReader);
+            // Check --test-repl before checking for a console
+            testRepl -> replRoller(::testTerminal)
             null == System.console() -> StdinRoller(random, reporter)
-            else -> ReplRoller(random, reporter, prompt, ::replReader)
+            else -> replRoller(::terminal)
         }
 
         roller.rollAndReport()
+
+        return 0
     }
 }

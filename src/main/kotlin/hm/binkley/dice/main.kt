@@ -12,55 +12,36 @@ const val COLORFUL_DIE_PROMPT = "\uD83C\uDFB2 "
 
 fun main(args: Array<String>) {
     val options = Options()
-    val processSpecialOptions = IExecutionStrategy special@{ parseResult ->
-        // TODO: How to get Picocli to do these for me?
-        if (options.copyright) {
-            options.javaClass
-                .classLoader
-                .getResourceAsStream("META-INF/LICENSE")!!
-                .copyTo(System.out)
-            return@special 0
-        }
-
-        // Run here rather than in Options so that --help respects the flag
-        options.color.install()
-
-        RunLast().execute(parseResult)
-    }
 
     exitProcess(
         CommandLine(options)
-            .setExecutionExceptionHandler(exceptionHandling)
-            .setExecutionStrategy(processSpecialOptions)
+            .setExecutionExceptionHandler(exceptionsFor(options))
+            .setExecutionStrategy(executionFor(options))
             // Use last value for repeated options (ie, `--color`)
             .setOverwrittenOptionsAllowed(true)
             .execute(*args)
     )
 }
 
-val exceptionHandling = IExecutionExceptionHandler { ex, commandLine, _ ->
-    when (ex) {
-        // User-friendly error message
-        is DiceException -> {
-            if (commandLine.getCommand<Options>().debug)
-                commandLine.err.println(colorScheme.richStackTraceString(ex))
-            else {
-                val interactive = null != System.console()
-                // GNU standards prefix errors with program name to aid in
-                // debugging failed scripts, etc.
-                val prefix = if (interactive) "" else "$PROGRAM_NAME: "
-                commandLine.err.println(
-                    colorScheme.errorText(prefix + ex.message)
+fun exceptionsFor(options: Options) =
+    IExecutionExceptionHandler { ex, commandLine, _ ->
+        when (ex) {
+            // User-friendly error message
+            is DiceException -> {
+                if (options.debug) commandLine.err.println(
+                    colorScheme.richStackTraceString(ex)
                 )
+                else commandLine.err.println(
+                    colorScheme.errorText(maybeGnuPrefix() + ex.message)
+                )
+                commandLine.commandSpec.exitCodeOnExecutionException() // 1
             }
-            commandLine.commandSpec.exitCodeOnExecutionException() // 1
+            // Special case for the REPL - shells return 130 on SIGINT
+            is UserInterruptException -> 130
+            // Unknown exceptions fall back to Picolo default handling
+            else -> throw ex
         }
-        // Special case for the REPL - shells return 130 on SIGINT
-        is UserInterruptException -> 130
-        // Unknown exceptions fall back to Picolo default handling
-        else -> throw ex
     }
-}
 
 /**
  * Used by both demo and testing.
@@ -110,3 +91,18 @@ val demoExpressions = arrayOf(
     "100d3r1h99!+100d3r1l99!3-17" to 919,
     "blah" to null,
 )
+
+private fun maybeGnuPrefix(): String {
+    val interactive = null != System.console()
+    // GNU standards prefix errors with program name to aid in
+    // debugging failed scripts, etc.
+    return if (interactive) "" else "$PROGRAM_NAME: "
+}
+
+private fun executionFor(options: Options) =
+    IExecutionStrategy special@{ parseResult ->
+        // Run here rather than in Options so that --help respects the option
+        options.color.install()
+
+        RunLast().execute(parseResult)
+    }

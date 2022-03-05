@@ -1,52 +1,34 @@
 package hm.binkley.dice
 
-import com.github.stefanbirkner.systemlambda.SystemLambda.restoreSystemProperties
-import hm.binkley.dice.Options.Color
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import picocli.CommandLine
 import kotlin.reflect.KProperty1
 
 internal class OptionsTest {
-    /** @todo How to test and *not* expose innards of the Color enum? */
     @Test
-    fun `should alias arguments to color flag`() {
-        shouldUpdateColorSysProp(Color.always, "true")
-        shouldUpdateColorSysProp(Color.yes, "true")
-        shouldUpdateColorSysProp(Color.force, "true")
-
-        shouldUpdateColorSysProp(Color.auto, null)
-        shouldUpdateColorSysProp(Color.tty, null)
-        shouldUpdateColorSysProp(Color.`if-tty`, null)
-
-        shouldUpdateColorSysProp(Color.never, "false")
-        shouldUpdateColorSysProp(Color.no, "false")
-        shouldUpdateColorSysProp(Color.none, "false")
-    }
-
-    @Test
-    fun `should set color with long flag`() {
-        shouldChangeFromDefault(
+    fun `should set color with long option`() {
+        shouldDefaultThenUpdate(
             Options::color,
-            Color.auto,
-            Color.always,
+            ColorOption.auto,
+            ColorOption.always,
             "--color", "always"
         )
     }
 
     @Test
-    fun `should set color with short flag`() {
-        shouldChangeFromDefault(
+    fun `should set color with short option`() {
+        shouldDefaultThenUpdate(
             Options::color,
-            Color.auto,
-            Color.always,
+            ColorOption.auto,
+            ColorOption.always,
             "-C", "always"
         )
     }
 
     @Test
     fun `should set debug`() {
-        shouldChangeFromDefault(
+        shouldDefaultThenUpdate(
             Options::debug,
             false,
             true,
@@ -56,7 +38,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set copyright`() {
-        shouldChangeFromDefault(
+        shouldDefaultThenUpdate(
             Options::copyright,
             false,
             true,
@@ -66,7 +48,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set demo`() {
-        shouldChangeFromDefault(
+        shouldDefaultThenUpdate(
             Options::demo,
             false,
             true,
@@ -75,8 +57,8 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set minimum with long flag`() {
-        shouldChangeFromDefault(
+    fun `should set minimum with long option`() {
+        shouldDefaultThenUpdate(
             Options::minimum,
             Int.MIN_VALUE,
             1,
@@ -85,8 +67,8 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set minimum with short flag`() {
-        shouldChangeFromDefault(
+    fun `should set minimum with short option`() {
+        shouldDefaultThenUpdate(
             Options::minimum,
             Int.MIN_VALUE,
             1,
@@ -95,8 +77,8 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set prompt with long flag`() {
-        shouldChangeFromDefault(
+    fun `should set prompt with long option`() {
+        shouldDefaultThenUpdate(
             Options::prompt,
             COLORFUL_DIE_PROMPT,
             "> ",
@@ -105,8 +87,8 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set prompt with short flag`() {
-        shouldChangeFromDefault(
+    fun `should set prompt with short option`() {
+        shouldDefaultThenUpdate(
             Options::prompt,
             COLORFUL_DIE_PROMPT,
             "> ",
@@ -115,8 +97,8 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set seed with long flag`() {
-        shouldChangeFromDefault(
+    fun `should set seed with long option`() {
+        shouldDefaultThenUpdate(
             Options::seed,
             null,
             1,
@@ -126,7 +108,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set test repl`() {
-        shouldChangeFromDefault(
+        shouldDefaultThenUpdate(
             Options::testRepl,
             false,
             true,
@@ -135,8 +117,8 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set verbose with long flag`() {
-        shouldChangeFromDefault(
+    fun `should set verbose with long option`() {
+        shouldDefaultThenUpdate(
             Options::verbose,
             false,
             true,
@@ -145,8 +127,8 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set verbose with short flag`() {
-        shouldChangeFromDefault(
+    fun `should set verbose with short option`() {
+        shouldDefaultThenUpdate(
             Options::verbose,
             false,
             true,
@@ -155,20 +137,10 @@ internal class OptionsTest {
     }
 }
 
-private fun shouldUpdateColorSysProp(
-    color: Color,
-    sysPropValue: String?,
-) {
-    restoreSystemProperties {
-        color.install()
-        System.getProperty("picocli.ansi") shouldBe sysPropValue
-    }
-}
-
-private fun <T> shouldChangeFromDefault(
+private fun <T> shouldDefaultThenUpdate(
     prop: KProperty1<Options, T>,
     default: T,
-    changed: T,
+    updated: T,
     vararg flags: String,
 ) {
     val options = Options()
@@ -177,5 +149,5 @@ private fun <T> shouldChangeFromDefault(
 
     CommandLine(options).parseArgs(*flags)
 
-    prop.get(options) shouldBe changed
+    prop.get(options) shouldBe updated
 }

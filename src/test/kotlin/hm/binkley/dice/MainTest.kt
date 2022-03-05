@@ -15,7 +15,6 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.jline.reader.UserInterruptException
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.ParseResult
 
@@ -224,16 +223,14 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
             )
         }
 
-        @Command
-        inner class Immaterial
-
-        private val commandLine = picocli.CommandLine(Immaterial())
-        private val parseResult =
-            ParseResult.builder(CommandSpec.create()).build()
+        private val options = Options()
+        private val commandLine = picocli.CommandLine(options)
+        private val parseResult = ParseResult.builder(CommandSpec.create())
+            .build()
 
         @Test
         fun `should exit on interrupt the same as shells`() {
-            val exitCode = exceptionHandling.handleExecutionException(
+            val exitCode = exceptionsFor(options).handleExecutionException(
                 UserInterruptException("I was typing somethi^C"),
                 commandLine,
                 parseResult,
@@ -246,7 +243,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
         fun `should let framework handle unknown exceptions`() {
             val ex = NullPointerException("Did I forget something?")
             val thrown = shouldThrow<NullPointerException> {
-                exceptionHandling.handleExecutionException(
+                exceptionsFor(options).handleExecutionException(
                     ex,
                     commandLine,
                     parseResult,
@@ -498,13 +495,13 @@ private fun captureRun(main: () -> Unit): ShellOutcome {
     }
 
     if (2 == exitCode)
-        fail("BUG: Test using bad flags for main()")
+        fail("BUG: Test using bad options for main()")
 
     return ShellOutcome(exitCode, stdout, stderr)
 }
 
 private fun captureRunWithInput(vararg lines: String, main: () -> Unit):
-        ShellOutcome {
+    ShellOutcome {
     var outcome = ShellOutcome(-1, "BUG", "BUG")
     withTextFromSystemIn(*lines).execute {
         outcome = captureRun(main)
