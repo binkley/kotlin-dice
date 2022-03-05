@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.DiceParser.Companion.dice
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeEmpty
@@ -11,11 +12,9 @@ internal class DiceParserTest {
     fun `should parse and roll`() {
         for ((expression, expected, description) in demoExpressions)
             withClue("$expression ($description)") {
-                val result = roll(
-                    expression = expression,
-                    random = stableSeedForEachTest(),
-                    reporter = silentTestingReporter
-                )
+                // Recreate each time to reset the seed each time
+                val dice = dice(stableSeedForEachTest()) {}
+                val result = dice.roll(expression)
 
                 result.resultValue shouldBe expected
 
@@ -28,9 +27,21 @@ internal class DiceParserTest {
 
     @Test
     fun `should use default RNG`() {
-        val result = roll("1d1") { }
+        val dice = dice {}
+        val result = dice.roll("1d1")
 
         result.resultValue shouldBe 1
+        result.parseErrors.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should reuse existing dice parser`() {
+        val dice = dice(stableSeedForEachTest()) {}
+        // Complex expression to show state is reset
+        dice.roll("100d3r1h99!+100d3r1l99!3-17")
+        val result = dice.roll("d6")
+
+        result.resultValue shouldBe 4
         result.parseErrors.shouldBeEmpty()
     }
 }

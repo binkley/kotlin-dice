@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.DiceParser.Companion.dice
 import picocli.CommandLine.Help.Ansi.AUTO
 import picocli.CommandLine.Help.defaultColorScheme
 import java.lang.System.err
@@ -8,9 +9,10 @@ import kotlin.random.Random
 val colorScheme = defaultColorScheme(AUTO)
 
 sealed class MainRoller(
-    private val random: Random,
+    random: Random,
     private val reporter: MainReporter,
 ) {
+    private val dice = dice(random, reporter)
     abstract fun rollAndReport()
 
     protected fun rollFromLines(nextLine: () -> String?) {
@@ -26,7 +28,7 @@ sealed class MainRoller(
 
     protected fun rollIt(expression: String) {
         reporter.preRoll()
-        val result = roll(expression, random, reporter)
+        val result = dice.roll(expression)
         reporter.display(result)
     }
 }
@@ -51,12 +53,12 @@ class DemoRoller(
     reporter: MainReporter,
 ) : MainRoller(random, reporter) {
     override fun rollAndReport() {
-        for ((expression, _) in demoExpressions)
-            try {
-                rollIt(expression)
-            } catch (e: DiceException) {
-                err.println(colorScheme.errorText(e.message))
-            }
+        for ((expression, _, description) in demoExpressions) try {
+            println(colorScheme.string("@|faint,italic - $description:|@"))
+            rollIt(expression)
+        } catch (e: DiceException) {
+            err.println(colorScheme.errorText(e.message))
+        }
 
         println(colorScheme.string("@|bold DONE|@"))
     }

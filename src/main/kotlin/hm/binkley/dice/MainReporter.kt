@@ -7,7 +7,7 @@ import org.parboiled.support.ParsingResult
 
 sealed class MainReporter(
     private val minimum: Int,
-    private val verbose: Boolean,
+    val verbose: Boolean,
 ) : RollReporter {
     fun display(result: ParsingResult<Int>) = with(result) {
         if (hasErrors())

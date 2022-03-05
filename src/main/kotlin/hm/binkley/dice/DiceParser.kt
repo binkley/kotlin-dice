@@ -10,29 +10,7 @@ import org.parboiled.Parboiled.createParser
 import org.parboiled.Rule
 import org.parboiled.annotations.BuildParseTree
 import org.parboiled.parserunners.ReportingParseRunner
-import org.parboiled.support.ParsingResult
 import kotlin.random.Random
-
-/**
- * Parses a dice expression, rolls, and returns the result, keeping the
- * reporter in final position usable as a lambda.
- */
-fun roll(
-    expression: String,
-    random: Random,
-    reporter: RollReporter,
-): ParsingResult<Int> = ReportingParseRunner<Int>(
-    createParser(DiceParser::class.java, random, reporter).diceExpression()
-).run(expression)
-
-/**
- * Convenience using the default RNG keeping the reporter in final position
- * usable as a lambda.
- */
-fun roll(
-    expression: String,
-    reporter: RollReporter,
-) = roll(expression, Random, reporter)
 
 /**
  * A dice expression evaluator.
@@ -51,6 +29,11 @@ open class DiceParser(
     private val random: Random, // TODO: RandomGenerator once on Java 17
     private val reporter: RollReporter,
 ) : BaseParser<Int>() {
+    companion object {
+        fun dice(random: Random = Random, reporter: RollReporter) =
+            createParser(DiceParser::class.java, random, reporter)!!
+    }
+
     // These properties define the current roll expression.  They are mutable
     // as the parser processes the input expression a piece at a time
     private var dieBase: DieBase? = null
@@ -60,6 +43,14 @@ open class DiceParser(
     private var keepCount: Int? = null
     private var explodeHigh: Int? = null
     private var multiply: Int? = null
+
+    /**
+     * Parses a dice expression, rolls, and returns the result.  Note that
+     * parsing also full resets internal state.
+     * It reuses this existing dice parser, and is *not* thread-safe.
+     */
+    fun roll(expression: String) =
+        ReportingParseRunner<Int>(diceExpression()).run(expression)!!
 
     /**
      * This is equivalent to `build()` in builder patterns.
@@ -235,7 +226,7 @@ open class DiceParser(
         val match = match()
         multiply = when {
             match.startsWith('*') ||
-                match.startsWith('x') || match.startsWith('X') ->
+                    match.startsWith('x') || match.startsWith('X') ->
                 match.substring(1).toInt()
             else -> 1 // multiply by one is idempotent
         }
