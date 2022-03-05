@@ -14,15 +14,14 @@ import kotlin.random.Random
 class ReplRoller(
     random: Random,
     reporter: MainReporter,
-    private val prompt: String?,
+    private val prompt: String,
 ) : MainRoller(random, reporter) {
     override fun rollAndReport() {
         val (terminal, replReader) = repl()
         terminal.use { // Terminals need closing to reset the external terminal
             try {
                 while (true) try {
-                    // TODO: JaCoCo says the lambda is untested, and does not
-                    //       apply the @Generated from function scope
+                    // TODO: Untested and @Generated does compile for lambdas
                     rollFromLines { replReader.readLine(prompt) }
                 } catch (e: DiceException) {
                     err.println(colorScheme.errorText(e.message))

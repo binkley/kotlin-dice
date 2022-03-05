@@ -14,6 +14,7 @@ import kotlin.random.Random
 import kotlin.system.exitProcess
 
 const val PROGRAM_NAME = "roll"
+const val COLORFUL_DIE_PROMPT = "\uD83C\uDFB2 "
 
 fun main(args: Array<String>) {
     val options = Options()
@@ -112,18 +113,18 @@ val exceptionHandling = IExecutionExceptionHandler { ex, commandLine, _ ->
   @|bold 130|@ - REPL interrupted (SIGINT)"""
     ],
 )
-private class Options : Runnable {
+internal class Options : Runnable {
     /**
      * Arguments to the `--color` flag based on GNU standards.
      * The enum name is identical to the argument and case-sensitive.
      * Example: `--color=always`.
      */
     @Suppress("EnumEntryName", "unused")
-    enum class Color(private val ansi: String?) {
+    enum class Color(private val ansi: Boolean?) {
         // Force color
-        always("true"),
-        yes("true"),
-        force("true"),
+        always(true),
+        yes(true),
+        force(true),
 
         // Guess for color
         auto(null),
@@ -131,15 +132,15 @@ private class Options : Runnable {
         `if-tty`(null),
 
         // Disable color
-        never("false"),
-        no("false"),
-        none("false"),
+        never(false),
+        no(false),
+        none(false),
         ;
 
         fun install() {
             when (ansi) {
                 null -> System.clearProperty("picocli.ansi")
-                else -> System.setProperty("picocli.ansi", ansi)
+                else -> System.setProperty("picocli.ansi", "$ansi")
             }
         }
     }
@@ -183,12 +184,13 @@ private class Options : Runnable {
     )
     var minimum = Int.MIN_VALUE
 
+
     @Option(
-        description = ["Change the interactive prompt from '\uD83C\uDFB2 '."],
+        description = ["Change the interactive prompt from '$COLORFUL_DIE_PROMPT'."],
         names = ["-p", "--prompt"],
         paramLabel = "PROMPT",
     )
-    var prompt = "\uD83C\uDFB2 " // Colorful die
+    var prompt = COLORFUL_DIE_PROMPT // Colorful die
 
     @Option(
         description = ["Provide a random seed for repeatable results."],
