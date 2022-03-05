@@ -35,12 +35,22 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set color`() {
+    fun `should set color with long flag`() {
         shouldChangeFromDefault(
             Options::color,
             Color.auto,
             Color.always,
             "--color", "always"
+        )
+    }
+
+    @Test
+    fun `should set color with short flag`() {
+        shouldChangeFromDefault(
+            Options::color,
+            Color.auto,
+            Color.always,
+            "-C", "always"
         )
     }
 
@@ -65,7 +75,7 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set minimum`() {
+    fun `should set minimum with long flag`() {
         shouldChangeFromDefault(
             Options::minimum,
             Int.MIN_VALUE,
@@ -75,17 +85,37 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set prompt`() {
+    fun `should set minimum with short flag`() {
         shouldChangeFromDefault(
-            Options::prompt,
-            COLORFUL_DIE_PROMPT,
-            "> ",
-            "--prompt",  "> "
+            Options::minimum,
+            Int.MIN_VALUE,
+            1,
+            "-m", "1"
         )
     }
 
     @Test
-    fun `should set seed`() {
+    fun `should set prompt with long flag`() {
+        shouldChangeFromDefault(
+            Options::prompt,
+            COLORFUL_DIE_PROMPT,
+            "> ",
+            "--prompt", "> "
+        )
+    }
+
+    @Test
+    fun `should set prompt with short flag`() {
+        shouldChangeFromDefault(
+            Options::prompt,
+            COLORFUL_DIE_PROMPT,
+            "> ",
+            "-p", "> "
+        )
+    }
+
+    @Test
+    fun `should set seed with long flag`() {
         shouldChangeFromDefault(
             Options::seed,
             null,
@@ -95,12 +125,32 @@ internal class OptionsTest {
     }
 
     @Test
-    fun `should set verbose`() {
+    fun `should set seed with short flag`() {
+        shouldChangeFromDefault(
+            Options::seed,
+            null,
+            1,
+            "-s", "1"
+        )
+    }
+
+    @Test
+    fun `should set verbose with long flag`() {
         shouldChangeFromDefault(
             Options::verbose,
             false,
             true,
             "--verbose",
+        )
+    }
+
+    @Test
+    fun `should set verbose with short flag`() {
+        shouldChangeFromDefault(
+            Options::verbose,
+            false,
+            true,
+            "-v",
         )
     }
 }
