@@ -19,6 +19,7 @@
         <jdk.version>11</jdk.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <jansi.version>2.4.0</jansi.version>
+        <jline.version>3.21.0</jline.version>
         <junit.version>5.8.2</junit.version>
         <kotest.version>5.1.0</kotest.version>
         <kotlin.code.style>official</kotlin.code.style>
@@ -66,14 +67,31 @@
         </dependency>
 
         <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli-shell-jline3</artifactId>
-            <version>${picocli.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <version>${jansi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>${jline.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli-shell-jline3</artifactId>
+            <version>${picocli.version}</version>
+            <exclusions>
+                <!-- Pick up most recent Jansi in previous dep -->
+                <exclusion>
+                    <groupId>org.fusesource.jansi</groupId>
+                    <artifactId>jansi</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- Pick up most recent JLine3 in previous dep -->
+                    <groupId>org.jline</groupId>
+                    <artifactId>jline</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Coverage -->

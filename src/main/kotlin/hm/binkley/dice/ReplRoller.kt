@@ -66,9 +66,8 @@ fun replReader(): Pair<Terminal, LineReader> {
 }
 
 /**
- * The terminal builder wraps the streams in a way than hangs testing, even
- * for a dumb terminal, and forcing use of a dumb terminal is challenging
- * in the face of complex heuristic logic.
+ * The terminal build hands the file descriptors for STDIN and STDOUT to the
+ * constructor of dumb terminals, so cannot change them out for testing.
  * See `ExternalTerminalTest` in the jline3 source for setting up attributes.
  */
 fun testReplReader(): Pair<DumbTerminal, LineReader> {
