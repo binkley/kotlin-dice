@@ -3,6 +3,7 @@ package hm.binkley.dice
 import lombok.Generated
 import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
+import org.jline.reader.LineReader.HISTORY_FILE
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.UserInterruptException
 import org.jline.reader.impl.history.DefaultHistory
@@ -16,6 +17,9 @@ import java.lang.System.err
 import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.io.path.Path
 import kotlin.random.Random
+
+private val HISTORY_PATH =
+    Path(System.getProperty("user.home"), ".roll_history")
 
 class ReplRoller(
     random: Random,
@@ -58,10 +62,7 @@ fun newRepl(): Pair<Terminal, LineReader> {
     val lineReader = LineReaderBuilder.builder()
         .terminal(terminal)
         .history(DefaultHistory())
-        .variable(
-            LineReader.HISTORY_FILE,
-            Path(System.getProperty("user.home"), ".roll_history")
-        )
+        .variable(HISTORY_FILE, HISTORY_PATH)
         .build()
     return terminal to lineReader
 }
