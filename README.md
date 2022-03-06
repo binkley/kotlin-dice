@@ -66,15 +66,18 @@ This project supports these types of expressions:
 [N]'B'D['r'R]['h'K|'l'K][!|!Z]['*'M|'x'M][+EXP|-EXP...][+A|-A]
 ```
 
-- N - number of dice, default 1
+- N - number of dice, default roll 1
 - B - either a literal 'd' (dice are 1 to D) or 'z' (dice are 0 to D-1)
 - D - sides on the die, or '%' for percentile dice (100-sided dice)
 - R - reroll dice this or lower, eg, reroll 1s
-- K - keep the highest ('h') or ('l') the lowest rolls
+- K - keep the highest ('h') or ('l') the lowest rolls, default keep 1
 - ! - explode the dice; default explosion is on max die value
 - m - either a literal '*' or 'x' to multiply the result
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
+
+For example, in _D&amp;D_ a d20 roll with advantage is "2d20h" and with 
+disadvantage is "2d20l", and in _Star Wars_ an exploding d6 roll is "d6!". 
 
 All characters are _case-insensitive_, eg, `d6` and `D6` are the same 
 expression.
@@ -149,7 +152,7 @@ val dice = dice(Random(1)) { rolledDice ->
     println(trace)
   }
 }
-val result = dice.roll("3d6")
+val result = dice.roll("2d20h")
 // Above tracing prints here
 println("result is ${result.resultValue}")
 ```
@@ -199,6 +202,8 @@ scripts.
 
 ## TODO
 
+* Raise exception when exploding from the die base (_eg_ "d6!1") as this will
+  never complete
 * Support divisors of rolls, ie, a syntax for `2d6/2`
 * Support `floor`, `ceil`, etc., to round rolls down/up
 * Reroll should support options other than low rolls

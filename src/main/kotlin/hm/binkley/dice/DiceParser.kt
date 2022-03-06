@@ -2,6 +2,7 @@
 
 package hm.binkley.dice
 
+import hm.binkley.dice.DiceParser.Companion.dice
 import hm.binkley.dice.DieBase.ONE
 import hm.binkley.dice.DieBase.ZERO
 import lombok.Generated
@@ -182,19 +183,25 @@ open class DiceParser(
                 Ch('l'),
                 Ch('L')
             ),
-            number()
+            Optional(number())
         ),
         recordKeepFewer()
     )
 
     internal fun recordKeepFewer(): Boolean {
         val match = match()
-        keepCount = when {
-            match.startsWith('h') || match.startsWith('H') ->
-                match.substring(1).toInt()
-            match.startsWith('l') || match.startsWith('L') ->
-                -match.substring(1).toInt()
-            else -> diceCount!!
+        if (match.isEmpty()) {
+            keepCount = diceCount!!
+            return true
+        }
+
+        val sign = when (match[0]) {
+            'h', 'H' -> 1
+            else -> -1 // l or L
+        }
+        keepCount = when(match.length) {
+            1 -> sign
+            else -> sign * match.substring(1).toInt()
         }
         return true
     }
