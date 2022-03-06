@@ -21,7 +21,7 @@ data class Roller(
 ) {
     fun rollDice() = with(parsed) {
         with(parsed) {
-            if (explodeHigh.isTooLowFor(dieBase))
+            if (dieBase >= explodeHigh)
                 throw ExplodingForeverException(expression, explodeHigh)
         }
 
@@ -86,7 +86,7 @@ data class Roller(
     }
 
     private fun rollDie() = with(parsed) {
-        random.nextInt(0, dieSides) + dieBase.value
+        dieBase + random.nextInt(0, dieSides)
     }
 
     private fun report(dice: RolledDice) = reporting.onRoll(dice)

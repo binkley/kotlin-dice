@@ -177,7 +177,7 @@ open class DiceParser(
 
     internal fun recordRerollLow(): Boolean {
         rerollLow = when (val match = match()) {
-            "" -> dieBase!!.value - 1
+            "" -> dieBase!! - 1
             else -> match.substring(1).toInt()
         }
         return true
