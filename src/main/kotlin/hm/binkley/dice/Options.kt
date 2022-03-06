@@ -1,6 +1,7 @@
 package hm.binkley.dice
 
 import hm.binkley.dice.ColorOption.auto
+import org.jline.reader.LineReader
 import org.jline.terminal.Terminal
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
@@ -145,17 +146,17 @@ class Options : Callable<Int> {
         val random = if (null == seed) Random else Random(seed!!)
         val reporter = MainReporter.new(minimum, verbose)
 
-        fun replRoller(newTerminal: () -> Terminal) =
-            ReplRoller(random, reporter, prompt, newTerminal)
+        fun replRoller(newRepl: () -> Pair<Terminal, LineReader>) =
+            ReplRoller(random, reporter, prompt, newRepl)
 
         val roller = when {
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
                 CommandLineRoller(random, reporter, arguments)
             // Check --test-repl before checking for a console
-            testRepl -> replRoller(::testTerminal)
+            testRepl -> replRoller(::newTestRepl)
             null == System.console() -> StdinRoller(random, reporter)
-            else -> replRoller(::terminal)
+            else -> replRoller(::newRepl)
         }
 
         roller.rollAndReport()
