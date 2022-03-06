@@ -4,6 +4,7 @@ import hm.binkley.dice.DiceParser.Companion.dice
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeEmpty
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -14,13 +15,19 @@ internal class DiceParserTest {
             withClue("$expression ($description)") {
                 // Recreate each time to reset the seed each time
                 val dice = dice(stableSeedForEachTest())
-                val result = dice.roll(expression)
+                try {
+                    val result = dice.roll(expression)
 
-                result.resultValue shouldBe expected
+                    result.resultValue shouldBe expected
 
-                when (expected) {
-                    null -> result.parseErrors.shouldNotBeEmpty()
-                    else -> result.parseErrors.shouldBeEmpty()
+                    when (expected) {
+                        null -> result.parseErrors.shouldNotBeEmpty()
+                        else -> result.parseErrors.shouldBeEmpty()
+                    }
+                } catch (e: DiceException) {
+                    // Case when app exception thrown from within parsing as
+                    // part of validation for business rules
+                    expected.shouldBeNull()
                 }
             }
     }

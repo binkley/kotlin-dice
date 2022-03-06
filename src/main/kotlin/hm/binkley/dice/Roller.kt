@@ -14,13 +14,17 @@ private typealias ReportType = (DiceExpression, Int) -> RolledDice
  * instances
  */
 data class Roller(
-    /** The RNG.  Tests use `stableSeedForEachTest()` for reproducibility. */
+    private val expression: String,
     private val random: Random,
-    /** Reports on individual roll outcomes for feedback. */
     private val reporting: RollReporter,
-    private val expression: DiceExpression,
+    private val parsed: DiceExpression,
 ) {
-    fun rollDice() = with(expression) {
+    fun rollDice() = with(parsed) {
+        with(parsed) {
+            if (explodeHigh.isTooLowFor(dieBase))
+                throw ExplodingForeverException(expression, explodeHigh)
+        }
+
         val rolls = generateSequence {
             rollPlain()
         }.take(diceCount).toList().sorted()
@@ -32,14 +36,14 @@ data class Roller(
         (kept.sum() + kept.rollExplosions().sum()) * multiply
     }
 
-    private fun List<Int>.keepLowest() = with(expression) {
+    private fun List<Int>.keepLowest() = with(parsed) {
         subList(-keepCount, diceCount).forEach {
             report(DroppedRoll(this, it))
         }
         subList(0, -keepCount)
     }
 
-    private fun List<Int>.keepHighest() = with(expression) {
+    private fun List<Int>.keepHighest() = with(parsed) {
         subList(0, diceCount - keepCount).forEach {
             report(DroppedRoll(this, it))
         }
@@ -50,7 +54,7 @@ data class Roller(
         val explosions = mutableListOf<Int>()
         forEach {
             var roll = it
-            while (roll >= expression.explodeHigh) {
+            while (roll >= parsed.explodeHigh) {
                 roll = rollExplosion()
                 explosions += roll
             }
@@ -71,7 +75,7 @@ data class Roller(
     private fun rollAndReport(
         onRoll: ReportType,
         onReroll: ReportType,
-    ) = with(expression) {
+    ) = with(parsed) {
         var roll = rollDie()
         report(onRoll(this, roll))
         while (roll <= rerollLow) {
@@ -81,7 +85,7 @@ data class Roller(
         roll
     }
 
-    private fun rollDie() = with(expression) {
+    private fun rollDie() = with(parsed) {
         random.nextInt(0, dieSides) + dieBase.value
     }
 

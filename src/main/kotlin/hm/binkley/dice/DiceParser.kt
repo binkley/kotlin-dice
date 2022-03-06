@@ -10,7 +10,9 @@ import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
 import org.parboiled.Rule
 import org.parboiled.annotations.BuildParseTree
+import org.parboiled.errors.ParserRuntimeException
 import org.parboiled.parserunners.ReportingParseRunner
+import org.parboiled.support.ParsingResult
 import kotlin.random.Random
 
 /**
@@ -46,6 +48,7 @@ open class DiceParser(
 
     // These properties define the current roll expression.  They are mutable
     // as the parser processes the input expression a piece at a time
+    private var expression: String? = null
     private var dieBase: DieBase? = null
     private var dieSides: Int? = null
     private var diceCount: Int? = null
@@ -59,8 +62,14 @@ open class DiceParser(
      * Note that parsing fully resets internal state, so this object may be
      * freely reused among dice expressions.
      */
-    fun roll(expression: String) =
-        ReportingParseRunner<Int>(diceExpression()).run(expression)!!
+    fun roll(expression: String): ParsingResult<Int> {
+        this.expression = expression
+        return try {
+            ReportingParseRunner<Int>(diceExpression()).run(expression)!!
+        } catch (e: ParserRuntimeException) {
+            throw e.cause ?: e
+        }
+    }
 
     /**
      * This is equivalent to `build()` in builder patterns.
@@ -199,7 +208,7 @@ open class DiceParser(
             'h', 'H' -> 1
             else -> -1 // l or L
         }
-        keepCount = when(match.length) {
+        keepCount = when (match.length) {
             1 -> sign
             else -> sign * match.substring(1).toInt()
         }
@@ -242,15 +251,16 @@ open class DiceParser(
         val match = match()
         multiply = when {
             match.startsWith('*') ||
-                    match.startsWith('x') || match.startsWith('X') ->
+                match.startsWith('x') || match.startsWith('X') ->
                 match.substring(1).toInt()
             else -> 1 // multiply by one is idempotent
         }
         return true
     }
 
-    internal fun rollTheDice() =
-        push(Roller(random, reporter, toParsedDice()).rollDice())
+    internal fun rollTheDice() = push(
+        Roller(expression!!, random, reporter, toParsedDice()).rollDice()
+    )
 
     @Generated // Lie to JaCoCo
     internal open fun maybeRollMore() = ZeroOrMore(

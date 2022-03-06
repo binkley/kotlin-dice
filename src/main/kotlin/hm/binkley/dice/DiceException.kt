@@ -35,3 +35,10 @@ class ResultTooLowException(
 ) : DiceException(
     "Result $result is below the minimum result of $minimum"
 )
+
+class ExplodingForeverException(
+    expression: String,
+    explodeHigh: Int,
+) : DiceException(
+    "Exploding on a $explodeHigh will never finish in dice expression '$expression'"
+)

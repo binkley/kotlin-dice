@@ -137,15 +137,26 @@ roll: Unexpected 'd' (at position 3) in dice expression '3dd'
         @Test
         fun `should fail gnuishly with 1-liner for incomplete expression`() {
             val (exitCode, out, err) = captureRun {
-                mainWithFixedSeed("3d6", "3d")
+                mainWithFixedSeed("3d")
             }
 
             exitCode shouldBe 1
-            out shouldBeAfterTrimming """
-3d6 10
-"""
+            out.shouldBeEmpty()
             err shouldBeAfterTrimming """
 roll: Incomplete dice expression '3d'
+"""
+        }
+
+        @Test
+        fun `should fail gnuishly with 1-liner for exploding too low`() {
+            val (exitCode, out, err) = captureRun {
+                mainWithFixedSeed("d1!")
+            }
+
+            exitCode shouldBe 1
+            out.shouldBeEmpty()
+            err shouldBeAfterTrimming """
+roll: Exploding on a 1 will never finish in dice expression 'd1!'
 """
         }
 

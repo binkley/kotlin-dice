@@ -71,7 +71,7 @@ This project supports these types of expressions:
 - D - sides on the die, or '%' for percentile dice (100-sided dice)
 - R - reroll dice this or lower, eg, reroll 1s
 - K - keep the highest ('h') or ('l') the lowest rolls, default keep 1
-- ! - explode the dice; default explosion is on max die value
+- ! - explode the dice, default explosion is on a max roll
 - m - either a literal '*' or 'x' to multiply the result
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
@@ -86,7 +86,9 @@ Whitespace is supported **only**:
 - At start or end of the complete expression
 - Around the `+` and `-` operators between single dice expressions
 
-Note this is _not_ a general calculator so `1 + 2` will not work.
+Notes:
+- This is _not_ a general calculator so `1 + 2` does not work
+- Picking too low an explosion (1 for 'd' or 0 or 'z' dice) does not work
 
 See [TODO](#todo) for further improvements.
 

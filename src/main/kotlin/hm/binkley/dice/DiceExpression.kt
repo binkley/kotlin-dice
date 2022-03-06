@@ -59,5 +59,7 @@ interface DiceExpression {
  */
 enum class DieBase(val value: Int) {
     ZERO(0),
-    ONE(1),
+    ONE(1);
 }
+
+fun Int.isTooLowFor(dieBase: DieBase) = dieBase.value >= this
