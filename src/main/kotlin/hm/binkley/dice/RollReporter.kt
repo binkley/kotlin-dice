@@ -1,13 +1,18 @@
 package hm.binkley.dice
 
 /**
- * This could have been a `typealias`.  However, Kotlin syntax plays nicer
- * with using a `fun interface` (SAM interface).
+ * Tracing for each individual die rolled.
+ * For example, the dice expression "2d20h1", given a RNG seeded with 1,
+ * yields these traces:
+ *  - [PlainRoll] of "d20" with result 6
+ *  - [PlainRoll] of "d20" with result 17
+ *  - [DroppedRoll] of "d20" with result 6
  */
 fun interface RollReporter {
     fun onRoll(dice: RolledDice)
 }
 
+/** Typing for why a die was rolled. */
 sealed class RolledDice(
     expression: DiceExpression,
     val roll: Int,

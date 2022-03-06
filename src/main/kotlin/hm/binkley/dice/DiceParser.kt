@@ -13,10 +13,11 @@ import org.parboiled.parserunners.ReportingParseRunner
 import kotlin.random.Random
 
 /**
- * A dice expression evaluator.
+ * A dice expression parser and roller.
  *
- * See [kotlin dice](https://github.com/binkley/kotlin-dice)
+ * See [Kotlin Dice](https://github.com/binkley/kotlin-dice) on GitHub.
  *
+ * @see [dice]
  * @see [roll]
  *
  * @todo Several parse methods use `@Generated`: they are actually covered,
@@ -53,9 +54,9 @@ open class DiceParser(
     private var multiply: Int? = null
 
     /**
-     * Parses a dice expression, rolls, and returns the result.  Note that
-     * parsing also full resets internal state.
-     * It reuses this existing dice parser, and is *not* thread-safe.
+     * Parses a dice expression, rolls, and returns the result.
+     * Note that parsing fully resets internal state, so this object may be
+     * freely reused among dice expressions.
      */
     fun roll(expression: String) =
         ReportingParseRunner<Int>(diceExpression()).run(expression)!!

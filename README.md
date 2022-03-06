@@ -27,6 +27,7 @@ interactive prompt for entering and evaluating dice expressions.
 * [Build](#build)
 * [Dice expression syntax](#dice-expression-syntax)
 * [Examples](#examples)
+* [API](#api)
 * [Code conventions](#code-conventions)
 * [TODO](#todo)
 * [References](#references)
@@ -100,6 +101,65 @@ See [TODO](#todo) for further improvements.
 
 The [demo examples](./src/main/kotlin/hm/binkley/dice/main.kt) (look at 
 `demoExpressions`) cover all supported examples.
+
+## API
+
+The code falls into two halves:
+
+- Main code for the command-line [`roll`](./roll) shell script
+- Library code for the parser and related types
+
+### Main
+
+### Library
+
+The key method is `dice(random, reporter)` in the companion object of
+[`DiceParser`](./src/main/kotlin/hm/binkley/dice/DiceParser.kt).  This 
+creates a reuseable parser and roller.
+
+The `random` parameter is a Kotlin `Random`, and defaults to the system RNG.
+The `reporter` parameter is a
+[`RollReporter`](./src/main/kotlin/hm/binkley/dice/RollReporter.kt) and 
+defaults to "do nothing" (_ie_, no reporting).
+
+The simplest example is:
+
+```kotlin
+val dice = dice() // Static import
+val result = dice.roll("3d6")
+println(result.resultValue)
+```
+
+A fancier example might be:
+
+```kotlin
+val dice = dice(Random(1)) { rolledDice ->
+  with(rolledDice) {
+    val die = when (dieBase) {
+      ONE -> "d$dieSides"
+      ZERO -> "z$dieSides"
+    }
+    val trace = when (this) {
+      is PlainRoll -> "rolled $die was $roll"
+      is PlainReroll -> "rerolled $die was $roll"
+      is ExplodedRoll -> "exploded $die >= $explodeHigh was $roll"
+      is ExplodedReroll -> "exploded reroll $die >= $explodeHigh is $roll"
+      is DroppedRoll -> "dropped $die was $roll"
+    }
+    println(trace)
+  }
+}
+val result = dice.roll("3d6")
+// Above tracing prints here
+println("result is ${result.resultValue}")
+```
+And would output:
+```
+rolled d20 was 6
+rolled d20 was 17
+dropped d20 was 6
+result is 17
+```
 
 ## Code conventions
 
