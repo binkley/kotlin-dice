@@ -40,5 +40,5 @@ class ExplodingForeverException(
     expression: String,
     explodeHigh: Int,
 ) : DiceException(
-    "Exploding on a $explodeHigh will never finish in dice expression '$expression'"
+    "Exploding on $explodeHigh will never finish in dice expression '$expression'"
 )

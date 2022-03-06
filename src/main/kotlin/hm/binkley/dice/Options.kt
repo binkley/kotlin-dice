@@ -42,11 +42,19 @@ import kotlin.random.Random
      @|faint,italic roll(d4) -> 3|@
      @|bold 2d4|@ -> @|fg_green,bold 7|@
 
+@|bold, underline Files:|@
+  @|italic ~/.roll_history|@
+     This file preserves input history across runs of the REPL.
+
 @|bold,underline Error messages:|@
   @|italic Incomplete dice expression '<EXPRESSION>'|@
      More characters were expected at the end of EXPRESSION.
   @|italic Unexpected '<CHAR>' (at position <POS>) in dice expression '<EXPRESSION>'|@
      CHAR was not expected in EXPRESSION at position POS (starting from 1).
+  @|italic Result <ROLL> is below the minimum result of <NUMBER>|@
+     ROLL is too low for the NUMBER in the --minimum option.
+  @|italic Exploding on <NUMBER> will never finish in dice expression '<EXPRESSION>'|@
+     NUMBER is too low for the number of sides on the die.
 
 @|bold,underline Exit codes:|@
   @|bold   0|@ - Successful completion

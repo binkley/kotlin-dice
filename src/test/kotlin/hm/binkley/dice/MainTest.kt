@@ -156,7 +156,7 @@ roll: Incomplete dice expression '3d'
             exitCode shouldBe 1
             out.shouldBeEmpty()
             err shouldBeAfterTrimming """
-roll: Exploding on a 1 will never finish in dice expression 'd1!'
+roll: Exploding on 1 will never finish in dice expression 'd1!'
 """
         }
 
