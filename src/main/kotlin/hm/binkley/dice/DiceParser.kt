@@ -67,7 +67,10 @@ open class DiceParser(
         return try {
             ReportingParseRunner<Int>(diceExpression()).run(expression)!!
         } catch (e: ParserRuntimeException) {
-            throw e.cause ?: e
+            throw when (val x = e.cause) {
+                is DiceException -> x
+                else -> e
+            }
         }
     }
 
@@ -251,7 +254,7 @@ open class DiceParser(
         val match = match()
         multiply = when {
             match.startsWith('*') ||
-                match.startsWith('x') || match.startsWith('X') ->
+                    match.startsWith('x') || match.startsWith('X') ->
                 match.substring(1).toInt()
             else -> 1 // multiply by one is idempotent
         }
