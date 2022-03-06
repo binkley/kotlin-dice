@@ -63,16 +63,17 @@ drawing inspiration from:
 This project supports these types of expressions:
 
 ```
-[N]'B'D['r'R]['h'K|'l'K][!|!Z]['*'M|'x'M][+EXP|-EXP...][+A|-A]
+[N]'B'D['r'R]['h'[K]|'m'[K]|'l'[K]][!|!Z]['x'M|'*'M][+EXP|-EXP...][+A|-A]
 ```
 
 - N - number of dice, default roll 1
-- B - either a literal 'd' (dice are 1 to D) or 'z' (dice are 0 to D-1)
-- D - sides on the die, or '%' for percentile dice (100-sided dice)
+- B - either a literal `d` (dice are 1 to D) or `z` (dice are 0 to D-1)
+- D - sides on the die, or `%` for percentile dice (100-sided dice)
 - R - reroll dice this or lower, eg, reroll 1s
-- K - keep the highest ('h') or ('l') the lowest rolls, default keep 1
+- K - keep the highest (`h`), middle (`m`), or lowest (`l`) lowest rolls,
+  default keep 1
 - ! - explode the dice, default explosion is on a max roll
-- m - either a literal '*' or 'x' to multiply the result
+- m - either a literal `*` or `x` to multiply the result
 - EXP - add/subtract more dice expressions
 - A - add/subtract this fixed amount to the result
 

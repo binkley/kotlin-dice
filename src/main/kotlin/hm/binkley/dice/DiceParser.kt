@@ -192,6 +192,8 @@ open class DiceParser(
             FirstOf(
                 Ch('h'),
                 Ch('H'),
+                Ch('m'),
+                Ch('M'),
                 Ch('l'),
                 Ch('L')
             ),
@@ -209,6 +211,7 @@ open class DiceParser(
 
         val type = when (match[0]) {
             'h', 'H' -> ::KeepHigh
+            'm', 'M' -> ::KeepMiddle
             else -> ::KeepLow // l or L
         }
         keepCount = when (match.length) {
