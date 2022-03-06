@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.KeepCount.Companion.keep
 import kotlin.random.Random
 
 private typealias ReportType = (DiceExpression, Int) -> RolledDice
@@ -27,13 +28,13 @@ data class Roller(
             rollPlain()
         }.take(diceCount).toList()
 
-        val kept = rolls.sorted().keep()
+        val kept = rolls.sorted().keepOrDrop()
 
         (kept.sum() + kept.rollExplosions().sum()) * multiply
     }
 
-    private fun List<Int>.keep(): List<Int> {
-        val (kept, dropped) = parsed.keepCount.partition(this)
+    private fun List<Int>.keepOrDrop(): List<Int> {
+        val (kept, dropped) = keep(parsed.keepCount)
         dropped.forEach { report(DroppedRoll(parsed, it)) }
         return kept
     }

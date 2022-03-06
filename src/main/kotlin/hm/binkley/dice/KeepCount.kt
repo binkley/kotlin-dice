@@ -13,7 +13,12 @@ sealed class KeepCount(protected val value: Int) {
     override fun hashCode() = hash(javaClass, value)
 
     /** Splits sorted list of results into those to keep and those to drop. */
-    abstract fun partition(other: List<Int>): Pair<List<Int>, List<Int>>
+    protected abstract fun partition(other: List<Int>):
+            Pair<List<Int>, List<Int>>
+
+    companion object {
+        fun List<Int>.keep(count: KeepCount) = count.partition(this)
+    }
 }
 
 /**
@@ -75,9 +80,9 @@ abstract class KeepMiddle(
         val lowerKeep = splitKeep(listEven, keepEven)
         val upperKeep = value - lowerKeep
 
-        val (lower, upper) = KeepLow(lowerSize).partition(other)
-        val (lowerKept, lowerDropped) = KeepHigh(lowerKeep).partition(lower)
-        val (upperKept, upperDropped) = KeepLow(upperKeep).partition(upper)
+        val (lower, upper) = other.keep(KeepLow(lowerSize))
+        val (lowerKept, lowerDropped) = lower.keep(KeepHigh(lowerKeep))
+        val (upperKept, upperDropped) = upper.keep(KeepLow(upperKeep))
 
         return (lowerKept + upperKept) to (lowerDropped + upperDropped)
     }

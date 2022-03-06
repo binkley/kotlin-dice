@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.KeepCount.Companion.keep
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
@@ -43,27 +44,27 @@ internal class KeepCountTest {
         val oddList = listOf(0, 1, 2, 3, 4)
 
         val zeroKeepMiddle = KeepMiddleLow(0)
-        zeroKeepMiddle.partition(evenList) shouldBe
+        evenList.keep(zeroKeepMiddle) shouldBe
                 (listOf<Int>() to listOf(0, 1, 2, 3))
-        zeroKeepMiddle.partition(oddList) shouldBe
+        oddList.keep(zeroKeepMiddle) shouldBe
                 (listOf<Int>() to listOf(0, 1, 2, 3, 4))
 
         val oneKeepMiddle = KeepMiddleLow(1)
-        oneKeepMiddle.partition(evenList) shouldBe
+        evenList.keep(oneKeepMiddle) shouldBe
                 (listOf(1) to listOf(0, 2, 3))
-        oneKeepMiddle.partition(oddList) shouldBe
+        oddList.keep(oneKeepMiddle) shouldBe
                 (listOf(2) to listOf(0, 1, 3, 4))
 
         val evenKeepMiddle = KeepMiddleLow(2)
-        evenKeepMiddle.partition(evenList) shouldBe
+        evenList.keep(evenKeepMiddle) shouldBe
                 (listOf(1, 2) to listOf(0, 3))
-        evenKeepMiddle.partition(oddList) shouldBe
+        oddList.keep(evenKeepMiddle) shouldBe
                 (listOf(1, 2) to listOf(0, 3, 4))
 
         val oddKeepMiddle = KeepMiddleLow(3)
-        oddKeepMiddle.partition(evenList) shouldBe
+        evenList.keep(oddKeepMiddle) shouldBe
                 (listOf(0, 1, 2) to listOf(3))
-        oddKeepMiddle.partition(oddList) shouldBe
+        oddList.keep(oddKeepMiddle) shouldBe
                 (listOf(1, 2, 3) to listOf(0, 4))
     }
 
@@ -73,27 +74,27 @@ internal class KeepCountTest {
         val oddList = listOf(0, 1, 2, 3, 4)
 
         val zeroKeepMiddle = KeepMiddleHigh(0)
-        zeroKeepMiddle.partition(evenList) shouldBe
+        evenList.keep(zeroKeepMiddle) shouldBe
                 (listOf<Int>() to listOf(0, 1, 2, 3))
-        zeroKeepMiddle.partition(oddList) shouldBe
+        oddList.keep(zeroKeepMiddle) shouldBe
                 (listOf<Int>() to listOf(0, 1, 2, 3, 4))
 
         val oneKeepMiddle = KeepMiddleHigh(1)
-        oneKeepMiddle.partition(evenList) shouldBe
+        evenList.keep(oneKeepMiddle) shouldBe
                 (listOf(2) to listOf(0, 1, 3))
-        oneKeepMiddle.partition(oddList) shouldBe
+        oddList.keep(oneKeepMiddle) shouldBe
                 (listOf(2) to listOf(0, 1, 3, 4))
 
         val evenKeepMiddle = KeepMiddleHigh(2)
-        evenKeepMiddle.partition(evenList) shouldBe
+        evenList.keep(evenKeepMiddle) shouldBe
                 (listOf(1, 2) to listOf(0, 3))
-        evenKeepMiddle.partition(oddList) shouldBe
+        oddList.keep(evenKeepMiddle) shouldBe
                 (listOf(2, 3) to listOf(0, 1, 4))
 
         val oddKeepMiddle = KeepMiddleHigh(3)
-        oddKeepMiddle.partition(evenList) shouldBe
+        evenList.keep(oddKeepMiddle) shouldBe
                 (listOf(1, 2, 3) to listOf(0))
-        oddKeepMiddle.partition(oddList) shouldBe
+        oddList.keep(oddKeepMiddle) shouldBe
                 (listOf(1, 2, 3) to listOf(0, 4))
     }
 }
