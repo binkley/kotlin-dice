@@ -12,9 +12,13 @@ sealed class KeepCount(protected val value: Int) {
 
     override fun hashCode() = hash(javaClass, value)
 
+    /** Splits sorted list of results into those to keep and those to drop. */
     abstract fun partition(other: List<Int>): Pair<List<Int>, List<Int>>
 }
 
+/**
+ * Keeps the highest dice rolls.
+ */
 class KeepHigh(value: Int) : KeepCount(value) {
     override fun partition(other: List<Int>): Pair<List<Int>, List<Int>> {
         val (kept, dropped) = other.withIndex().partition { (index, _) ->
@@ -68,19 +72,20 @@ abstract class KeepMiddle(
         val lowerSize =
             if (listEven) other.size / 2
             else other.size / 2 + 1
-        val lowerKeepHigh = splitKeep(listEven, keepEven)
-        val upperKeepLow = value - lowerKeepHigh
+        val lowerKeep = splitKeep(listEven, keepEven)
+        val upperKeep = value - lowerKeep
 
         val (lower, upper) = KeepLow(lowerSize).partition(other)
-        val (lowerKept, lowerDropped) =
-            KeepHigh(lowerKeepHigh).partition(lower)
-        val (upperKept, upperDropped) =
-            KeepLow(upperKeepLow).partition(upper)
+        val (lowerKept, lowerDropped) = KeepHigh(lowerKeep).partition(lower)
+        val (upperKept, upperDropped) = KeepLow(upperKeep).partition(upper)
 
         return (lowerKept + upperKept) to (lowerDropped + upperDropped)
     }
 }
 
+/**
+ * Keeps the lowest dice rolls.
+ */
 class KeepLow(value: Int) : KeepCount(value) {
     override fun partition(other: List<Int>): Pair<List<Int>, List<Int>> {
         val (kept, dropped) = other.withIndex().partition { (index, _) ->
