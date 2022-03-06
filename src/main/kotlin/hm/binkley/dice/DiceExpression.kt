@@ -31,13 +31,10 @@ interface DiceExpression {
     val rerollLow: Int
 
     /**
-     * Which rolls to keep:
-     * * If positive, keep the highest values (ie, top N die rolls)
-     * * If negative, keep the lowest values (ie, bottom N die rolls)
-     * * If zero, keep all values regardless of die roll
-     * The default is to discard no rolls.
+     * Which rolls to keep.
+     * The default is to keep all rolls.
      */
-    val keepCount: Int
+    val keepCount: KeepCount
 
     /**
      * Continue rolling more dice while the roll is this value or greater.
@@ -50,18 +47,4 @@ interface DiceExpression {
      * The default is to multiply by one (no change).
      */
     val multiply: Int
-}
-
-/**
- * The lowest pip on a die.
- * Physical dice are 1-based, _eg_, 1-6 for "d6"; "z dice" are 0-based,
- * _eg_, 0-5 for "z6", equal to one less than the equivalent physical dice.
- */
-enum class DieBase(private val value: Int) {
-    ZERO(0),
-    ONE(1);
-
-    operator fun plus(other: Int) = value + other
-    operator fun minus(other: Int) = value - other
-    operator fun compareTo(other: Int) = value.compareTo(other)
 }

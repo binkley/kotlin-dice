@@ -20,34 +20,22 @@ data class Roller(
     private val parsed: DiceExpression,
 ) {
     fun rollDice() = with(parsed) {
-        with(parsed) {
-            if (dieBase >= explodeHigh)
-                throw ExplodingForeverException(expression, explodeHigh)
-        }
+        if (dieBase >= explodeHigh)
+            throw ExplodingForeverException(expression, explodeHigh)
 
         val rolls = generateSequence {
             rollPlain()
-        }.take(diceCount).toList().sorted()
+        }.take(diceCount).toList()
 
-        val kept =
-            if (keepCount < 0) rolls.keepLowest()
-            else rolls.keepHighest()
+        val kept = rolls.sorted().keep()
 
         (kept.sum() + kept.rollExplosions().sum()) * multiply
     }
 
-    private fun List<Int>.keepLowest() = with(parsed) {
-        subList(-keepCount, diceCount).forEach {
-            report(DroppedRoll(this, it))
-        }
-        subList(0, -keepCount)
-    }
-
-    private fun List<Int>.keepHighest() = with(parsed) {
-        subList(0, diceCount - keepCount).forEach {
-            report(DroppedRoll(this, it))
-        }
-        subList(diceCount - keepCount, diceCount)
+    private fun List<Int>.keep(): List<Int> {
+        val (kept, dropped) = parsed.keepCount.partition(this)
+        dropped.forEach { report(DroppedRoll(parsed, it)) }
+        return kept
     }
 
     private fun List<Int>.rollExplosions(): List<Int> {

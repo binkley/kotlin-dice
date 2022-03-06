@@ -12,7 +12,7 @@ internal class RollerTest {
             it.dieBase shouldBe ONE
             it.diceCount shouldBe 7
             it.rerollLow shouldBe 2
-            it.keepCount shouldBe 3
+            it.keepCount shouldBe KeepHigh(3)
             it.explodeHigh shouldBe 4
             it.multiply shouldBe 2
         }
@@ -26,7 +26,7 @@ internal class RollerTest {
                 dieBase = ONE,
                 diceCount = 7,
                 rerollLow = 2,
-                keepCount = 3,
+                keepCount = KeepHigh(3),
                 explodeHigh = 4,
                 multiply = 2,
             )

@@ -53,7 +53,7 @@ open class DiceParser(
     private var dieSides: Int? = null
     private var diceCount: Int? = null
     private var rerollLow: Int? = null
-    private var keepCount: Int? = null
+    private var keepCount: KeepCount? = null
     private var explodeHigh: Int? = null
     private var multiply: Int? = null
 
@@ -203,17 +203,17 @@ open class DiceParser(
     internal fun recordKeepFewer(): Boolean {
         val match = match()
         if (match.isEmpty()) {
-            keepCount = diceCount!!
+            keepCount = KeepHigh(diceCount!!)
             return true
         }
 
-        val sign = when (match[0]) {
-            'h', 'H' -> 1
-            else -> -1 // l or L
+        val type = when (match[0]) {
+            'h', 'H' -> ::KeepHigh
+            else -> ::KeepLow // l or L
         }
         keepCount = when (match.length) {
-            1 -> sign
-            else -> sign * match.substring(1).toInt()
+            1 -> type(1)
+            else -> type(match.substring(1).toInt())
         }
         return true
     }
@@ -317,7 +317,7 @@ data class ParsedDice(
     override val dieSides: Int,
     override val diceCount: Int,
     override val rerollLow: Int,
-    override val keepCount: Int,
+    override val keepCount: KeepCount,
     override val explodeHigh: Int,
     override val multiply: Int,
 ) : DiceExpression
