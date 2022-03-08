@@ -4,6 +4,7 @@ import lombok.Generated
 import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
 import org.jline.reader.LineReader.HISTORY_FILE
+import org.jline.reader.LineReader.HISTORY_FILE_SIZE
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.UserInterruptException
 import org.jline.reader.impl.history.DefaultHistory
@@ -19,6 +20,7 @@ import kotlin.io.path.Path
 import kotlin.random.Random
 
 private val HISTORY_PATH = pathInHome(".roll_history")
+private val MAX_HISTORY = 20
 
 class ReplRoller(
     random: Random,
@@ -62,6 +64,7 @@ fun newRepl(): Pair<Terminal, LineReader> {
         .terminal(terminal)
         .history(DefaultHistory())
         .variable(HISTORY_FILE, HISTORY_PATH)
+        .variable(HISTORY_FILE_SIZE, MAX_HISTORY) // TODO: Does this work?
         .build()
     return terminal to lineReader
 }
