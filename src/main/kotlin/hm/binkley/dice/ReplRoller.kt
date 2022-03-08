@@ -4,10 +4,8 @@ import lombok.Generated
 import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
 import org.jline.reader.LineReader.HISTORY_FILE
-import org.jline.reader.LineReader.HISTORY_FILE_SIZE
 import org.jline.reader.LineReader.HISTORY_SIZE
 import org.jline.reader.LineReaderBuilder
-import org.jline.reader.UserInterruptException
 import org.jline.terminal.Terminal
 import org.jline.terminal.Terminal.TYPE_DUMB
 import org.jline.terminal.Terminal.TYPE_DUMB_COLOR
@@ -20,7 +18,6 @@ import kotlin.io.path.Path
 import kotlin.random.Random
 
 private val HISTORY_PATH = pathInHome(".roll_history")
-private const val MAX_HISTORY_SAVE = 20 // TODO: Actually saving 24 lines
 
 class ReplRoller(
     random: Random,
@@ -37,20 +34,15 @@ class ReplRoller(
         this.lineReader = lineReader
     }
 
-    override fun rollAndReport() {
-        terminal.use { // Terminals need closing to reset the external terminal
-            try {
-                while (true) try {
-                    // TODO: Untested, and @Generated does compile for lambdas
-                    rollFromLines { lineReader.readLine(prompt) }
-                } catch (e: DiceException) {
-                    err.println(colorScheme.errorText(e.message))
-                }
-            } catch (e: UserInterruptException) {
-                throw e // Let main() handle this for the right exit code
-            } catch (e: EndOfFileException) {
-                return
-            }
+    /** Note: closes (and resets) the terminal when done. */
+    override fun rollAndReport() = terminal.use {
+        while (true) try {
+            // TODO: Untested, and @Generated does compile for lambdas
+            rollFromLines { lineReader.readLine(prompt) }
+        } catch (e: DiceException) {
+            err.println(colorScheme.errorText(e.message))
+        } catch (e: EndOfFileException) {
+            return
         }
     }
 }
@@ -63,7 +55,6 @@ fun newRepl(): Pair<Terminal, LineReader> {
     val lineReader = LineReaderBuilder.builder()
         .terminal(terminal)
         .variable(HISTORY_FILE, HISTORY_PATH)
-        .variable(HISTORY_FILE_SIZE, MAX_HISTORY_SAVE)
         .build()
     return terminal to lineReader
 }
