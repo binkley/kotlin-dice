@@ -18,8 +18,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.io.path.Path
 import kotlin.random.Random
 
-private val HISTORY_PATH =
-    Path(System.getProperty("user.home"), ".roll_history")
+private val HISTORY_PATH = pathInHome(".roll_history")
 
 class ReplRoller(
     random: Random,
@@ -85,3 +84,7 @@ fun newTestRepl(): Pair<Terminal, LineReader> {
         .build()
     return terminal to lineReader
 }
+
+@Suppress("SameParameterValue")
+private fun pathInHome(fileName: String) =
+    Path(System.getProperty("user.home"), fileName)
