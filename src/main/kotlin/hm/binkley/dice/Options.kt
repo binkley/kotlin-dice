@@ -60,7 +60,8 @@ import kotlin.random.Random
   @|bold   0|@ - Successful completion
   @|bold   1|@ - Bad dice expression
   @|bold   2|@ - Bad program usage
-  @|bold 130|@ - REPL interrupted (SIGINT)"""
+  @|bold 130|@ - REPL interrupted (SIGINT)
+        """
     ],
 )
 class Options : Callable<Int> {

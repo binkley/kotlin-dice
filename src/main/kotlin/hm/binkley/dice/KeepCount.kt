@@ -6,15 +6,15 @@ sealed class KeepCount(protected val value: Int) {
     override fun toString() = "${this::class.simpleName}($value)"
 
     override fun equals(other: Any?) = this === other ||
-            other is KeepCount &&
-            javaClass == other.javaClass &&
-            value == other.value
+        other is KeepCount &&
+        javaClass == other.javaClass &&
+        value == other.value
 
     override fun hashCode() = hash(javaClass, value)
 
     /** Splits sorted list of results into those to keep and those to drop. */
     protected abstract fun partition(other: List<Int>):
-            Pair<List<Int>, List<Int>>
+        Pair<List<Int>, List<Int>>
 
     companion object {
         fun List<Int>.keep(count: KeepCount) = count.partition(this)
@@ -64,7 +64,8 @@ abstract class KeepMiddle(
     value: Int,
 ) : KeepCount(value) {
     protected abstract fun splitKeep(
-        listEven: Boolean, keepEven: Boolean,
+        listEven: Boolean,
+        keepEven: Boolean,
     ): Int
 
     override fun partition(other: List<Int>): Pair<List<Int>, List<Int>> {

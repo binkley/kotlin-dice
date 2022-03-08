@@ -32,6 +32,6 @@ internal class DiceExceptionTest {
 Mary had a little lamb (line 1, pos 3):
 abcdef
   ^            
-""".trim()
+        """.trim()
     }
 }

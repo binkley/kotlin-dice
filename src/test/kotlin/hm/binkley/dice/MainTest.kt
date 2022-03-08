@@ -80,7 +80,7 @@ internal class MainTest {
             exitCode shouldBe 0
             out shouldBeAfterTrimming """
 3d6 10
-"""
+            """
             err.shouldBeEmpty()
         }
 
@@ -94,7 +94,7 @@ internal class MainTest {
             exitCode shouldBe 0
             out shouldBeAfterTrimming """
 3d6 @|fg_green,bold 10|@
-""".colored
+            """.colored
             err.shouldBeEmpty()
         }
 
@@ -112,7 +112,7 @@ internal class MainTest {
 @|faint,italic roll(d6) -> 1|@
 @|faint,italic roll(d6) -> 5|@
 @|bold 3d6|@ -> @|fg_green,bold 10|@
-""".colored
+            """.colored
             err.shouldBeEmpty()
         }
     }
@@ -128,10 +128,10 @@ internal class MainTest {
             exitCode shouldBe 1
             out shouldBeAfterTrimming """
 3d6 10
-"""
+            """
             err shouldBeAfterTrimming """
 roll: Unexpected 'd' (at position 3) in dice expression '3dd'
-"""
+            """
         }
 
         @Test
@@ -144,7 +144,7 @@ roll: Unexpected 'd' (at position 3) in dice expression '3dd'
             out.shouldBeEmpty()
             err shouldBeAfterTrimming """
 roll: Incomplete dice expression '3d'
-"""
+            """
         }
 
         @Test
@@ -157,7 +157,7 @@ roll: Incomplete dice expression '3d'
             out.shouldBeEmpty()
             err shouldBeAfterTrimming """
 roll: Exploding on 1 will never finish in dice expression 'd1!'
-"""
+            """
         }
 
         @Test
@@ -170,10 +170,10 @@ roll: Exploding on 1 will never finish in dice expression 'd1!'
             exitCode shouldBe 1
             out shouldBeAfterTrimming """
 3d6 10
-"""
+            """
             err shouldBeAfterTrimming """
 roll: Incomplete dice expression '3d'
-"""
+            """
         }
 
         @Test
@@ -188,10 +188,10 @@ roll: Incomplete dice expression '3d'
             out shouldBeAfterTrimming """
 ${COLORFUL_DIE_PROMPT}3d6 10
 $COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
-"""
+            """
             err shouldBeAfterTrimming """
 Incomplete dice expression '3d'
-"""
+            """
         }
 
         @Test
@@ -203,11 +203,11 @@ Incomplete dice expression '3d'
             exitCode shouldBe 1
             out shouldBeAfterTrimming """
 3d6 @|fg_green,bold 10|@
-""".colored
+            """.colored
             // NB -- order of fg_red,bold and bold,fg_red matters
             err shouldBeAfterTrimming """
 @|fg_red,bold roll: Incomplete dice expression '3d'|@
-""".colored
+            """.colored
         }
 
         @Test
@@ -224,7 +224,7 @@ roll(d6) -> 1
 roll(d6) -> 5
 3d6 -> 10
 ---                
-"""
+            """
             // TODO: assertion is sensitive to MainReporter line numbers
             err.shouldStartWith(
                 """
@@ -276,7 +276,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
             exitCode shouldBe 0
             out shouldBeAfterTrimming """
 3d6 10
-"""
+            """
             err.shouldBeEmpty()
         }
 
@@ -317,7 +317,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
             out shouldBeAfterTrimming """
 ${COLORFUL_DIE_PROMPT}3d6 10
 $COLORFUL_DIE_PROMPT
-"""
+            """
             err.shouldBeEmpty()
         }
 
@@ -333,7 +333,7 @@ $COLORFUL_DIE_PROMPT
             // NB -- user typing <ENTER> supplies the newline
             out shouldBeAfterTrimming """
 $COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
-"""
+            """
             err.shouldBeEmpty()
         }
 
@@ -347,7 +347,7 @@ $COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
             out shouldBeAfterTrimming """
 ${COLORFUL_DIE_PROMPT}3d6 @|fg_green,bold 10|@
 $COLORFUL_DIE_PROMPT
-""".colored
+            """.colored
             err.shouldBeEmpty()
         }
     }
@@ -426,7 +426,7 @@ $COLORFUL_DIE_PROMPT
 3d6+1 13
 3d6+1 13
 3d6+1 19
-"""
+            """
             err.shouldBeEmpty()
         }
 
@@ -441,7 +441,7 @@ $COLORFUL_DIE_PROMPT
 ---
 roll(d1) -> 1
  1d1 + 1  -> 2
-"""
+            """
             err.shouldBeEmpty()
         }
     }
@@ -457,7 +457,7 @@ roll(d1) -> 1
             exitCode shouldBe 0
             out shouldBeAfterTrimming """
 1z1-1 -1
-"""
+            """
             err.shouldBeEmpty()
         }
 
@@ -471,7 +471,7 @@ roll(d1) -> 1
             out.shouldBeEmpty()
             err shouldBeAfterTrimming """
 roll: Result -1 is below the minimum result of 0
-"""
+            """
             err.shouldNotBeEmpty()
         }
     }
