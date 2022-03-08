@@ -5,9 +5,9 @@ import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
 import org.jline.reader.LineReader.HISTORY_FILE
 import org.jline.reader.LineReader.HISTORY_FILE_SIZE
+import org.jline.reader.LineReader.HISTORY_SIZE
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.UserInterruptException
-import org.jline.reader.impl.history.DefaultHistory
 import org.jline.terminal.Terminal
 import org.jline.terminal.Terminal.TYPE_DUMB
 import org.jline.terminal.Terminal.TYPE_DUMB_COLOR
@@ -62,7 +62,6 @@ fun newRepl(): Pair<Terminal, LineReader> {
         .build()
     val lineReader = LineReaderBuilder.builder()
         .terminal(terminal)
-        .history(DefaultHistory())
         .variable(HISTORY_FILE, HISTORY_PATH)
         .variable(HISTORY_FILE_SIZE, MAX_HISTORY_SAVE)
         .build()
@@ -84,6 +83,7 @@ fun newTestRepl(): Pair<Terminal, LineReader> {
     // No history during testing
     val lineReader = LineReaderBuilder.builder()
         .terminal(terminal)
+        .variable(HISTORY_SIZE, 0)
         .build()
     return terminal to lineReader
 }
