@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import lombok.Generated
 import org.jline.reader.UserInterruptException
 import picocli.CommandLine
 import picocli.CommandLine.IExecutionExceptionHandler
@@ -99,6 +100,7 @@ val demoExpressions = arrayOf(
     "blah" to null to "syntax error",
 )
 
+@Generated // Lie to JaCoCo -- tests never have a system Console object
 private fun maybeGnuPrefix(): String {
     val interactive = null != System.console()
     // GNU standards prefix errors with program name to aid in

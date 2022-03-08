@@ -1,8 +1,10 @@
 package hm.binkley.dice
 
+import io.kotest.matchers.collections.shouldNotBeOneOf
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import picocli.CommandLine
+import kotlin.math.exp
 import kotlin.reflect.KProperty1
 
 internal class OptionsTest {
@@ -134,6 +136,15 @@ internal class OptionsTest {
             true,
             "-v",
         )
+    }
+
+    @Test
+    fun `should save command line arguments`() {
+        val options = Options()
+
+        CommandLine(options).parseArgs("a", "b")
+
+        options.arguments shouldBe listOf("a", "b")
     }
 }
 
