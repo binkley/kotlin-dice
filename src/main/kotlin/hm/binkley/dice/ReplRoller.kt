@@ -20,7 +20,7 @@ import kotlin.io.path.Path
 import kotlin.random.Random
 
 private val HISTORY_PATH = pathInHome(".roll_history")
-private val MAX_HISTORY = 20
+private const val MAX_HISTORY_SAVE = 20 // TODO: Actually saving 24 lines
 
 class ReplRoller(
     random: Random,
@@ -64,7 +64,7 @@ fun newRepl(): Pair<Terminal, LineReader> {
         .terminal(terminal)
         .history(DefaultHistory())
         .variable(HISTORY_FILE, HISTORY_PATH)
-        .variable(HISTORY_FILE_SIZE, MAX_HISTORY) // TODO: Does this work?
+        .variable(HISTORY_FILE_SIZE, MAX_HISTORY_SAVE)
         .build()
     return terminal to lineReader
 }
