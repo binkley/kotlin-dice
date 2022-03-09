@@ -16,24 +16,26 @@ fun main(args: Array<String>) {
 
     exitProcess(
         CommandLine(options)
-            .setExecutionExceptionHandler(exceptionsFor(options))
-            .setExecutionStrategy(executionFor(options))
-            // Use last value for repeated options (ie, `--color`)
+            .setExecutionExceptionHandler(options.exceptionHandler())
+            .setExecutionStrategy(options.executionStrategy())
+            // Use the last setting for an option if it is repeated; needed
+            // testing which defaults to no color, but some tests will
+            // override the option to test color output
             .setOverwrittenOptionsAllowed(true)
             .execute(*args)
     )
 }
 
-fun exceptionsFor(options: Options) =
+fun Options.exceptionHandler() =
     IExecutionExceptionHandler { ex, commandLine, _ ->
         when (ex) {
             // User-friendly error message
             is DiceException -> {
-                if (options.debug) commandLine.err.println(
+                if (debug) commandLine.err.println(
                     colorScheme.richStackTraceString(ex)
                 )
                 else commandLine.err.println(
-                    colorScheme.errorText(maybeGnuPrefix() + ex.message)
+                    colorScheme.errorText(ex.message.maybeGnuPrefix())
                 )
                 commandLine.commandSpec.exitCodeOnExecutionException() // 1
             }
@@ -100,21 +102,22 @@ val demoExpressions = arrayOf(
     "blah" to null to "syntax error",
 )
 
-@Generated // Lie to JaCoCo -- tests never have a system Console object
-private fun maybeGnuPrefix(): String {
-    val interactive = null != System.console()
-    // GNU standards prefix errors with program name to aid in
-    // debugging failed scripts, etc.
-    return if (interactive) "" else "$PROGRAM_NAME: "
+private fun Options.executionStrategy() = IExecutionStrategy { parseResult ->
+    // Run here rather than in Options so that --help respects the option
+    color.install()
+
+    RunLast().execute(parseResult)
 }
 
-private fun executionFor(options: Options) =
-    IExecutionStrategy special@{ parseResult ->
-        // Run here rather than in Options so that --help respects the option
-        options.color.install()
-
-        RunLast().execute(parseResult)
-    }
+@Generated // Lie to JaCoCo -- tests never have a system Console object
+private fun String?.maybeGnuPrefix(): String {
+    val interactive = null != System.console()
+    // Be careful with null handling: an NPE will have no error message.
+    // GNU standards prefix error messages with program name to aid in
+    // debugging pipelines, etc.
+    val self = this ?: ""
+    return if (interactive) self else "$PROGRAM_NAME: $self"
+}
 
 private infix fun <A, B, C> Pair<A, B>.to(third: C) =
     Triple(first, second, third)

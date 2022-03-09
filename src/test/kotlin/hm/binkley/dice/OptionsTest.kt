@@ -1,10 +1,8 @@
 package hm.binkley.dice
 
-import io.kotest.matchers.collections.shouldNotBeOneOf
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import picocli.CommandLine
-import kotlin.math.exp
 import kotlin.reflect.KProperty1
 
 internal class OptionsTest {

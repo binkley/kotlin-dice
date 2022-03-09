@@ -7,7 +7,7 @@ import org.parboiled.support.ParsingResult
 
 sealed class MainReporter(
     private val minimum: Int,
-    val verbose: Boolean,
+    private val verbose: Boolean,
 ) : RollReporter {
     fun display(result: ParsingResult<Int>) = with(result) {
         if (hasErrors())
@@ -16,7 +16,7 @@ sealed class MainReporter(
             throw ResultTooLowException(minimum, resultValue)
 
         val input = collectContent(inputBuffer)
-        val expression = if (verbose) input else normalize(input)
+        val expression = if (verbose) input else input.normalize()
         println(toDisplay(expression, resultValue))
     }
 
@@ -71,8 +71,8 @@ private fun traceRolls(dice: RolledDice) = with(dice) {
  * scripts, etc.
  * Normal format: `<expression> <result>`.
  */
-private fun normalize(expression: String) =
-    expression.trim().replace("\\s*\\+\\s*".toRegex(), "+")
+private fun String.normalize() =
+    trim().replace("\\s*\\+\\s*".toRegex(), "+")
 
 private fun println(message: String) =
     kotlin.io.println(colorScheme.string(message))

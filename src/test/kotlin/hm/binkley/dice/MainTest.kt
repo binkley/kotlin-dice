@@ -241,20 +241,21 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should exit on interrupt the same as shells`() {
-            val exitCode = exceptionsFor(options).handleExecutionException(
-                UserInterruptException("I was typing somethi^C"),
-                commandLine,
-                parseResult,
-            )
+            val exitCode = options.exceptionHandler()
+                .handleExecutionException(
+                    UserInterruptException("I was typing somethi^C"),
+                    commandLine,
+                    parseResult,
+                )
 
             exitCode shouldBe 130
         }
 
         @Test
         fun `should let framework handle unknown exceptions`() {
-            val ex = NullPointerException("Did I forget something?")
+            val ex = NullPointerException()
             val thrown = shouldThrow<NullPointerException> {
-                exceptionsFor(options).handleExecutionException(
+                options.exceptionHandler().handleExecutionException(
                     ex,
                     commandLine,
                     parseResult,
@@ -512,7 +513,7 @@ private fun captureRun(main: () -> Unit): ShellOutcome {
 }
 
 private fun captureRunWithInput(vararg lines: String, main: () -> Unit):
-    ShellOutcome {
+        ShellOutcome {
     var outcome = ShellOutcome(-1, "BUG", "BUG")
     withTextFromSystemIn(*lines).execute {
         outcome = captureRun(main)

@@ -6,7 +6,7 @@ import picocli.CommandLine.Help.defaultColorScheme
 import java.lang.System.err
 import kotlin.random.Random
 
-val colorScheme = defaultColorScheme(AUTO)
+val colorScheme = defaultColorScheme(AUTO)!!
 
 sealed class MainRoller(
     random: Random,
@@ -28,8 +28,7 @@ sealed class MainRoller(
 
     protected fun rollIt(expression: String) {
         reporter.preRoll()
-        val result = dice.roll(expression)
-        reporter.display(result)
+        reporter.display(dice.roll(expression))
     }
 }
 
