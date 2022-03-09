@@ -161,7 +161,7 @@ class Options : Callable<Int> {
         val roller = when {
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
-                CommandLineRoller(random, reporter, arguments)
+                ArgumentRoller(random, reporter, arguments)
             // Check --test-repl before checking for a console
             testRepl -> replRoller(::newTestRepl)
             null == System.console() -> StdinRoller(random, reporter)

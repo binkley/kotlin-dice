@@ -17,27 +17,27 @@ sealed class MainRoller(
 
     protected fun rollFromLines(nextLine: () -> String?) {
         while (true) {
-            val line = nextLine()
+            val expression = nextLine()
             when {
-                null == line -> return
-                line.isEmpty() -> continue
-                else -> rollIt(line)
+                null == expression -> return
+                expression.isEmpty() -> continue
+                else -> expression.rollIt()
             }
         }
     }
 
-    protected fun rollIt(expression: String) {
+    protected fun String.rollIt() {
         reporter.preRoll()
-        reporter.display(dice.roll(expression))
+        reporter.display(dice.roll(this))
     }
 }
 
-class CommandLineRoller(
+class ArgumentRoller(
     random: Random,
     reporter: MainReporter,
     private val arguments: List<String>,
 ) : MainRoller(random, reporter) {
-    override fun rollAndReport() = arguments.forEach { rollIt(it) }
+    override fun rollAndReport() = arguments.forEach { it.rollIt() }
 }
 
 class StdinRoller(
@@ -54,7 +54,7 @@ class DemoRoller(
     override fun rollAndReport() {
         for ((expression, _, description) in demoExpressions) try {
             println(colorScheme.string("@|faint,italic - $description:|@"))
-            rollIt(expression)
+            expression.rollIt()
         } catch (e: DiceException) {
             err.println(colorScheme.errorText(e.message))
         }
