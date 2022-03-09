@@ -18,8 +18,7 @@ enum class ColorOption(private val ansi: Boolean?) {
     // Disable color
     never(false),
     no(never.ansi),
-    none(never.ansi),
-    ;
+    none(never.ansi);
 
     fun install() {
         when (ansi) {

@@ -15,20 +15,6 @@ class BadExpressionException(errors: List<ParseError>) :
         }
     )
 
-private fun oneLinerFor(error: InvalidInputError): String {
-    val at = error.startIndex
-    with(error.inputBuffer) {
-        val ch = charAt(at)
-        val position = getPosition(at)
-        val where = position.column
-        val expression = extractLine(position.line)
-        return if (Chars.EOI == ch)
-            "Incomplete dice expression '$expression'"
-        else
-            "Unexpected '$ch' (at position $where) in dice expression '$expression'"
-    }
-}
-
 class ResultTooLowException(
     minimum: Int,
     result: Int,
@@ -42,3 +28,17 @@ class ExplodingForeverException(
 ) : DiceException(
     "Exploding on $explodeHigh will never finish in dice expression '$expression'"
 )
+
+private fun oneLinerFor(error: InvalidInputError): String {
+    val at = error.startIndex
+    with(error.inputBuffer) {
+        val ch = charAt(at)
+        val position = getPosition(at)
+        val where = position.column
+        val expression = extractLine(position.line)
+        return if (Chars.EOI == ch)
+            "Incomplete dice expression '$expression'"
+        else
+            "Unexpected '$ch' (at position $where) in dice expression '$expression'"
+    }
+}

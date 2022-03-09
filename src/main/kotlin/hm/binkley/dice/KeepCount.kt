@@ -36,7 +36,7 @@ class KeepHigh(value: Int) : KeepCount(value) {
 
 /**
  * Keeps the lower middle dice rolls.
- * When there are even/odd number of dice, and even/odd number to keep:
+ * When there are even/odd numbers of dice, and even/odd numbers to keep:
  * - Even / even -- middle low and high are the same
  * - Even /odd -- picks up an extra low roll
  * - Odd / even -- picks up an extra low roll
@@ -49,7 +49,7 @@ class KeepMiddleLow(value: Int) : KeepMiddle(value) {
 
 /**
  * Keeps the upper middle dice rolls.
- * When there are even/odd number of dice, and even/odd number to keep:
+ * When there are even/odd numbers of dice, and even/odd numbers to keep:
  * - Even / even -- middle low and high are the same
  * - Even /odd -- picks up an extra high roll
  * - Odd / even -- picks up an extra high roll

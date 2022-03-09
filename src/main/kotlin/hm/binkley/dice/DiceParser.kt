@@ -318,7 +318,12 @@ open class DiceParser(
         ZeroOrMore(AnyOf("\t\u000c "))
 }
 
-/** Represent the parsed data from a dice expression. */
+/**
+ * The parsed roll instructions for one set of rolls in a dice expression.
+ * For example, "3d6+4d4+1" results in 2 parsed dice objects both having
+ * the same [expression], "3d6" and "4d4"; the "1" at the end does not
+ * create a parsed dice object.
+ */
 data class ParsedDice(
     override val expression: String,
     override val dieBase: DieBase,
