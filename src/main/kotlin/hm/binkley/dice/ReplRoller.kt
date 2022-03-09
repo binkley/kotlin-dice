@@ -11,7 +11,6 @@ import org.jline.terminal.Terminal.TYPE_DUMB_COLOR
 import org.jline.terminal.TerminalBuilder
 import org.jline.terminal.impl.DumbTerminal
 import picocli.CommandLine.Help.Ansi.AUTO
-import java.lang.System.err
 import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.io.path.Path
 import kotlin.random.Random
@@ -43,7 +42,7 @@ class ReplRoller(
             // TODO: Untested, and @Generated does compile for lambdas
             rollFromLines { lineReader.readLine(options.prompt) }
         } catch (e: DiceException) {
-            err.println(colorScheme.errorText(e.message))
+            options.commandLine.err.println(colorScheme.errorText(e.message))
         } catch (e: EndOfFileException) {
             return
         }

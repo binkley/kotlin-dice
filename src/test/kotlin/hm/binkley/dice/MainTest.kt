@@ -512,8 +512,10 @@ private fun captureRun(main: () -> Unit): ShellOutcome {
     return ShellOutcome(exitCode, stdout, stderr)
 }
 
-private fun captureRunWithInput(vararg lines: String, main: () -> Unit):
-        ShellOutcome {
+private fun captureRunWithInput(
+    vararg lines: String,
+    main: () -> Unit
+): ShellOutcome {
     var outcome = ShellOutcome(-1, "BUG", "BUG")
     withTextFromSystemIn(*lines).execute {
         outcome = captureRun(main)
