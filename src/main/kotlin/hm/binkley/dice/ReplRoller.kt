@@ -1,6 +1,5 @@
 package hm.binkley.dice
 
-import lombok.Generated
 import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
 import org.jline.reader.LineReader.HISTORY_FILE
@@ -19,17 +18,21 @@ import kotlin.random.Random
 
 private val HISTORY_PATH = pathInHome(".roll_history")
 
+fun interface NewRepl {
+    operator fun invoke(options: Options): Pair<Terminal, LineReader>
+}
+
 class ReplRoller(
     random: Random,
     reporter: MainReporter,
-    private val prompt: String,
-    newRepl: () -> Pair<Terminal, LineReader>,
+    private val options: Options,
+    newRepl: NewRepl,
 ) : MainRoller(random, reporter) {
     private val terminal: Terminal
     private val lineReader: LineReader
 
     init {
-        val (terminal, lineReader) = newRepl()
+        val (terminal, lineReader) = newRepl(options)
         this.terminal = terminal
         this.lineReader = lineReader
     }
@@ -38,7 +41,7 @@ class ReplRoller(
     override fun rollAndReport() = terminal.use {
         while (true) try {
             // TODO: Untested, and @Generated does compile for lambdas
-            rollFromLines { lineReader.readLine(prompt) }
+            rollFromLines { lineReader.readLine(options.prompt) }
         } catch (e: DiceException) {
             err.println(colorScheme.errorText(e.message))
         } catch (e: EndOfFileException) {
@@ -47,23 +50,23 @@ class ReplRoller(
     }
 }
 
-@Generated // Lie to JaCoCo -- the real terminal blocks on read in tests
-fun newRepl(): Pair<Terminal, LineReader> {
-    val terminal = TerminalBuilder.builder()
+val newRealRepl = NewRepl { options ->
+    val terminalBuilder = TerminalBuilder.builder()
         .name(PROGRAM_NAME)
-        .build()
-    val lineReader = LineReaderBuilder.builder()
-        .terminal(terminal)
+
+    val lineReaderBuilder = LineReaderBuilder.builder()
+        .terminal(terminalBuilder.build())
+    if (options.history) lineReaderBuilder
         .variable(HISTORY_FILE, HISTORY_PATH)
-        .build()
-    return terminal to lineReader
+
+    terminalBuilder.build() to lineReaderBuilder.build()
 }
 
 /**
  * The terminal builder hands file descriptors for STDIN and STDOUT to the
  * constructor of dumb terminals, and provides no means for changing them.
  */
-fun newTestRepl(): Pair<Terminal, LineReader> {
+val newTestRepl = NewRepl {
     val terminal = DumbTerminal(
         PROGRAM_NAME,
         if (AUTO.enabled()) TYPE_DUMB_COLOR else TYPE_DUMB,
@@ -76,7 +79,7 @@ fun newTestRepl(): Pair<Terminal, LineReader> {
         .terminal(terminal)
         .variable(HISTORY_SIZE, 0)
         .build()
-    return terminal to lineReader
+    terminal to lineReader
 }
 
 @Suppress("SameParameterValue")

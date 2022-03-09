@@ -1,8 +1,6 @@
 package hm.binkley.dice
 
 import hm.binkley.dice.ColorOption.auto
-import org.jline.reader.LineReader
-import org.jline.terminal.Terminal
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
@@ -98,6 +96,12 @@ class Options : Callable<Int> {
     var demo = false
 
     @Option(
+        description = ["Do not save history from the REPL."],
+        names = ["--no-history"],
+    )
+    var history = true
+
+    @Option(
         description = ["Fail results below a minimum."],
         names = ["-m", "--minimum"],
         paramLabel = "MINIMUM",
@@ -155,17 +159,17 @@ class Options : Callable<Int> {
         val random = if (null == seed) Random else Random(seed!!)
         val reporter = MainReporter.new(minimum, verbose)
 
-        fun replRoller(newRepl: () -> Pair<Terminal, LineReader>) =
-            ReplRoller(random, reporter, prompt, newRepl)
+        fun NewRepl.create() =
+            ReplRoller(random, reporter, this@Options, this)
 
         val roller = when {
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
                 ArgumentRoller(random, reporter, arguments)
             // Check --test-repl before checking for a console
-            testRepl -> replRoller(::newTestRepl)
+            testRepl -> newTestRepl.create()
             null == System.console() -> StdinRoller(random, reporter)
-            else -> replRoller(::newRepl)
+            else -> newRealRepl.create()
         }
 
         roller.rollAndReport()

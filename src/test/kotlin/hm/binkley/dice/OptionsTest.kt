@@ -57,6 +57,16 @@ internal class OptionsTest {
     }
 
     @Test
+    fun `should set history`() {
+        shouldDefaultThenUpdate(
+            Options::history,
+            true,
+            false,
+            "--no-history"
+        )
+    }
+
+    @Test
     fun `should set minimum with long option`() {
         shouldDefaultThenUpdate(
             Options::minimum,

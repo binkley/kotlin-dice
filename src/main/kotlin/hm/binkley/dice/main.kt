@@ -1,6 +1,5 @@
 package hm.binkley.dice
 
-import lombok.Generated
 import org.jline.reader.UserInterruptException
 import picocli.CommandLine
 import picocli.CommandLine.IExecutionExceptionHandler
@@ -109,7 +108,6 @@ private fun Options.executionStrategy() = IExecutionStrategy { parseResult ->
     RunLast().execute(parseResult)
 }
 
-@Generated // Lie to JaCoCo -- tests never have a system Console object
 private fun String?.maybeGnuPrefix(): String {
     val interactive = null != System.console()
     // Be careful with null handling: an NPE will have no error message.
