@@ -1,7 +1,6 @@
 package hm.binkley.dice
 
 import org.jline.reader.UserInterruptException
-import picocli.CommandLine
 import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.RunLast
@@ -14,36 +13,16 @@ fun main(args: Array<String>) {
     val options = Options()
 
     exitProcess(
-        CommandLine(options)
-            .setExecutionExceptionHandler(options.exceptionHandler())
-            .setExecutionStrategy(options.executionStrategy())
+        options.commandLine
             // Use the last setting for an option if it is repeated; needed
             // testing which defaults to no color, but some tests will
             // override the option to test color output
             .setOverwrittenOptionsAllowed(true)
+            .setExecutionStrategy(options.executionStrategy())
+            .setExecutionExceptionHandler(options.exceptionHandler())
             .execute(*args)
     )
 }
-
-fun Options.exceptionHandler() =
-    IExecutionExceptionHandler { ex, commandLine, _ ->
-        when (ex) {
-            // User-friendly error message
-            is DiceException -> {
-                if (debug) commandLine.err.println(
-                    colorScheme.richStackTraceString(ex)
-                )
-                else commandLine.err.println(
-                    colorScheme.errorText(ex.message.maybeGnuPrefix())
-                )
-                commandLine.commandSpec.exitCodeOnExecutionException() // 1
-            }
-            // Special case for the REPL - shells return 130 on SIGINT
-            is UserInterruptException -> 130
-            // Unknown exceptions fall back to Picolo default handling
-            else -> throw ex
-        }
-    }
 
 /**
  * Used by both demo and testing.
@@ -100,6 +79,26 @@ val demoExpressions = arrayOf(
     "d1!" to null to "explosion too low",
     "blah" to null to "syntax error",
 )
+
+fun Options.exceptionHandler() =
+    IExecutionExceptionHandler { ex, commandLine, _ ->
+        when (ex) {
+            // User-friendly error message
+            is DiceException -> {
+                if (debug) commandLine.err.println(
+                    colorScheme.richStackTraceString(ex)
+                )
+                else commandLine.err.println(
+                    colorScheme.errorText(ex.message.maybeGnuPrefix())
+                )
+                commandLine.commandSpec.exitCodeOnExecutionException() // 1
+            }
+            // Special case for the REPL - shells return 130 on SIGINT
+            is UserInterruptException -> 130
+            // Unknown exceptions fall back to Picolo default handling
+            else -> throw ex
+        }
+    }
 
 private fun Options.executionStrategy() = IExecutionStrategy { parseResult ->
     // Run here rather than in Options so that --help respects the option

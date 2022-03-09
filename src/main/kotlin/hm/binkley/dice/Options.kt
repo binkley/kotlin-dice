@@ -1,6 +1,7 @@
 package hm.binkley.dice
 
 import hm.binkley.dice.ColorOption.auto
+import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
@@ -63,6 +64,8 @@ import kotlin.random.Random
     ],
 )
 class Options : Callable<Int> {
+    val commandLine = CommandLine(this)
+
     @Option(
         description = [
             "Choose color output (\${COMPLETION-CANDIDATES})",
