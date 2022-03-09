@@ -5,22 +5,20 @@ package hm.binkley.dice
  * The enum name is identical to the argument and case-sensitive.
  * Example: `--color=always`.
  */
-@Suppress("EnumEntryName", "unused")
+@Suppress("EnumEntryName")
 enum class ColorOption(private val ansi: Boolean?) {
     // Force color
     always(true),
-    yes(true),
-    force(true),
-
+    yes(always.ansi),
+    force(always.ansi),
     // Guess for color
     auto(null),
-    tty(null),
-    `if-tty`(null),
-
+    tty(auto.ansi),
+    `if-tty`(auto.ansi),
     // Disable color
     never(false),
-    no(false),
-    none(false),
+    no(never.ansi),
+    none(never.ansi),
     ;
 
     fun install() {
