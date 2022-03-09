@@ -9,4 +9,4 @@ internal const val FIXED_SEED = 1L
  * independent of the order tests run; avoid reusing the _same_ `Random`
  * object.
  */
-internal fun stableSeedForEachTest() = Random(FIXED_SEED)
+internal fun stableSeedForTesting() = Random(FIXED_SEED)

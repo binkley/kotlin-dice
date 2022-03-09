@@ -83,6 +83,7 @@ open class DiceParser(
      *       builder pattern
      */
     private fun toParsedDice() = ParsedDice(
+        expression = expression!!,
         dieSides = dieSides!!,
         dieBase = dieBase!!,
         diceCount = diceCount!!,
@@ -268,7 +269,7 @@ open class DiceParser(
     }
 
     internal fun rollTheDice() = push(
-        Roller(expression!!, random, reporter, toParsedDice()).rollDice()
+        Roller(random, reporter, toParsedDice()).rollDice()
     )
 
     @Generated // Lie to JaCoCo
@@ -319,6 +320,7 @@ open class DiceParser(
 
 /** Represent the parsed data from a dice expression. */
 data class ParsedDice(
+    override val expression: String,
     override val dieBase: DieBase,
     override val dieSides: Int,
     override val diceCount: Int,

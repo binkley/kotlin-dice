@@ -8,6 +8,7 @@ internal class RollerTest {
     @Test
     fun `should report roll details`() {
         val assertOnRoll = RollReporter {
+            it.expression shouldBe "7d6r2h3!4x2"
             it.dieSides shouldBe 6
             it.dieBase shouldBe ONE
             it.diceCount shouldBe 7
@@ -17,20 +18,19 @@ internal class RollerTest {
             it.multiply shouldBe 2
         }
 
-        val roller = Roller(
-            "7d6r2h3!4x2",
-            stableSeedForEachTest(),
+        Roller(
+            stableSeedForTesting(),
             assertOnRoll,
             ParsedDice(
-                dieSides = 6,
+                expression = "7d6r2h3!4x2",
                 dieBase = ONE,
+                dieSides = 6,
                 diceCount = 7,
                 rerollLow = 2,
                 keepCount = KeepHigh(3),
                 explodeHigh = 4,
                 multiply = 2,
             )
-        )
-        roller.rollDice()
+        ).rollDice()
     }
 }

@@ -15,7 +15,6 @@ private typealias ReportType = (DiceExpression, Int) -> RolledDice
  * instances
  */
 data class Roller(
-    private val expression: String,
     private val random: Random,
     private val reporting: RollReporter,
     private val parsed: DiceExpression,

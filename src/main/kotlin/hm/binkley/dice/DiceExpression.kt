@@ -1,6 +1,9 @@
 package hm.binkley.dice
 
 interface DiceExpression {
+    /** The original dice expression input. */
+    val expression: String
+
     /**
      * Whether the die is one-based (standard, eg, 1-6) or zero-based (eg,
      * 0-5).
