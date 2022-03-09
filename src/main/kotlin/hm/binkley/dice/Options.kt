@@ -42,7 +42,7 @@ import kotlin.random.Random
      @|faint,italic roll(d4) -> 3|@
      @|bold 2d4|@ -> @|fg_green,bold 7|@
 
-@|bold, underline Files:|@
+@|bold,underline Files:|@
   @|italic ~/.roll_history|@
      This file preserves input history across runs of the REPL.
 
@@ -57,10 +57,10 @@ import kotlin.random.Random
      NUMBER is too low for the number of sides on the die.
 
 @|bold,underline Exit codes:|@
-  @|bold   0|@ - Successful completion
-  @|bold   1|@ - Bad dice expression
-  @|bold   2|@ - Bad program usage
-  @|bold 130|@ - REPL interrupted (SIGINT)
+  @|bold   0|@   Successful completion
+  @|bold   1|@   Bad dice expression
+  @|bold   2|@   Bad program usage
+  @|bold 130|@   REPL interrupted (SIGINT)
         """
     ],
 )
