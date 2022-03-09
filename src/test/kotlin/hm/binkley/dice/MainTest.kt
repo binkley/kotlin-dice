@@ -70,7 +70,7 @@ internal class MainTest {
     }
 
     @Nested
-    inner class CommandLine {
+    inner class Arguments {
         @Test
         fun `should roll dice from command line`() {
             val (exitCode, out, err) = captureRun {
