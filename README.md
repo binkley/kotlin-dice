@@ -27,6 +27,7 @@ interactive prompt for entering and evaluating dice expressions.
 * [Build](#build)
 * [Dice expression syntax](#dice-expression-syntax)
 * [Examples](#examples)
+* [REPL](#repl)
 * [API](#api)
 * [Code conventions](#code-conventions)
 * [TODO](#todo)
@@ -110,6 +111,18 @@ See [TODO](#todo) for further improvements.
 
 The [demo examples](./src/main/kotlin/hm/binkley/dice/main.kt) (look at 
 `demoExpressions`) cover all supported examples.
+
+## REPL
+
+Running [`./roll`](./roll) with arguments or input starts an interactive REPL
+(read-evaluate-print loop).
+The REPL includes many features, courtesy of 
+[Picocli](https://picocli.info/) and [JLine3](https://jline.github.io/), 
+including:
+
+- Rich command-line color and formatting
+- Traditional shell key bindings such as `Ctrl-A` or up/down arrow
+- Command history (saved to `~/.roll_history`) and expansion (`!!`)
 
 ## API
 
