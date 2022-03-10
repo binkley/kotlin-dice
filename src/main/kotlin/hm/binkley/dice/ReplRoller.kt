@@ -49,10 +49,15 @@ class ReplRoller(
         while (true) try {
             // TODO: Untested, and @Generated does compile for lambdas
             rollFromLines { lineReader.readLine(options.prompt) }
+        } catch (e: BadHistoryException) {
+            e.print()
         } catch (e: DiceException) {
-            options.commandLine.err.println(colorScheme.errorText(e.message))
+            e.print()
         }
     }
+
+    private fun Throwable.print() =
+        options.commandLine.err.println(colorScheme.errorText(message))
 }
 
 val newRealRepl = NewRepl { options ->
@@ -102,15 +107,22 @@ private fun lineReaderBuilder(
     return lineReaderBuilder
 }
 
+private fun inColor() = AUTO.enabled()
+
 /**
  * Only expand history when `!` is the first character in the line.
  * Dice expressions use `!` for explosion, not history expansion.
  * However, it is still handy to expand lines like `!!` or `!31`, etc.
  */
 private class RollingExpander : DefaultExpander() {
-    override fun expandHistory(history: History, line: String): String =
+    override fun expandHistory(history: History, line: String): String = try {
         if (!line.startsWith('!')) line
         else super.expandHistory(history, line)
+    } catch (e: IllegalArgumentException) {
+        throw BadHistoryException(e)
+    }
 }
 
-private fun inColor() = AUTO.enabled()
+// TODO: Horrible -- defeat JLine3 readLine()
+private class BadHistoryException(cause: IllegalArgumentException) :
+    Throwable(cause.message)

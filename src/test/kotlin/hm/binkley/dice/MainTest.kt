@@ -195,6 +195,22 @@ Incomplete dice expression '3d'
         }
 
         @Test
+        fun `should fail for bad history expansion`() {
+            val (exitCode, out, err) = captureRunWithInput(
+                "!!",
+            ) { mainWithFixedSeed("--test-repl") }
+
+            exitCode shouldBe 0
+            // NB -- jline3 clears input and re-prompts
+            out shouldBeAfterTrimming """
+$DIE_PROMPT$DIE_PROMPT
+            """
+            err shouldBeAfterTrimming """
+!!: event not found
+            """
+        }
+
+        @Test
         fun `should fail in color`() {
             val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--color=always", "3d6", "3d")
