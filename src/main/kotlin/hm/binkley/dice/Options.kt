@@ -1,31 +1,25 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.ColorOption.auto
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+import picocli.CommandLine.Option.NULL_VALUE
 import picocli.CommandLine.Parameters
 import java.util.concurrent.Callable
 import kotlin.random.Random
 
 @Command(
-    name = PROGRAM_NAME,
     description = ["Roll dice expressions."],
-    mixinStandardHelpOptions = true,
-    version = ["dice 0-SNAPSHOT"],
-    synopsisHeading = "@|bold,underline Usage:|@%n",
     descriptionHeading = "%n@|bold,underline Description:|@%n",
-    optionListHeading = "%n@|bold,underline Options:|@%n",
-    parameterListHeading = "%n@|bold,underline Parameters:|@%n",
     footer = [
         """
 @|bold,underline Input modes:|@
   @|bold roll|@
-     Start the interactive dice rolling prompt (REPL)
+     Run the REPL.
   @|bold roll|@ <@|italic expression(s)|@>
-     Print result of dice expression(s), and exit.
+     Show roll results of dice expression(s) and exit.
   echo @|italic <expression(s)>|@ | @|bold roll|@
-     Print result of dice expression(s) read from STDIN, and exit.
+     Show roll result of dice expression(s) read from STDIN and exit.
 
 @|bold,underline Output examples:|@
   @|bold roll --seed=1 2d4 2d4|@ (normal)
@@ -62,88 +56,117 @@ import kotlin.random.Random
   @|bold 130|@   REPL interrupted (SIGINT)
         """
     ],
+    mixinStandardHelpOptions = true,
+    name = PROGRAM_NAME,
+    optionListHeading = "%n@|bold,underline Options:|@%n",
+    parameterListHeading = "%n@|bold,underline Parameters:|@%n",
+    showAtFileInUsageHelp = true,
+    showEndOfOptionsDelimiterInUsageHelp = true,
+    synopsisHeading = "@|bold,underline Usage:|@%n",
+    version = ["dice 0-SNAPSHOT"],
 )
 class Options : Callable<Int> {
     val commandLine = CommandLine(this)
 
     @Option(
+        defaultValue = "auto",
         description = [
-            "Choose color output (\${COMPLETION-CANDIDATES})",
-            "If specified without a WHEN, it uses '\${FALLBACK-VALUE}'",
-            "Without this option, color is used if at a tty"
+            "Choose color output (\${COMPLETION-CANDIDATES}).",
+            "Default with no option is '\${DEFAULT-VALUE}'.",
+            "Default with option but no WHEN is '\${FALLBACK-VALUE}'.",
         ],
         names = ["-C", "--color"],
         paramLabel = "WHEN",
         arity = "0..1",
         fallbackValue = "always",
     )
-    var color = auto
+    var color = ColorOption.auto
 
     @Option(
-        description = ["Verbose and with developer output (INTERNAL)."],
+        description = [
+            "Verbose and with developer output (INTERNAL)."
+        ],
         names = ["--debug"],
         hidden = true,
     )
     var debug = false
 
     @Option(
-        description = ["Print copyright and exit."],
+        description = [
+            "Show the copyright and exit."
+        ],
         names = ["--copyright"],
     )
     var copyright = false
 
     @Option(
-        description = ["Run the demo; ignore arguments."],
+        description = [
+            "Run the demo and exit."
+        ],
         names = ["--demo"],
     )
     var demo = false
 
     @Option(
-        description = ["Do not save history from the REPL."],
+        description = [
+            "Do not save history from the REPL."
+        ],
         names = ["--no-history"],
     )
     var history = true
 
     @Option(
-        description = ["Fail results below a minimum."],
+        description = [
+            "Fail roll results below MINIMUM.",
+            "Default with no option is no minimum.",
+        ],
         names = ["-m", "--minimum"],
         paramLabel = "MINIMUM",
     )
     var minimum = Int.MIN_VALUE
 
     @Option(
-        description = ["Change the interactive prompt from '$DIE_PROMPT'."],
-        names = ["-p", "--prompt"],
+        defaultValue = DIE_PROMPT, // Colorful die
+        description = [
+            "Change the REPL prompt from '\${DEFAULT-VALUE}'."
+        ],
+        names = ["-P", "--prompt"],
         paramLabel = "PROMPT",
     )
-    var prompt = DIE_PROMPT // Colorful die
+    var prompt = DIE_PROMPT
 
     @Option(
-        description = ["Provide a random seed for repeatable results."],
+        defaultValue = NULL_VALUE,
+        description = [
+            "Fix RNG seed to SEED for repeatable roll results."
+        ],
         names = ["-s", "--seed"],
         paramLabel = "SEED",
     )
     var seed: Int? = null
 
     @Option(
-        description = ["Test terminal for the REPL (INTERNAL)."],
-        names = ["--test-repl"],
+        description = [
+            "Test terminal for the REPL (INTERNAL)."
+        ],
         hidden = true,
+        names = ["--test-repl"],
     )
     var testRepl = false
 
     @Option(
-        description = ["Explain each die roll as it happens."],
+        description = [
+            "Show die rolls as they happens."
+        ],
         names = ["-v", "--verbose"],
     )
     var verbose = false
 
     @Parameters(
         description = [
-            "Dice expressions to roll",
-            "If provided no expressions, prompt user interactively"
+            "Dice expressions to roll."
         ],
-        paramLabel = "EXPRESSION",
+        paramLabel = "EXPRESSION(s)",
     )
     var arguments: List<String> = emptyList()
 

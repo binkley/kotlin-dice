@@ -3,7 +3,7 @@ package hm.binkley.dice
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import picocli.CommandLine
-import kotlin.reflect.KProperty1
+import kotlin.reflect.KMutableProperty1
 
 internal class OptionsTest {
     @Test
@@ -11,8 +11,8 @@ internal class OptionsTest {
         shouldDefaultThenUpdate(
             Options::color,
             ColorOption.auto,
-            ColorOption.always,
-            "--color", "always"
+            ColorOption.none,
+            "--color=none"
         )
     }
 
@@ -21,8 +21,18 @@ internal class OptionsTest {
         shouldDefaultThenUpdate(
             Options::color,
             ColorOption.auto,
+            ColorOption.none,
+            "-C", "none"
+        )
+    }
+
+    @Test
+    fun `should set color with fallback`() {
+        shouldDefaultThenUpdate(
+            Options::color,
+            ColorOption.auto,
             ColorOption.always,
-            "-C", "always"
+            "-C"
         )
     }
 
@@ -72,7 +82,7 @@ internal class OptionsTest {
             Options::minimum,
             Int.MIN_VALUE,
             1,
-            "--minimum", "1"
+            "--minimum=1"
         )
     }
 
@@ -102,7 +112,7 @@ internal class OptionsTest {
             Options::prompt,
             DIE_PROMPT,
             "> ",
-            "-p", "> "
+            "-P", "> "
         )
     }
 
@@ -153,20 +163,28 @@ internal class OptionsTest {
         CommandLine(options).parseArgs("a", "b")
 
         options.arguments shouldBe listOf("a", "b")
+        options.arguments = listOf("p", "q") // Writeable
     }
 }
 
 private fun <T> shouldDefaultThenUpdate(
-    prop: KProperty1<Options, T>,
-    default: T,
-    updated: T,
-    vararg flags: String,
+    prop: KMutableProperty1<Options, T>,
+    defaultValue: T,
+    updatedValue: T,
+    vararg optionFlags: String,
 ) {
+    // Run parseArgs before reading properties so Picocli sets lateinit vars
+    // Note also that JaCoCo does not understand branches for lateinit
     val options = Options()
 
-    prop.get(options) shouldBe default
+    // First, check default values
+    CommandLine(options).parseArgs()
+    prop.get(options) shouldBe defaultValue
 
-    CommandLine(options).parseArgs(*flags)
+    // Second, check setting props based on command line flags
+    CommandLine(options).parseArgs(*optionFlags)
+    prop.get(options) shouldBe updatedValue
 
-    prop.get(options) shouldBe updated
+    // Third, show the options are mutable from code (not just reflection)
+    prop.set(options, prop.get(options))
 }
