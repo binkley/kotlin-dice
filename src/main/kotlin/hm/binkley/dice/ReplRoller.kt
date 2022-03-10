@@ -1,6 +1,5 @@
 package hm.binkley.dice
 
-import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
 import org.jline.reader.LineReader.HISTORY_FILE
 import org.jline.reader.LineReader.HISTORY_SIZE
@@ -17,8 +16,14 @@ import kotlin.random.Random
 
 private val HISTORY_PATH = pathInHome(".roll_history")
 
+/**
+ * Creates a [Terminal] and [LineReaderBuilder] pair.
+ * The terminal is ready to use.
+ * The line reader is returned as a builder for further customization with
+ * commands, completion, etc.
+ */
 fun interface NewRepl {
-    operator fun invoke(options: Options): Pair<Terminal, LineReader>
+    operator fun invoke(options: Options): Pair<Terminal, LineReaderBuilder>
 }
 
 class ReplRoller(
@@ -33,7 +38,7 @@ class ReplRoller(
     init {
         val (terminal, lineReader) = newRepl(options)
         this.terminal = terminal
-        this.lineReader = lineReader
+        this.lineReader = lineReader.build()
     }
 
     /** Note: closes (and resets) the terminal when done. */
@@ -43,22 +48,21 @@ class ReplRoller(
             rollFromLines { lineReader.readLine(options.prompt) }
         } catch (e: DiceException) {
             options.commandLine.err.println(colorScheme.errorText(e.message))
-        } catch (e: EndOfFileException) {
-            return
         }
     }
 }
 
 val newRealRepl = NewRepl { options ->
-    val terminalBuilder = TerminalBuilder.builder()
+    val terminal = TerminalBuilder.builder()
         .name(PROGRAM_NAME)
+        .build()
 
     val lineReaderBuilder = LineReaderBuilder.builder()
-        .terminal(terminalBuilder.build())
+        .terminal(terminal)
     if (options.history) lineReaderBuilder
         .variable(HISTORY_FILE, HISTORY_PATH)
 
-    terminalBuilder.build() to lineReaderBuilder.build()
+    terminal to lineReaderBuilder
 }
 
 /**
@@ -68,19 +72,22 @@ val newRealRepl = NewRepl { options ->
 val newTestRepl = NewRepl {
     val terminal = DumbTerminal(
         PROGRAM_NAME,
-        if (AUTO.enabled()) TYPE_DUMB_COLOR else TYPE_DUMB,
+        if (inColor()) TYPE_DUMB_COLOR else TYPE_DUMB,
         System.`in`,
         System.out,
         UTF_8,
     )
+
     // No history during testing
-    val lineReader = LineReaderBuilder.builder()
+    val lineReaderBuilder = LineReaderBuilder.builder()
         .terminal(terminal)
         .variable(HISTORY_SIZE, 0)
-        .build()
-    terminal to lineReader
+
+    terminal to lineReaderBuilder
 }
 
 @Suppress("SameParameterValue")
 private fun pathInHome(fileName: String) =
     Path(System.getProperty("user.home"), fileName)
+
+private fun inColor() = AUTO.enabled()

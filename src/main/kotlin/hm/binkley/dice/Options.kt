@@ -162,7 +162,7 @@ class Options : Callable<Int> {
         val random = if (null == seed) Random else Random(seed!!)
         val reporter = MainReporter.new(minimum, verbose)
 
-        fun NewRepl.create() =
+        fun NewRepl.roller() =
             ReplRoller(random, reporter, this@Options, this)
 
         val roller = when {
@@ -170,9 +170,9 @@ class Options : Callable<Int> {
             arguments.isNotEmpty() ->
                 ArgumentRoller(random, reporter, arguments)
             // Check --test-repl before checking for a console
-            testRepl -> newTestRepl.create()
-            null == System.console() -> StdinRoller(random, reporter)
-            else -> newRealRepl.create()
+            testRepl -> newTestRepl.roller()
+            isInteractive() -> newRealRepl.roller()
+            else -> StdinRoller(random, reporter)
         }
 
         roller.rollAndReport()

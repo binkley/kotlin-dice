@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
 import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.IExecutionStrategy
@@ -80,6 +81,8 @@ val demoExpressions = arrayOf(
     "blah" to null to "syntax error",
 )
 
+fun isInteractive() = null != System.console()
+
 fun Options.exceptionHandler() =
     IExecutionExceptionHandler { ex, commandLine, _ ->
         when (ex) {
@@ -93,6 +96,8 @@ fun Options.exceptionHandler() =
                 )
                 commandLine.commandSpec.exitCodeOnExecutionException() // 1
             }
+            // REPL closed with Ctrl-D/Ctrl-Z
+            is EndOfFileException -> 0
             // Special case for the REPL - shells return 130 on SIGINT
             is UserInterruptException -> 130
             // Unknown exceptions fall back to Picolo default handling
@@ -108,7 +113,7 @@ private fun Options.executionStrategy() = IExecutionStrategy { parseResult ->
 }
 
 private fun String?.maybeGnuPrefix(): String {
-    val interactive = null != System.console()
+    val interactive = isInteractive()
     // Be careful with null handling: an NPE will have no error message.
     // GNU standards prefix error messages with program name to aid in
     // debugging pipelines, etc.
