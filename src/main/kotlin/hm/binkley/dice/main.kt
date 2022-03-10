@@ -8,7 +8,7 @@ import picocli.CommandLine.RunLast
 import kotlin.system.exitProcess
 
 const val PROGRAM_NAME = "roll"
-const val COLORFUL_DIE_PROMPT = "\uD83C\uDFB2 "
+const val DIE_PROMPT = "\uD83C\uDFB2 "
 
 fun main(args: Array<String>) {
     val options = Options()

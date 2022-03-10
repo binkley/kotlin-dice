@@ -1,9 +1,11 @@
 package hm.binkley.dice
 
+import org.jline.reader.History
 import org.jline.reader.LineReader
 import org.jline.reader.LineReader.HISTORY_FILE
 import org.jline.reader.LineReader.HISTORY_SIZE
 import org.jline.reader.LineReaderBuilder
+import org.jline.reader.impl.DefaultExpander
 import org.jline.terminal.Terminal
 import org.jline.terminal.Terminal.TYPE_DUMB
 import org.jline.terminal.Terminal.TYPE_DUMB_COLOR
@@ -12,9 +14,10 @@ import org.jline.terminal.impl.DumbTerminal
 import picocli.CommandLine.Help.Ansi.AUTO
 import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.io.path.Path
+import kotlin.io.path.createTempFile
 import kotlin.random.Random
 
-private val HISTORY_PATH = pathInHome(".roll_history")
+private const val HISTORY_FILE_NAME = ".roll_history"
 
 /**
  * Creates a [Terminal] and [LineReaderBuilder] pair.
@@ -36,9 +39,9 @@ class ReplRoller(
     private val lineReader: LineReader
 
     init {
-        val (terminal, lineReader) = newRepl(options)
+        val (terminal, lineReaderBuilder) = newRepl(options)
         this.terminal = terminal
-        this.lineReader = lineReader.build()
+        lineReader = lineReaderBuilder.build()
     }
 
     /** Note: closes (and resets) the terminal when done. */
@@ -57,10 +60,9 @@ val newRealRepl = NewRepl { options ->
         .name(PROGRAM_NAME)
         .build()
 
-    val lineReaderBuilder = LineReaderBuilder.builder()
-        .terminal(terminal)
-    if (options.history) lineReaderBuilder
-        .variable(HISTORY_FILE, HISTORY_PATH)
+    val historyPath = Path(System.getProperty("user.home"), HISTORY_FILE_NAME)
+    val lineReaderBuilder = lineReaderBuilder(terminal, options)
+        .variable(HISTORY_FILE, historyPath)
 
     terminal to lineReaderBuilder
 }
@@ -69,7 +71,7 @@ val newRealRepl = NewRepl { options ->
  * The terminal builder hands file descriptors for STDIN and STDOUT to the
  * constructor of dumb terminals, and provides no means for changing them.
  */
-val newTestRepl = NewRepl {
+val newTestRepl = NewRepl { options ->
     val terminal = DumbTerminal(
         PROGRAM_NAME,
         if (inColor()) TYPE_DUMB_COLOR else TYPE_DUMB,
@@ -78,16 +80,37 @@ val newTestRepl = NewRepl {
         UTF_8,
     )
 
-    // No history during testing
-    val lineReaderBuilder = LineReaderBuilder.builder()
-        .terminal(terminal)
-        .variable(HISTORY_SIZE, 0)
+    // Do not save test roll history to ~/.roll_history
+    val lineReaderBuilder = lineReaderBuilder(terminal, options)
+        .variable(HISTORY_FILE, createTempFile(PROGRAM_NAME))
 
     terminal to lineReaderBuilder
 }
 
-@Suppress("SameParameterValue")
-private fun pathInHome(fileName: String) =
-    Path(System.getProperty("user.home"), fileName)
+private fun lineReaderBuilder(
+    terminal: Terminal,
+    options: Options,
+): LineReaderBuilder {
+    val lineReaderBuilder = LineReaderBuilder.builder()
+        .terminal(terminal)
+
+    if (options.history) lineReaderBuilder
+        .expander(RollingExpander())
+    else lineReaderBuilder
+        .variable(HISTORY_SIZE, 0)
+
+    return lineReaderBuilder
+}
+
+/**
+ * Only expand history when `!` is the first character in the line.
+ * Dice expressions use `!` for explosion, not history expansion.
+ * However, it is still handy to expand lines like `!!` or `!31`, etc.
+ */
+private class RollingExpander : DefaultExpander() {
+    override fun expandHistory(history: History, line: String): String =
+        if (!line.startsWith('!')) line
+        else super.expandHistory(history, line)
+}
 
 private fun inColor() = AUTO.enabled()

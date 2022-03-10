@@ -90,7 +90,7 @@ internal class OptionsTest {
     fun `should set prompt with long option`() {
         shouldDefaultThenUpdate(
             Options::prompt,
-            COLORFUL_DIE_PROMPT,
+            DIE_PROMPT,
             "> ",
             "--prompt", "> "
         )
@@ -100,7 +100,7 @@ internal class OptionsTest {
     fun `should set prompt with short option`() {
         shouldDefaultThenUpdate(
             Options::prompt,
-            COLORFUL_DIE_PROMPT,
+            DIE_PROMPT,
             "> ",
             "-p", "> "
         )

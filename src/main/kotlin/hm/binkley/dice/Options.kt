@@ -112,11 +112,11 @@ class Options : Callable<Int> {
     var minimum = Int.MIN_VALUE
 
     @Option(
-        description = ["Change the interactive prompt from '$COLORFUL_DIE_PROMPT'."],
+        description = ["Change the interactive prompt from '$DIE_PROMPT'."],
         names = ["-p", "--prompt"],
         paramLabel = "PROMPT",
     )
-    var prompt = COLORFUL_DIE_PROMPT // Colorful die
+    var prompt = DIE_PROMPT // Colorful die
 
     @Option(
         description = ["Provide a random seed for repeatable results."],

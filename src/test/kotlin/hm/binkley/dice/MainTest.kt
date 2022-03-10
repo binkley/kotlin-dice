@@ -186,8 +186,8 @@ roll: Incomplete dice expression '3d'
             exitCode shouldBe 0
             // NB -- user typing <ENTER> supplies the newline
             out shouldBeAfterTrimming """
-${COLORFUL_DIE_PROMPT}3d6 10
-$COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
+${DIE_PROMPT}3d6 10
+$DIE_PROMPT$DIE_PROMPT
             """
             err shouldBeAfterTrimming """
 Incomplete dice expression '3d'
@@ -316,8 +316,8 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 
             exitCode shouldBe 0
             out shouldBeAfterTrimming """
-${COLORFUL_DIE_PROMPT}3d6 10
-$COLORFUL_DIE_PROMPT
+${DIE_PROMPT}3d6 10
+$DIE_PROMPT
             """
             err.shouldBeEmpty()
         }
@@ -333,7 +333,7 @@ $COLORFUL_DIE_PROMPT
             exitCode shouldBe 0
             // NB -- user typing <ENTER> supplies the newline
             out shouldBeAfterTrimming """
-$COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
+$DIE_PROMPT$DIE_PROMPT
             """
             err.shouldBeEmpty()
         }
@@ -346,9 +346,27 @@ $COLORFUL_DIE_PROMPT$COLORFUL_DIE_PROMPT
 
             exitCode shouldBe 0
             out shouldBeAfterTrimming """
-${COLORFUL_DIE_PROMPT}3d6 @|fg_green,bold 10|@
-$COLORFUL_DIE_PROMPT
+${DIE_PROMPT}3d6 @|fg_green,bold 10|@
+$DIE_PROMPT
             """.colored
+            err.shouldBeEmpty()
+        }
+
+        @Test
+        fun `should expand history in the REPL`() {
+            val (exitCode, out, err) = captureRunWithInput(
+                "3d6",
+                "!!",
+                "3d6!2",
+            ) { mainWithFixedSeed("--test-repl") }
+
+            exitCode shouldBe 0
+            out shouldBeAfterTrimming """
+${DIE_PROMPT}3d6 10
+${DIE_PROMPT}3d6 11
+${DIE_PROMPT}3d6!2 70
+$DIE_PROMPT
+            """
             err.shouldBeEmpty()
         }
     }
@@ -514,7 +532,7 @@ private fun captureRun(main: () -> Unit): ShellOutcome {
 
 private fun captureRunWithInput(
     vararg lines: String,
-    main: () -> Unit
+    main: () -> Unit,
 ): ShellOutcome {
     var outcome = ShellOutcome(-1, "BUG", "BUG")
     withTextFromSystemIn(*lines).execute {
