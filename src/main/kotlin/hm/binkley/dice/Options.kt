@@ -5,7 +5,6 @@ import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Option.NULL_VALUE
 import picocli.CommandLine.Parameters
-import java.util.concurrent.Callable
 import kotlin.random.Random
 
 @Command(
@@ -65,7 +64,7 @@ import kotlin.random.Random
     synopsisHeading = "@|bold,underline Usage:|@%n",
     version = ["dice 0-SNAPSHOT"],
 )
-class Options : Callable<Int> {
+class Options : Runnable {
     val commandLine = CommandLine(this)
 
     @Option(
@@ -170,13 +169,13 @@ class Options : Callable<Int> {
     )
     var arguments: List<String> = emptyList()
 
-    override fun call(): Int {
+    override fun run() {
         // Handle copyright first so we can return 0 quickly
         if (copyright) {
             javaClass.classLoader
                 .getResourceAsStream("META-INF/LICENSE")!!
                 .copyTo(System.out)
-            return 0
+            return
         }
 
         if (debug) verbose = true
@@ -185,21 +184,14 @@ class Options : Callable<Int> {
         val random = if (null == seed) Random else Random(seed!!)
         val reporter = MainReporter.new(minimum, verbose)
 
-        fun NewRepl.roller() =
-            ReplRoller(random, reporter, this@Options, this)
-
         val roller = when {
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
                 ArgumentRoller(random, reporter, arguments)
-            // Check --test-repl before checking for a console
-            testRepl -> newTestRepl.roller()
-            isInteractive() -> newRealRepl.roller()
+            isInteractive() || testRepl -> ReplRoller(random, reporter, this)
             else -> StdinRoller(random, reporter)
         }
 
         roller.rollAndReport()
-
-        return 0
     }
 }

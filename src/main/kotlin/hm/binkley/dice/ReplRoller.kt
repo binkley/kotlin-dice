@@ -19,29 +19,20 @@ import kotlin.random.Random
 
 private const val HISTORY_FILE_NAME = ".roll_history"
 
-/**
- * Creates a [Terminal] and [LineReaderBuilder] pair.
- * The terminal is ready to use.
- * The line reader is returned as a builder for further customization with
- * commands, completion, etc.
- */
-fun interface NewRepl {
-    operator fun invoke(options: Options): Pair<Terminal, LineReaderBuilder>
-}
-
 class ReplRoller(
     random: Random,
     reporter: MainReporter,
     private val options: Options,
-    newRepl: NewRepl,
 ) : MainRoller(random, reporter) {
     private val terminal: Terminal
     private val lineReader: LineReader
 
     init {
-        val (terminal, lineReaderBuilder) = newRepl(options)
+        val (terminal, lineReader) =
+            if (options.testRepl) newTestRepl(options)
+            else newRealRepl(options)
         this.terminal = terminal
-        lineReader = lineReaderBuilder.build()
+        this.lineReader = lineReader
     }
 
     /** Note: closes (and resets) the terminal when done. */
@@ -60,7 +51,7 @@ class ReplRoller(
         options.commandLine.err.println(colorScheme.errorText(message))
 }
 
-val newRealRepl = NewRepl { options ->
+internal fun newRealRepl(options: Options): Pair<Terminal, LineReader> {
     val terminal = TerminalBuilder.builder()
         .name(PROGRAM_NAME)
         .build()
@@ -71,14 +62,14 @@ val newRealRepl = NewRepl { options ->
         .variable(HISTORY_FILE,
             Path(System.getProperty("user.home"), HISTORY_FILE_NAME))
 
-    terminal to lineReaderBuilder
+    return terminal to lineReaderBuilder.build()
 }
 
 /**
  * The terminal builder hands file descriptors for STDIN and STDOUT to the
  * constructor of dumb terminals, and provides no means for changing them.
  */
-val newTestRepl = NewRepl { options ->
+private fun newTestRepl(options: Options): Pair<Terminal, LineReader> {
     val terminal = DumbTerminal(
         PROGRAM_NAME,
         if (inColor()) TYPE_DUMB_COLOR else TYPE_DUMB,
@@ -92,7 +83,7 @@ val newTestRepl = NewRepl { options ->
     if (options.history) lineReaderBuilder
         .variable(HISTORY_FILE, createTempFile(PROGRAM_NAME))
 
-    terminal to lineReaderBuilder
+    return terminal to lineReaderBuilder.build()
 }
 
 private fun lineReaderBuilder(
