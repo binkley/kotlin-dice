@@ -3,11 +3,13 @@ package hm.binkley.dice
 import com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrNormalized
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
+import com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable
 import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
 import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotBeEmpty
 import io.kotest.matchers.string.shouldStartWith
@@ -15,6 +17,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.jline.reader.UserInterruptException
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import picocli.CommandLine.Help.Ansi
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.ParseResult
 
@@ -22,13 +25,24 @@ internal class MainTest {
     @Nested
     inner class BasicOptions {
         @Test
-        fun `should show basic help`() {
+        fun `should show help`() {
             val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--help")
             }
 
             exitCode shouldBe 0
-            out.shouldNotBeEmpty()
+            out shouldContain "\nDescription:\n"
+            err.shouldBeEmpty()
+        }
+
+        @Test
+        fun `should show help in color when forced`() {
+            val (exitCode, out, err) = captureRun {
+                mainWithFixedSeed("--color=always", "--help")
+            }
+
+            exitCode shouldBe 0
+            out shouldContain "\n@|bold,underline Description:|@\n".colored
             err.shouldBeEmpty()
         }
 
@@ -520,7 +534,7 @@ private fun mainWithFixedSeed(vararg cmdLine: String) = main(
     )
 )
 
-private inline val String.colored get() = colorScheme.string(this)
+private inline val String.colored get() = Ansi.ON.string(this)
 
 private infix fun String.shouldBeAfterTrimming(expected: String) =
     trimIndent().trim() shouldBe expected.trimIndent().trim()
@@ -536,7 +550,10 @@ private fun captureRun(main: () -> Unit): ShellOutcome {
     var stdout = "BUG in test method"
     val stderr: String = tapSystemErrNormalized {
         stdout = tapSystemOutNormalized {
-            exitCode = catchSystemExit(main)
+            // Undo any fiddling with color between tests
+            withEnvironmentVariable("picocli.ansi", null).execute {
+                exitCode = catchSystemExit(main)
+            }
         }
     }
 
