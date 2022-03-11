@@ -64,10 +64,12 @@ val newRealRepl = NewRepl { options ->
     val terminal = TerminalBuilder.builder()
         .name(PROGRAM_NAME)
         .build()
-
-    val historyPath = Path(System.getProperty("user.home"), HISTORY_FILE_NAME)
     val lineReaderBuilder = lineReaderBuilder(terminal, options)
-        .variable(HISTORY_FILE, historyPath)
+
+    // Do not save test rolls to ~/.roll_history; delete after finishing
+    if (options.history) lineReaderBuilder
+        .variable(HISTORY_FILE,
+            Path(System.getProperty("user.home"), HISTORY_FILE_NAME))
 
     terminal to lineReaderBuilder
 }
@@ -84,9 +86,10 @@ val newTestRepl = NewRepl { options ->
         System.out,
         UTF_8,
     )
-
-    // Do not save test roll history to ~/.roll_history
     val lineReaderBuilder = lineReaderBuilder(terminal, options)
+
+    // Do not save test rolls to ~/.roll_history; delete after finishing
+    if (options.history) lineReaderBuilder
         .variable(HISTORY_FILE, createTempFile(PROGRAM_NAME))
 
     terminal to lineReaderBuilder
