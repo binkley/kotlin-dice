@@ -2,8 +2,11 @@ package hm.binkley.dice
 
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
+import java.io.Console
+import java.lang.System.console
 
 internal class ReplSupportTest {
     @Test
@@ -11,9 +14,9 @@ internal class ReplSupportTest {
         null.maybeGnuPrefix() shouldBe "roll: "
         "Cool".maybeGnuPrefix() shouldBe "roll: Cool"
 
-        // TODO: Better than string name of JVM Kt class!
-        mockkStatic("hm.binkley.dice.ReplSupportKt") {
-            every { isInteractive() } returns true
+        val doNothingConsole = mockk<Console>()
+        mockkStatic(System::class) {
+            every { console() } returns doNothingConsole
             null.maybeGnuPrefix() shouldBe ""
             "Cool".maybeGnuPrefix() shouldBe "Cool"
         }

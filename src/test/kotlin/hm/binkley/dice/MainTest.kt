@@ -1,11 +1,5 @@
 package hm.binkley.dice
 
-import com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrNormalized
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
-import com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable
-import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
-import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
@@ -17,7 +11,6 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.jline.reader.UserInterruptException
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import picocli.CommandLine.Help.Ansi
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.ParseResult
 
@@ -523,57 +516,3 @@ roll: Result -1 is below the minimum result of 0
         }
     }
 }
-
-private fun mainWithFixedSeed(vararg cmdLine: String) = main(
-    arrayOf(
-        "--color=never", // Force color off for testing
-        "--seed=$FIXED_SEED", // Hard-coded for reproducibility
-        *cmdLine,
-    )
-)
-
-private inline val String.colored get() = Ansi.ON.string(this)
-
-private infix fun String.shouldBeAfterTrimming(expected: String) =
-    trimIndent().trim() shouldBe expected.trimIndent().trim()
-
-/**
- * **NB** &mdash; Nested system-lambda handling is needed as `main` calls
- * `System.exit`, hence assertions on `System.out` and `System.err` must come
- * _before_ trapping `System.exit`.; otherwise the exit bubbles out, and the
- * stream assertions do not run
- */
-private fun captureRun(main: () -> Unit): ShellOutcome {
-    var exitCode = -1
-    var stdout = "BUG in test method"
-    val stderr: String = tapSystemErrNormalized {
-        stdout = tapSystemOutNormalized {
-            // Undo any fiddling with color between tests
-            withEnvironmentVariable("picocli.ansi", null).execute {
-                exitCode = catchSystemExit(main)
-            }
-        }
-    }
-
-    if (2 == exitCode)
-        fail("BUG: Test using bad options for main()")
-
-    return ShellOutcome(exitCode, stdout, stderr)
-}
-
-private fun captureRunWithInput(
-    vararg lines: String,
-    main: () -> Unit,
-): ShellOutcome {
-    var outcome = ShellOutcome(-1, "BUG", "BUG")
-    withTextFromSystemIn(*lines).execute {
-        outcome = captureRun(main)
-    }
-    return outcome
-}
-
-private data class ShellOutcome(
-    val exitCode: Int,
-    val stdout: String,
-    val stderr: String,
-)

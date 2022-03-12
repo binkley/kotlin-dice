@@ -132,13 +132,16 @@ private fun lineReaderBuilder(
  */
 private class RollingExpander : DefaultExpander() {
     override fun expandHistory(history: History, line: String): String = try {
-        if (!line.startsWith('!')) line
+        if (!line.trimStart().startsWith('!')) line
         else super.expandHistory(history, line)
     } catch (e: IllegalArgumentException) {
         throw BadHistoryException(e)
     }
 }
 
-// TODO: Horrible -- defeat JLine3 readLine()
+/**
+ * Extends `Throwable` so that it is neither an `Exception` nor an `Error`.
+ * This workaround defeats JLine3 from force-dumping a stack trace.
+ */
 internal class BadHistoryException(cause: IllegalArgumentException) :
     Throwable(cause.message)
