@@ -179,7 +179,7 @@ roll: Exploding on 1 will never finish in dice expression 'd1!'
             val (exitCode, out, err) = captureRunWithInput(
                 "3d6",
                 "3d",
-            ) { mainWithFixedSeed("3d6", "3d") }
+            ) { mainWithFixedSeed() }
 
             exitCode shouldBe 1
             out shouldBeAfterTrimming """
@@ -326,9 +326,7 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
         fun `should do nothing if STDIN is just a blank line`() {
             val (exitCode, out, err) = captureRunWithInput(
                 ""
-            ) {
-                mainWithFixedSeed()
-            }
+            ) { mainWithFixedSeed() }
 
             exitCode shouldBe 0
             out.shouldBeEmpty()
