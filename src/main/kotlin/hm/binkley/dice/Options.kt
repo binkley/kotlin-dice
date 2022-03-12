@@ -64,8 +64,14 @@ import kotlin.random.Random
     synopsisHeading = "@|bold,underline Usage:|@%n",
     version = ["dice 0-SNAPSHOT"],
 )
-class Options : Runnable {
-    val commandLine = CommandLine(this)
+class Options : ReplSupport {
+    override val commandLine: CommandLine = CommandLine(this)
+        // Use the last setting for an option if it is repeated; needed
+        // testing which defaults to no color, but some tests will
+        // override the option to test color output
+        .setOverwrittenOptionsAllowed(true)
+        .setExecutionStrategy(executionStrategy())
+        .setExecutionExceptionHandler(exceptionHandler())
 
     @Option(
         defaultValue = "auto",
@@ -79,7 +85,7 @@ class Options : Runnable {
         arity = "0..1",
         fallbackValue = "always",
     )
-    var color = ColorOption.auto
+    override var color = ColorOption.auto
 
     @Option(
         description = [
@@ -88,7 +94,7 @@ class Options : Runnable {
         names = ["--debug"],
         hidden = true,
     )
-    var debug = false
+    override var debug = false
 
     @Option(
         description = [
@@ -112,7 +118,7 @@ class Options : Runnable {
         ],
         names = ["--no-history"],
     )
-    var history = true
+    override var history = true
 
     @Option(
         description = [
@@ -132,7 +138,7 @@ class Options : Runnable {
         names = ["-P", "--prompt"],
         paramLabel = "PROMPT",
     )
-    var prompt = DIE_PROMPT
+    override var prompt = DIE_PROMPT
 
     @Option(
         defaultValue = NULL_VALUE,
@@ -151,7 +157,7 @@ class Options : Runnable {
         hidden = true,
         names = ["--test-repl"],
     )
-    var testRepl = false
+    override var testRepl = false
 
     @Option(
         description = [

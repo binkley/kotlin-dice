@@ -175,56 +175,6 @@ roll: Exploding on 1 will never finish in dice expression 'd1!'
         }
 
         @Test
-        fun `should fail gnuishly for STDIN`() {
-            val (exitCode, out, err) = captureRunWithInput(
-                "3d6",
-                "3d",
-            ) { mainWithFixedSeed() }
-
-            exitCode shouldBe 1
-            out shouldBeAfterTrimming """
-3d6 10
-            """
-            err shouldBeAfterTrimming """
-roll: Incomplete dice expression '3d'
-            """
-        }
-
-        @Test
-        fun `should fail for REPL`() {
-            val (exitCode, out, err) = captureRunWithInput(
-                "3d6",
-                "3d",
-            ) { mainWithFixedSeed("--test-repl") }
-
-            exitCode shouldBe 0
-            // NB -- user typing <ENTER> supplies the newline
-            out shouldBeAfterTrimming """
-${DIE_PROMPT}3d6 10
-$DIE_PROMPT$DIE_PROMPT
-            """
-            err shouldBeAfterTrimming """
-Incomplete dice expression '3d'
-            """
-        }
-
-        @Test
-        fun `should fail for bad history expansion`() {
-            val (exitCode, out, err) = captureRunWithInput(
-                "!!",
-            ) { mainWithFixedSeed("--test-repl") }
-
-            exitCode shouldBe 0
-            // NB -- jline3 clears input and re-prompts
-            out shouldBeAfterTrimming """
-$DIE_PROMPT$DIE_PROMPT
-            """
-            err shouldBeAfterTrimming """
-!!: event not found
-            """
-        }
-
-        @Test
         fun `should fail in color`() {
             val (exitCode, out, err) = captureRun {
                 mainWithFixedSeed("--color=always", "3d6", "3d")
@@ -262,37 +212,6 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
 	at hm.binkley.dice.MainReporter.display(MainReporter.kt:14)
                 """.trimIndent()
             )
-        }
-
-        private val options = Options()
-        private val commandLine = picocli.CommandLine(options)
-        private val parseResult = ParseResult.builder(CommandSpec.create())
-            .build()
-
-        @Test
-        fun `should exit on interrupt the same as shells`() {
-            val exitCode = options.exceptionHandler()
-                .handleExecutionException(
-                    UserInterruptException("I was typing somethi^C"),
-                    commandLine,
-                    parseResult,
-                )
-
-            exitCode shouldBe 130
-        }
-
-        @Test
-        fun `should let framework handle unknown exceptions`() {
-            val ex = NullPointerException()
-            val thrown = shouldThrow<NullPointerException> {
-                options.exceptionHandler().handleExecutionException(
-                    ex,
-                    commandLine,
-                    parseResult,
-                )
-            }
-
-            thrown shouldBeSameInstanceAs ex
         }
     }
 
@@ -332,10 +251,43 @@ hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
             out.shouldBeEmpty()
             err.shouldBeEmpty()
         }
+
+        @Test
+        fun `should fail gnuishly for STDIN`() {
+            val (exitCode, out, err) = captureRunWithInput(
+                "3d6",
+                "3d",
+            ) { mainWithFixedSeed() }
+
+            exitCode shouldBe 1
+            out shouldBeAfterTrimming """
+3d6 10
+            """
+            err shouldBeAfterTrimming """
+roll: Incomplete dice expression '3d'
+            """
+        }
     }
 
     @Nested
     inner class Repl {
+        private val options = Options()
+        private val commandLine = picocli.CommandLine(options)
+        private val parseResult = ParseResult.builder(CommandSpec.create())
+            .build()
+
+        @Test
+        fun `should exit on interrupt in REPL the same as shells`() {
+            val exitCode = options.exceptionHandler()
+                .handleExecutionException(
+                    UserInterruptException("I was typing somethi^C"),
+                    commandLine,
+                    parseResult,
+                )
+
+            exitCode shouldBe 130
+        }
+
         @Test
         fun `should roll dice from REPL`() {
             val (exitCode, out, err) = captureRunWithInput(
@@ -381,6 +333,24 @@ $DIE_PROMPT
         }
 
         @Test
+        fun `should fail for REPL`() {
+            val (exitCode, out, err) = captureRunWithInput(
+                "3d6",
+                "3d",
+            ) { mainWithFixedSeed("--test-repl") }
+
+            exitCode shouldBe 0
+            // NB -- user typing <ENTER> supplies the newline
+            out shouldBeAfterTrimming """
+${DIE_PROMPT}3d6 10
+$DIE_PROMPT$DIE_PROMPT
+            """
+            err shouldBeAfterTrimming """
+Incomplete dice expression '3d'
+            """
+        }
+
+        @Test
         fun `should expand history in the REPL`() {
             val (exitCode, out, err) = captureRunWithInput(
                 "3d6",
@@ -396,6 +366,36 @@ ${DIE_PROMPT}3d6!2 70
 $DIE_PROMPT
             """
             err.shouldBeEmpty()
+        }
+
+        @Test
+        fun `should fail for bad history expansion`() {
+            val (exitCode, out, err) = captureRunWithInput(
+                "!!",
+            ) { mainWithFixedSeed("--test-repl") }
+
+            exitCode shouldBe 0
+            // NB -- jline3 clears input and re-prompts
+            out shouldBeAfterTrimming """
+$DIE_PROMPT$DIE_PROMPT
+            """
+            err shouldBeAfterTrimming """
+!!: event not found
+            """
+        }
+
+        @Test
+        fun `should let framework handle unknown exceptions in REPL`() {
+            val ex = NullPointerException()
+            val thrown = shouldThrow<NullPointerException> {
+                options.exceptionHandler().handleExecutionException(
+                    ex,
+                    commandLine,
+                    parseResult,
+                )
+            }
+
+            thrown shouldBeSameInstanceAs ex
         }
     }
 

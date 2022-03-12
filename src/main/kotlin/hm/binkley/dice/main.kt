@@ -1,28 +1,13 @@
 package hm.binkley.dice
 
-import org.jline.reader.EndOfFileException
-import org.jline.reader.UserInterruptException
-import picocli.CommandLine.IExecutionExceptionHandler
-import picocli.CommandLine.IExecutionStrategy
-import picocli.CommandLine.RunLast
 import kotlin.system.exitProcess
 
 const val PROGRAM_NAME = "roll"
 const val DIE_PROMPT = "\uD83C\uDFB2 "
+const val HISTORY_FILE_NAME = ".roll_history"
 
 fun main(args: Array<String>) {
-    val options = Options()
-
-    exitProcess(
-        options.commandLine
-            // Use the last setting for an option if it is repeated; needed
-            // testing which defaults to no color, but some tests will
-            // override the option to test color output
-            .setOverwrittenOptionsAllowed(true)
-            .setExecutionStrategy(options.executionStrategy())
-            .setExecutionExceptionHandler(options.exceptionHandler())
-            .execute(*args)
-    )
+    exitProcess(Options().commandLine.execute(*args))
 }
 
 /**
@@ -80,46 +65,6 @@ val demoExpressions = arrayOf(
     "d1!" to null to "explosion too low",
     "blah" to null to "syntax error",
 )
-
-fun isInteractive() = null != System.console()
-
-fun Options.exceptionHandler() =
-    IExecutionExceptionHandler { ex, commandLine, _ ->
-        when (ex) {
-            // User-friendly error message
-            is DiceException -> {
-                if (debug) commandLine.err.println(
-                    colorScheme.richStackTraceString(ex)
-                )
-                else commandLine.err.println(
-                    colorScheme.errorText(ex.message.maybeGnuPrefix())
-                )
-                commandLine.commandSpec.exitCodeOnExecutionException() // 1
-            }
-            // REPL closed with Ctrl-D/Ctrl-Z
-            is EndOfFileException -> 0
-            // Special case for the REPL - shells return 130 on SIGINT
-            is UserInterruptException -> 130
-            // Unknown exceptions fall back to Picolo default handling
-            else -> throw ex
-        }
-    }
-
-private fun Options.executionStrategy() = IExecutionStrategy { parseResult ->
-    // Run here rather than in Options so that --help respects the option
-    color.install()
-
-    RunLast().execute(parseResult)
-}
-
-private fun String?.maybeGnuPrefix(): String {
-    val interactive = isInteractive()
-    // Be careful with null handling: an NPE will have no error message.
-    // GNU standards prefix error messages with program name to aid in
-    // debugging pipelines, etc.
-    val self = this ?: ""
-    return if (interactive) self else "$PROGRAM_NAME: $self"
-}
 
 private infix fun <A, B, C> Pair<A, B>.to(third: C) =
     Triple(first, second, third)
