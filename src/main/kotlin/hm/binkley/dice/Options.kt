@@ -1,13 +1,20 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.NeedsLineReader.DoNeedsLineReader
+import hm.binkley.dice.NeedsSystemRegistry.DoNeedsSystemRegistry
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.Option
 import picocli.CommandLine.Option.NULL_VALUE
 import picocli.CommandLine.Parameters
+import picocli.CommandLine.Spec
+import picocli.shell.jline3.PicocliCommands.PicocliCommandsFactory
 import kotlin.random.Random
 
 @Command(
+    // TODO: New REPL only
+    commandListHeading = "%n@|bold,underline Commands:|@%n",
     description = ["Roll dice expressions."],
     descriptionHeading = "%n@|bold,underline Description:|@%n",
     footer = [
@@ -63,15 +70,37 @@ import kotlin.random.Random
     showEndOfOptionsDelimiterInUsageHelp = true,
     synopsisHeading = "@|bold,underline Usage:|@%n",
     version = ["dice 0-SNAPSHOT"],
+    subcommands = [
+        ClearScreenCommand::class,
+        HistoryCommand::class,
+        OptionsCommand::class,
+    ]
 )
-class Options : ReplSupport {
-    override val commandLine: CommandLine = CommandLine(this)
-        // Use the last setting for an option if it is repeated; needed
-        // testing which defaults to no color, but some tests will
-        // override the option to test color output
-        .setOverwrittenOptionsAllowed(true)
-        .setExecutionStrategy(executionStrategy())
-        .setExecutionExceptionHandler(exceptionHandler())
+class Options :
+    Runnable,
+    NeedsSystemRegistry by DoNeedsSystemRegistry(),
+    NeedsLineReader by DoNeedsLineReader() {
+    @Spec
+    lateinit var commandSpec: CommandSpec
+
+    val commandLine: CommandLine =
+        CommandLine(this, PicocliCommandsFactory())
+            // Use the last setting for an option if it is repeated; needed
+            // testing which defaults to no color, but some tests will
+            // override the option to test color output
+            .setOverwrittenOptionsAllowed(true)
+            .setExecutionStrategy(executionStrategy())
+            .setExecutionExceptionHandler(exceptionHandler())
+
+    // TODO: Temporary while cutting over to main main
+    @Option(
+        description = [
+            "Use the new REPL (EXPERIMENTAL)."
+        ],
+        names = ["--new-repl"],
+        hidden = true,
+    )
+    var newRepl = false
 
     @Option(
         defaultValue = "auto",
@@ -85,7 +114,7 @@ class Options : ReplSupport {
         arity = "0..1",
         fallbackValue = "always",
     )
-    override var color = ColorOption.auto
+    var color = ColorOption.auto
 
     @Option(
         description = [
@@ -94,7 +123,7 @@ class Options : ReplSupport {
         names = ["--debug"],
         hidden = true,
     )
-    override var debug = false
+    var debug = false
 
     @Option(
         description = [
@@ -118,7 +147,7 @@ class Options : ReplSupport {
         ],
         names = ["--no-history"],
     )
-    override var history = true
+    var history = true
 
     @Option(
         description = [
@@ -138,7 +167,7 @@ class Options : ReplSupport {
         names = ["-P", "--prompt"],
         paramLabel = "PROMPT",
     )
-    override var prompt = DIE_PROMPT
+    var prompt = DIE_PROMPT
 
     @Option(
         defaultValue = NULL_VALUE,
@@ -157,7 +186,7 @@ class Options : ReplSupport {
         hidden = true,
         names = ["--test-repl"],
     )
-    override var testRepl = false
+    var testRepl = false
 
     @Option(
         description = [
@@ -176,6 +205,12 @@ class Options : ReplSupport {
     var arguments: List<String> = emptyList()
 
     override fun run() {
+        if (newRepl) commandLine.err.println(
+            colorScheme.errorText(
+                "WARNING: the new REPL is EXPERIMENTAL".maybeGnuPrefix()
+            )
+        )
+
         // Handle copyright first so we can return 0 quickly
         if (copyright) {
             javaClass.classLoader
@@ -194,7 +229,10 @@ class Options : ReplSupport {
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
                 ArgumentRoller(random, reporter, arguments)
-            isInteractive() || testRepl -> ReplRoller(random, reporter, this)
+            isInteractive() || testRepl ->
+                if (newRepl) NewReplRoller(random, reporter, this)
+                    .inject(commandLine, lineReader, systemRegistry)
+                else OldReplRoller(random, reporter, this)
             else -> StdinRoller(random, reporter)
         }
 

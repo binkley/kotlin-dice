@@ -1,11 +1,29 @@
 package hm.binkley.dice
 
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import picocli.CommandLine
 import kotlin.reflect.KMutableProperty1
 
 internal class OptionsTest {
+    @Test
+    fun `should set command spec`() {
+        val options = Options()
+        CommandLine(options).parseArgs()
+        options.commandSpec.shouldNotBeNull()
+    }
+
+    @Test
+    fun `should set new REPL`() {
+        shouldDefaultThenUpdate(
+            Options::newRepl,
+            false,
+            true,
+            "--new-repl"
+        )
+    }
+
     @Test
     fun `should set color with long option`() {
         shouldDefaultThenUpdate(

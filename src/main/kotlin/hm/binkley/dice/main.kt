@@ -7,7 +7,19 @@ const val DIE_PROMPT = "\uD83C\uDFB2 "
 const val HISTORY_FILE_NAME = ".roll_history"
 
 fun main(args: Array<String>) {
-    exitProcess(Options().commandLine.execute(*args))
+    val options = Options()
+    val (commandLine, terminal) = options.newCommandLineAndTerminal(args)
+
+    // TODO: Why do tests complain about falling back on a dumb terminal?
+    //       Somehow, even when --new-repl is false, is confusing
+    if (options.newRepl) {
+        val (parser, systemRegistry) =
+            newParserAndSystemRegistry(terminal, commandLine)
+        val lineReader = newLineReader(terminal, systemRegistry, parser)
+        commandLine.inject(commandLine, lineReader, systemRegistry)
+    }
+
+    exitProcess(commandLine.execute(*args))
 }
 
 /**

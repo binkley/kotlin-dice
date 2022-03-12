@@ -4,10 +4,10 @@ import org.jline.reader.LineReader
 import org.jline.terminal.Terminal
 import kotlin.random.Random
 
-class ReplRoller(
+class OldReplRoller(
     random: Random,
     reporter: MainReporter,
-    private val options: ReplSupport,
+    private val options: Options,
 ) : MainRoller(random, reporter) {
     private val terminal: Terminal
     private val lineReader: LineReader

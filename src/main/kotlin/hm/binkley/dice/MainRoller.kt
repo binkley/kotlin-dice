@@ -8,7 +8,7 @@ import kotlin.random.Random
 
 val colorScheme = defaultColorScheme(AUTO)!!
 
-sealed class MainRoller(
+abstract class MainRoller(
     random: Random,
     private val reporter: MainReporter,
 ) {
