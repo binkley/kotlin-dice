@@ -41,27 +41,24 @@ private val diceLike = Regex("^[1-9dz]", IGNORE_CASE)
 internal fun String.maybeDiceExpression() =
     diceLike.containsMatchIn(trimStart())
 
-internal fun <T : Options> T.newCommandLineAndTerminal(
+internal fun Options.newCommandLineAndTerminal(
     args: Array<String>,
 ): Pair<CommandLine, Terminal> {
     val commandLine = commandLine.apply { parseArgs(*args) }
-    val terminal = newTerminal(this)
+    val terminal = newTerminal()
 
     return commandLine to terminal
 }
 
-// TODO: extension fun on Options
-internal fun newTerminal(options: Options) =
-    if (options.testRepl) newDumbTerminal()
+private fun Options.newTerminal() =
+    if (testRepl) newDumbTerminal()
     else newRealTerminal()
 
-// TODO: private
-internal fun newRealTerminal() = TerminalBuilder.builder()
+private fun newRealTerminal() = TerminalBuilder.builder()
     .name(PROGRAM_NAME)
     .build()
 
-// TODO: private
-internal fun newDumbTerminal() = DumbTerminal(
+private fun newDumbTerminal() = DumbTerminal(
     PROGRAM_NAME,
     if (Ansi.AUTO.enabled()) TYPE_DUMB_COLOR else TYPE_DUMB,
     System.`in`,
@@ -107,16 +104,14 @@ internal fun Options.executionStrategy() =
         RunLast().execute(parseResult)
     }
 
-// TODO: Extension fun on CommandLine?
 @Generated
-internal fun newParserAndSystemRegistry(
+internal fun CommandLine.newParserAndSystemRegistry(
     terminal: Terminal,
-    commandLine: CommandLine,
 ): Pair<Parser, SystemRegistryImpl> {
     val parser: Parser = DefaultParser()
     val systemRegistry = SystemRegistryImpl(parser, terminal, null, null)
         .groupCommandsInHelp(false)
-    systemRegistry.setCommandRegistries(PicocliCommands(commandLine))
+    systemRegistry.setCommandRegistries(PicocliCommands(this))
 
     return parser to systemRegistry
 }

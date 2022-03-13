@@ -13,6 +13,7 @@ class OldReplRoller(
     private val lineReader: LineReader
 
     init {
+        // TODO: Get rid init block in favor of injection
         val (terminal, lineReader) =
             if (options.testRepl) newTestRepl(options)
             else newRealRepl(options)

@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     //       Somehow, even when --new-repl is false, is confusing
     if (options.newRepl) {
         val (parser, systemRegistry) =
-            newParserAndSystemRegistry(terminal, commandLine)
+            commandLine.newParserAndSystemRegistry(terminal)
         val lineReader = newLineReader(terminal, systemRegistry, parser)
         commandLine.inject(commandLine, lineReader, systemRegistry)
     }
