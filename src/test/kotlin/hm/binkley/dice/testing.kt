@@ -1,6 +1,10 @@
 package hm.binkley.dice
 
-import com.github.stefanbirkner.systemlambda.SystemLambda
+import com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit
+import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrNormalized
+import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
+import com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable
+import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
 import io.kotest.assertions.fail
 import io.kotest.matchers.shouldBe
 import picocli.CommandLine.Help.Ansi
@@ -37,13 +41,12 @@ internal infix fun String.shouldBeAfterTrimming(expected: String) =
 internal fun captureRun(main: () -> Unit): ShellOutcome {
     var exitCode = -1
     var stdout = "BUG in test method"
-    val stderr: String = SystemLambda.tapSystemErrNormalized {
-        stdout = SystemLambda.tapSystemOutNormalized {
+    val stderr: String = tapSystemErrNormalized {
+        stdout = tapSystemOutNormalized {
             // Undo any fiddling with color between tests
-            SystemLambda.withEnvironmentVariable("picocli.ansi", null)
-                .execute {
-                    exitCode = SystemLambda.catchSystemExit(main)
-                }
+            withEnvironmentVariable("picocli.ansi", null).execute {
+                exitCode = catchSystemExit(main)
+            }
         }
     }
 
@@ -58,7 +61,7 @@ internal fun captureRunWithInput(
     main: () -> Unit,
 ): ShellOutcome {
     var outcome = ShellOutcome(-1, "BUG", "BUG")
-    SystemLambda.withTextFromSystemIn(*lines).execute {
+    withTextFromSystemIn(*lines).execute {
         outcome = captureRun(main)
     }
     return outcome
