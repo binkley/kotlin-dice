@@ -21,6 +21,7 @@ import picocli.CommandLine.RunLast
 import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.io.path.Path
 import kotlin.io.path.createTempFile
+import kotlin.text.RegexOption.IGNORE_CASE
 
 interface ReplSupport : Runnable {
     val commandLine: CommandLine
@@ -32,6 +33,15 @@ interface ReplSupport : Runnable {
 }
 
 internal fun isInteractive() = null != System.console()
+
+/**
+ * All dice expressions start either with a non-zero digit, or the letters
+ * 'd' or 'z'.  No commands start with 'd' or 'z'.
+ */
+private val diceLike = Regex("^[1-9dz]", IGNORE_CASE)
+
+internal fun String.maybeDiceExpression() =
+    diceLike.containsMatchIn(trimStart())
 
 internal fun newRealTerminal() = TerminalBuilder.builder()
     .name(PROGRAM_NAME)
@@ -128,14 +138,11 @@ private fun lineReaderBuilder(
  */
 private object RollingExpander : DefaultExpander() {
     override fun expandHistory(history: History, line: String): String = try {
-        if (!line.diceHistoryExpansion()) line
+        if (line.maybeDiceExpression()) line
         else super.expandHistory(history, line)
     } catch (e: IllegalArgumentException) {
         throw BadHistoryException(e)
     }
-
-    private fun String.diceHistoryExpansion() =
-        trimStart().startsWith('!')
 }
 
 /**
