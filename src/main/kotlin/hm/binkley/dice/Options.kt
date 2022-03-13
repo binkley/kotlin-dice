@@ -78,8 +78,8 @@ import kotlin.random.Random
 )
 class Options :
     Runnable,
-    NeedsSystemRegistry by DoNeedsSystemRegistry(),
-    NeedsLineReader by DoNeedsLineReader() {
+    NeedsLineReader by DoNeedsLineReader(),
+    NeedsSystemRegistry by DoNeedsSystemRegistry() {
     @Spec
     lateinit var commandSpec: CommandSpec
 
@@ -231,7 +231,7 @@ class Options :
                 ArgumentRoller(random, reporter, arguments)
             isInteractive() || testRepl ->
                 if (newRepl) NewReplRoller(random, reporter, this)
-                    .inject(commandLine, lineReader, systemRegistry)
+                    .inject(commandLine, systemRegistry, lineReader)
                 else OldReplRoller(random, reporter, this)
             else -> StdinRoller(random, reporter)
         }

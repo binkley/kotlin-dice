@@ -35,26 +35,26 @@ interface NeedsLineReader {
 @Generated
 fun <T> T.inject(
     commandLine: CommandLine,
-    lineReader: LineReader,
     systemRegistry: SystemRegistry,
+    lineReader: LineReader,
 ): T = apply {
     if (this is NeedsCommandLine) this.commandLine = commandLine
-    if (this is NeedsLineReader) this.lineReader = lineReader
     if (this is NeedsSystemRegistry)
         this.systemRegistry = systemRegistry
+    if (this is NeedsLineReader) this.lineReader = lineReader
 }
 
 @Generated
 fun CommandLine.inject(
     commandLine: CommandLine,
-    lineReader: LineReader,
     systemRegistry: SystemRegistry,
+    lineReader: LineReader,
 ): CommandLine = apply {
     val command = getCommand<Any>()
-    command.inject(commandLine, lineReader, systemRegistry)
+    command.inject(commandLine, systemRegistry, lineReader)
 
     // Recur through subcommands
     subcommands.map { it.value }.forEach {
-        it.inject(commandLine, lineReader, systemRegistry)
+        it.inject(commandLine, systemRegistry, lineReader)
     }
 }

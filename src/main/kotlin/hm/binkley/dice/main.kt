@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
         val (parser, systemRegistry) =
             commandLine.newParserAndSystemRegistry(terminal)
         val lineReader = newLineReader(terminal, systemRegistry, parser)
-        commandLine.inject(commandLine, lineReader, systemRegistry)
+        commandLine.inject(commandLine, systemRegistry, lineReader)
     }
 
     exitProcess(commandLine.execute(*args))

@@ -14,8 +14,8 @@ class NewReplRoller(
     private val options: Options,
 ) : MainRoller(random, reporter),
     NeedsCommandLine by DoNeedsCommandLine(),
-    NeedsSystemRegistry by DoNeedsSystemRegistry(),
-    NeedsLineReader by DoNeedsLineReader() {
+    NeedsLineReader by DoNeedsLineReader(),
+    NeedsSystemRegistry by DoNeedsSystemRegistry() {
     override fun rollAndReport() {
         while (true) try {
             val line = lineReader.readLine(options.prompt)
