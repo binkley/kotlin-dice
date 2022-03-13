@@ -113,30 +113,29 @@ internal fun newTestRepl(options: ReplSupport): Pair<Terminal, LineReader> {
 private fun lineReaderBuilder(
     terminal: Terminal,
     options: ReplSupport,
-): LineReaderBuilder {
-    val lineReaderBuilder = LineReaderBuilder.builder()
-        .terminal(terminal)
-
-    if (options.history) lineReaderBuilder
-        .expander(RollingExpander())
-    else lineReaderBuilder
-        .variable(HISTORY_SIZE, 0)
-
-    return lineReaderBuilder
+) = LineReaderBuilder.builder().apply {
+    terminal(terminal)
+    if (options.history) expander(RollingExpander)
+    else variable(HISTORY_SIZE, 0)
 }
 
 /**
  * Only expand history when `!` is the first character in the line.
  * Dice expressions use `!` for explosion, not history expansion.
  * However, it is still handy to expand lines like `!!` or `!31`, etc.
+ *
+ * @todo Some better way than catching IAE
  */
-private class RollingExpander : DefaultExpander() {
+private object RollingExpander : DefaultExpander() {
     override fun expandHistory(history: History, line: String): String = try {
-        if (!line.trimStart().startsWith('!')) line
+        if (!line.diceHistoryExpansion()) line
         else super.expandHistory(history, line)
     } catch (e: IllegalArgumentException) {
         throw BadHistoryException(e)
     }
+
+    private fun String.diceHistoryExpansion() =
+        trimStart().startsWith('!')
 }
 
 /**
