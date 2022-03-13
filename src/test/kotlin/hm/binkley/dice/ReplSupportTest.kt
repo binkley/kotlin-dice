@@ -14,9 +14,9 @@ internal class ReplSupportTest {
         null.maybeGnuPrefix() shouldBe "roll: "
         "Cool".maybeGnuPrefix() shouldBe "roll: Cool"
 
-        val doNothingConsole = mockk<Console>()
+        val interactiveConsole = mockk<Console>()
         mockkStatic(System::class) {
-            every { console() } returns doNothingConsole
+            every { console() } returns interactiveConsole
             null.maybeGnuPrefix() shouldBe ""
             "Cool".maybeGnuPrefix() shouldBe "Cool"
         }
