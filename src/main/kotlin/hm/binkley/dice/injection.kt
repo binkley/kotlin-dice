@@ -3,7 +3,17 @@ package hm.binkley.dice
 import lombok.Generated
 import org.jline.console.SystemRegistry
 import org.jline.reader.LineReader
+import org.jline.terminal.Terminal
 import picocli.CommandLine
+
+interface NeedsTerminal {
+    var terminal: Terminal
+
+    @Generated
+    class DoNeedsTerminal : NeedsTerminal {
+        override lateinit var terminal: Terminal
+    }
+}
 
 interface NeedsCommandLine {
     var commandLine: CommandLine

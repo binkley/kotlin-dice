@@ -30,7 +30,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.createTempFile
 import kotlin.text.RegexOption.IGNORE_CASE
 
-internal fun isInteractive() = null != System.console()
+fun isInteractive() = null != System.console()
 
 /**
  * All dice expressions start either with a non-zero digit, or the letters
@@ -38,27 +38,26 @@ internal fun isInteractive() = null != System.console()
  */
 private val diceLike = Regex("^[1-9dz]", IGNORE_CASE)
 
-internal fun String.maybeDiceExpression() =
+fun String.maybeDiceExpression() =
     diceLike.containsMatchIn(trimStart())
 
-internal fun Options.newCommandLineAndTerminal(
+fun Options.commandLineAndTerminal(
     args: Array<String>,
 ): Pair<CommandLine, Terminal> {
     val commandLine = commandLine.apply { parseArgs(*args) }
-    val terminal = newTerminal()
+    // Parse command line first to respect --test-repl option
+    val terminal =
+        if (testRepl) dumbTerminal()
+        else realTerminal()
 
     return commandLine to terminal
 }
 
-private fun Options.newTerminal() =
-    if (testRepl) newDumbTerminal()
-    else newRealTerminal()
-
-private fun newRealTerminal() = TerminalBuilder.builder()
+fun realTerminal(): Terminal = TerminalBuilder.builder()
     .name(PROGRAM_NAME)
     .build()
 
-private fun newDumbTerminal() = DumbTerminal(
+private fun dumbTerminal() = DumbTerminal(
     PROGRAM_NAME,
     if (Ansi.AUTO.enabled()) TYPE_DUMB_COLOR else TYPE_DUMB,
     System.`in`,
@@ -66,7 +65,7 @@ private fun newDumbTerminal() = DumbTerminal(
     UTF_8,
 )
 
-internal fun Options.exceptionHandler() =
+fun Options.exceptionHandler() =
     IExecutionExceptionHandler { ex, commandLine, _ ->
         when (ex) {
             // User-friendly error message
@@ -88,7 +87,7 @@ internal fun Options.exceptionHandler() =
         }
     }
 
-internal fun String?.maybeGnuPrefix(): String {
+fun String?.maybeGnuPrefix(): String {
     // Be careful with null handling: an NPE will have no error message.
     // GNU standards prefix error messages with program name to aid in
     // debugging pipelines, etc.
@@ -96,7 +95,7 @@ internal fun String?.maybeGnuPrefix(): String {
     return if (isInteractive()) message else "$PROGRAM_NAME: $message"
 }
 
-internal fun Options.executionStrategy() =
+fun Options.executionStrategy() =
     IExecutionStrategy { parseResult ->
         // Run here rather than in Options so that --help respects the option
         color.install()
@@ -105,7 +104,7 @@ internal fun Options.executionStrategy() =
     }
 
 @Generated
-internal fun CommandLine.newParserAndSystemRegistry(
+fun CommandLine.parserAndSystemRegistry(
     terminal: Terminal,
 ): Pair<Parser, SystemRegistryImpl> {
     val parser: Parser = DefaultParser()
@@ -116,33 +115,29 @@ internal fun CommandLine.newParserAndSystemRegistry(
     return parser to systemRegistry
 }
 
-internal fun newRealRepl(options: Options): Pair<Terminal, LineReader> {
-    val terminal = newRealTerminal()
-    val lineReaderBuilder = lineReaderBuilder(terminal, options)
+fun Options.realLineReader(terminal: Terminal): LineReader {
+    val builder = lineReaderBuilder(terminal, this)
 
     // Save REPL rolls to ~/.roll_history
-    if (options.history) lineReaderBuilder
-        .variable(
-            HISTORY_FILE,
-            Path(System.getProperty("user.home"), HISTORY_FILE_NAME)
-        )
+    if (history) builder.variable(
+        HISTORY_FILE,
+        Path(System.getProperty("user.home"), HISTORY_FILE_NAME)
+    )
 
-    return terminal to lineReaderBuilder.build()
+    return builder.build()
 }
 
 /**
  * The terminal builder hands file descriptors for STDIN and STDOUT to the
  * constructor of dumb terminals, and provides no means for changing them.
  */
-internal fun newTestRepl(options: Options): Pair<Terminal, LineReader> {
-    val terminal = newDumbTerminal()
-    val lineReaderBuilder = lineReaderBuilder(terminal, options)
+fun Options.testLineReader(terminal: Terminal): LineReader {
+    val builder = lineReaderBuilder(terminal, this)
 
     // Do not save test rolls to ~/.roll_history; delete after finishing
-    if (options.history) lineReaderBuilder
-        .variable(HISTORY_FILE, createTempFile(PROGRAM_NAME))
+    if (history) builder.variable(HISTORY_FILE, createTempFile(PROGRAM_NAME))
 
-    return terminal to lineReaderBuilder.build()
+    return builder.build()
 }
 
 /**
@@ -150,11 +145,11 @@ internal fun newTestRepl(options: Options): Pair<Terminal, LineReader> {
  * @todo Alias "quit" to "exit"
  */
 @Generated
-internal fun newLineReader(
+fun lineReader(
     terminal: Terminal,
     systemRegistry: SystemRegistry,
     parser: Parser,
-) = LineReaderBuilder.builder()
+): LineReader = LineReaderBuilder.builder()
     .completer(systemRegistry.completer())
     .expander(RollingExpander)
     .parser(parser)
@@ -192,5 +187,5 @@ private object RollingExpander : DefaultExpander() {
  * Extends `Throwable` so that it is neither an `Exception` nor an `Error`.
  * This workaround defeats JLine3 from force-dumping a stack trace.
  */
-internal class BadHistoryException(cause: IllegalArgumentException) :
+class BadHistoryException(cause: IllegalArgumentException) :
     Throwable(cause.message)

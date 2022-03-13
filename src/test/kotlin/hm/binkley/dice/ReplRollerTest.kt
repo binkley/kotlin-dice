@@ -7,7 +7,7 @@ internal class ReplRollerTest {
     fun `should create real REPL`() {
         val options = Options() // all defaults
 
-        newRealRepl(options)
+        options.realLineReader(realTerminal())
     }
 
     @Test
@@ -15,6 +15,6 @@ internal class ReplRollerTest {
         val options = Options()
         options.history = false
 
-        newRealRepl(options)
+        options.realLineReader(realTerminal())
     }
 }

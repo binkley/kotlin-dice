@@ -2,6 +2,7 @@ package hm.binkley.dice
 
 import hm.binkley.dice.NeedsLineReader.DoNeedsLineReader
 import hm.binkley.dice.NeedsSystemRegistry.DoNeedsSystemRegistry
+import hm.binkley.dice.NeedsTerminal.DoNeedsTerminal
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
@@ -78,6 +79,7 @@ import kotlin.random.Random
 )
 class Options :
     Runnable,
+    NeedsTerminal by DoNeedsTerminal(),
     NeedsLineReader by DoNeedsLineReader(),
     NeedsSystemRegistry by DoNeedsSystemRegistry() {
     @Spec
@@ -232,7 +234,7 @@ class Options :
             isInteractive() || testRepl ->
                 if (newRepl) NewReplRoller(random, reporter, this)
                     .inject(commandLine, systemRegistry, lineReader)
-                else OldReplRoller(random, reporter, this)
+                else OldReplRoller(random, reporter, terminal,this)
             else -> StdinRoller(random, reporter)
         }
 

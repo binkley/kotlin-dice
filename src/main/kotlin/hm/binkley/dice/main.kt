@@ -8,14 +8,15 @@ const val HISTORY_FILE_NAME = ".roll_history"
 
 fun main(args: Array<String>) {
     val options = Options()
-    val (commandLine, terminal) = options.newCommandLineAndTerminal(args)
+    val (commandLine, terminal) = options.commandLineAndTerminal(args)
+    options.terminal = terminal
 
     // TODO: Why do tests complain about falling back on a dumb terminal?
     //       Somehow, even when --new-repl is false, is confusing
     if (options.newRepl) {
         val (parser, systemRegistry) =
-            commandLine.newParserAndSystemRegistry(terminal)
-        val lineReader = newLineReader(terminal, systemRegistry, parser)
+            commandLine.parserAndSystemRegistry(terminal)
+        val lineReader = lineReader(terminal, systemRegistry, parser)
         commandLine.inject(commandLine, systemRegistry, lineReader)
     }
 

@@ -7,19 +7,13 @@ import kotlin.random.Random
 class OldReplRoller(
     random: Random,
     reporter: MainReporter,
+    private val terminal: Terminal,
     private val options: Options,
 ) : MainRoller(random, reporter) {
-    private val terminal: Terminal
-    private val lineReader: LineReader
-
-    init {
-        // TODO: Get rid init block in favor of injection
-        val (terminal, lineReader) =
-            if (options.testRepl) newTestRepl(options)
-            else newRealRepl(options)
-        this.terminal = terminal
-        this.lineReader = lineReader
-    }
+    // TODO: Get rid of logic in favor of injection
+    private val lineReader: LineReader =
+        if (options.testRepl) options.testLineReader(terminal)
+        else options.realLineReader(terminal)
 
     /** Note: closes (and resets) the terminal when done. */
     override fun rollAndReport() = terminal.use {
