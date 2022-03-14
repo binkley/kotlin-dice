@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
     if (options.newRepl) {
         val (parser, systemRegistry) =
             commandLine.parserAndSystemRegistry(terminal)
-        val lineReader = lineReader(terminal, systemRegistry, parser)
+        val lineReader = options.lineReader(terminal, systemRegistry, parser)
         commandLine.inject(commandLine, systemRegistry, lineReader)
     }
 

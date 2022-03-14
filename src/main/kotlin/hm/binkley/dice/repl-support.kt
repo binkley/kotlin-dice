@@ -116,7 +116,7 @@ fun CommandLine.parserAndSystemRegistry(
 }
 
 fun Options.realLineReader(terminal: Terminal): LineReader {
-    val builder = lineReaderBuilder(terminal, this)
+    val builder = this.lineReaderBuilder(terminal)
 
     // Save REPL rolls to ~/.roll_history
     if (history) builder.variable(
@@ -132,7 +132,7 @@ fun Options.realLineReader(terminal: Terminal): LineReader {
  * constructor of dumb terminals, and provides no means for changing them.
  */
 fun Options.testLineReader(terminal: Terminal): LineReader {
-    val builder = lineReaderBuilder(terminal, this)
+    val builder = this.lineReaderBuilder(terminal)
 
     // Do not save test rolls to ~/.roll_history; delete after finishing
     if (history) builder.variable(HISTORY_FILE, createTempFile(PROGRAM_NAME))
@@ -146,25 +146,23 @@ fun Options.testLineReader(terminal: Terminal): LineReader {
  * @todo Reconcile the *three* factory functions for two purposes
  */
 @Generated
-fun lineReader(
+fun Options.lineReader(
     terminal: Terminal,
     systemRegistry: SystemRegistry,
     parser: Parser,
-): LineReader = LineReaderBuilder.builder()
+): LineReader = lineReaderBuilder(terminal)
     .completer(systemRegistry.completer())
-    .expander(RollingExpander)
     .parser(parser)
     .terminal(terminal)
     .build().apply {
         autosuggestion = COMPLETER
     }
 
-private fun lineReaderBuilder(
+private fun Options.lineReaderBuilder(
     terminal: Terminal,
-    options: Options,
 ) = LineReaderBuilder.builder().apply {
     terminal(terminal)
-    if (options.history) expander(RollingExpander)
+    if (history) expander(RollingExpander(this@lineReaderBuilder))
     else variable(HISTORY_SIZE, 0)
 }
 
@@ -175,9 +173,11 @@ private fun lineReaderBuilder(
  *
  * @todo Some better way than catching IAE
  */
-private object RollingExpander : DefaultExpander() {
+private class RollingExpander(
+    private val options: Options,
+) : DefaultExpander() {
     override fun expandHistory(history: History, line: String): String = try {
-        if (line.maybeDiceExpression()) line
+        if (!options.history || line.maybeDiceExpression()) line
         else super.expandHistory(history, line)
     } catch (e: IllegalArgumentException) {
         throw BadHistoryException(e)

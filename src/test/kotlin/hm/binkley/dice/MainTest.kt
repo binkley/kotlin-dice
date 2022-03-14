@@ -368,6 +368,25 @@ $DIE_PROMPT
         }
 
         @Test
+        fun `should not expand history in the REPL`() {
+            val (exitCode, out, err) = captureRunWithInput(
+                "3d6",
+                "!!",
+                "3d6!2",
+            ) { mainWithFixedSeed("--test-repl", "--no-history") }
+
+            exitCode shouldBe 0
+            out shouldBeAfterTrimming """
+${DIE_PROMPT}3d6 10
+$DIE_PROMPT${DIE_PROMPT}3d6!2 76
+$DIE_PROMPT
+            """
+            err shouldBeAfterTrimming """
+Unexpected '!' (at position 1) in dice expression '!!'                
+            """
+        }
+
+        @Test
         fun `should fail for bad history expansion`() {
             val (exitCode, out, err) = captureRunWithInput(
                 "!!",
