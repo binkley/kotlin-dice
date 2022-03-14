@@ -174,8 +174,8 @@ private fun Options.lineReaderBuilder(
     terminal: Terminal,
 ) = LineReaderBuilder.builder().apply {
     terminal(terminal)
-    if (history) expander(RollingExpander(this@lineReaderBuilder))
-    else variable(HISTORY_SIZE, 0)
+    expander(RollingExpander(this@lineReaderBuilder))
+    if (!history) variable(HISTORY_SIZE, 0)
 }
 
 /**
