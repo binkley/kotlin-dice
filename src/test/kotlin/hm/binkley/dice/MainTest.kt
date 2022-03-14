@@ -332,6 +332,20 @@ $DIE_PROMPT
         }
 
         @Test
+        fun `should change prompt for REPL`() {
+            val (exitCode, out, err) = captureRunWithInput(
+                "3d6"
+            ) { mainWithFixedSeed("--test-repl", "--prompt", ">") }
+
+            exitCode shouldBe 0
+            out shouldBeAfterTrimming """
+>3d6 10
+>
+            """
+            err.shouldBeEmpty()
+        }
+
+        @Test
         fun `should fail for REPL`() {
             val (exitCode, out, err) = captureRunWithInput(
                 "3d6",
