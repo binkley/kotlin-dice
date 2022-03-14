@@ -13,18 +13,8 @@ abstract class MainRoller(
     private val reporter: MainReporter,
 ) {
     private val dice = dice(random, reporter)
-    abstract fun rollAndReport()
 
-    protected fun rollFromLines(nextLine: () -> String?) {
-        while (true) {
-            val expression = nextLine()
-            when {
-                null == expression -> return
-                expression.isEmpty() -> continue
-                else -> expression.rollIt()
-            }
-        }
-    }
+    abstract fun rollAndReport()
 
     protected fun String.rollIt() {
         reporter.preRoll()
@@ -44,7 +34,16 @@ class StdinRoller(
     random: Random,
     reporter: MainReporter,
 ) : MainRoller(random, reporter) {
-    override fun rollAndReport() = rollFromLines { readLine() }
+    override fun rollAndReport() {
+        while (true) {
+            val expression = readLine()
+            when {
+                null == expression -> return
+                expression.isEmpty() -> continue
+                else -> expression.rollIt()
+            }
+        }
+    }
 }
 
 class DemoRoller(

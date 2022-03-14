@@ -47,8 +47,10 @@ class OldReplRoller(
 ) : ReplRoller(random, reporter, options) {
     override var lineReader = options.oldLineReader(options.terminal)
 
-    /** @todo `rollFromLines` is a pull-loop: why loop twice (superclass)? */
-    override fun rollSome() = rollFromLines { readLine() }
+    override fun rollSome() {
+        val expression = readLine()
+        if (expression.isNotEmpty()) expression.rollIt()
+    }
 }
 
 @Generated
