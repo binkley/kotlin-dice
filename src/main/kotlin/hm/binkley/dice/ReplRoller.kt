@@ -49,7 +49,7 @@ class OldReplRoller(
 
     override fun rollSome() {
         val expression = readLine()
-        if (expression.isNotEmpty()) expression.rollIt()
+        if (expression.isNotEmpty()) expression.roll()
     }
 }
 
@@ -62,7 +62,7 @@ class NewReplRoller(
     NeedsSystemRegistry by DoNeedsSystemRegistry() {
     override fun rollSome() {
         val line = readLine()
-        if (line.maybeDiceExpression()) line.rollIt()
+        if (line.maybeDiceExpression()) line.roll()
         else try {
             systemRegistry.execute(line)
         } finally {

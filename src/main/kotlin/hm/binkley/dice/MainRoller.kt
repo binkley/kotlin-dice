@@ -16,7 +16,7 @@ abstract class MainRoller(
 
     abstract fun rollAndReport()
 
-    protected fun String.rollIt() {
+    protected fun String.roll() {
         reporter.preRoll()
         reporter.display(dice.roll(this))
     }
@@ -27,7 +27,7 @@ class ArgumentRoller(
     reporter: MainReporter,
     private val arguments: List<String>,
 ) : MainRoller(random, reporter) {
-    override fun rollAndReport() = arguments.forEach { it.rollIt() }
+    override fun rollAndReport() = arguments.forEach { it.roll() }
 }
 
 class StdinRoller(
@@ -40,7 +40,7 @@ class StdinRoller(
             when {
                 null == expression -> return
                 expression.isEmpty() -> continue
-                else -> expression.rollIt()
+                else -> expression.roll()
             }
         }
     }
@@ -53,7 +53,7 @@ class DemoRoller(
     override fun rollAndReport() {
         for ((expression, _, description) in demoExpressions) try {
             println(colorScheme.string("@|faint,italic - $description:|@"))
-            expression.rollIt()
+            expression.roll()
         } catch (e: DiceException) {
             err.println(colorScheme.errorText(e.message))
         }
