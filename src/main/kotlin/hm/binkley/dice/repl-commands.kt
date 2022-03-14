@@ -124,15 +124,15 @@ private fun OptionSpec.format(): String {
 
 // DEBUGGERY
 
-//private fun OptionSpec.dump() {
+// private fun OptionSpec.dump() {
 //    println("---")
 //    println("* $this")
 //    details.forEach {
 //        println(" - ${it.label} -> ${it(this).dump()}")
 //    }
-//}
+// }
 //
-//private val details = listOf(
+// private val details = listOf(
 //    OptionSpec::arity,
 //    OptionSpec::auxiliaryTypes,
 //    OptionSpec::defaultValue,
@@ -158,18 +158,18 @@ private fun OptionSpec.format(): String {
 //    OptionSpec::typedValues,
 //    OptionSpec::userObject,
 //    OptionSpec::getValue,
-//)
+// )
 //
-//private val KFunction1<OptionSpec, *>.label: String
+// private val KFunction1<OptionSpec, *>.label: String
 //    get() {
 //        val label = name.replace("([A-Z])".toRegex(), "-$1").uppercase()
 //        return if (returnType == typeOf<Boolean>()) "$label?"
 //        else label
 //    }
 //
-//private fun Collection<*>.dump(): String = map { it.dump() }.toString()
+// private fun Collection<*>.dump(): String = map { it.dump() }.toString()
 //
-//private fun Any?.dump() = when (this) {
+// private fun Any?.dump() = when (this) {
 //    null -> "null"
 //    is Array<*> -> asList().dump()
 //    is Boolean -> "$this"
@@ -179,4 +179,4 @@ private fun OptionSpec.format(): String {
 //    is Number -> "$this"
 //    is String -> "'$this'"
 //    else -> "[${this::class.simpleName}] $this"
-//}
+// }

@@ -41,8 +41,7 @@ private val diceLike = Regex("^[1-9dz]", IGNORE_CASE)
 fun String.maybeDiceExpression() =
     diceLike.containsMatchIn(trimStart())
 
-fun Options.commandLineAndTerminal(vararg args: String)
-        : Pair<CommandLine, Terminal> {
+fun Options.commandLineAndTerminal(vararg args: String): Pair<CommandLine, Terminal> {
     val commandLine = commandLine.apply { parseArgs(*args) }
     // Parse command line first to respect --test-repl option
     val terminal =

@@ -4,7 +4,6 @@ import hm.binkley.dice.NeedsLineReader.DoNeedsLineReader
 import hm.binkley.dice.NeedsSystemRegistry.DoNeedsSystemRegistry
 import lombok.Generated
 import org.jline.console.impl.SystemRegistryImpl.UnknownCommandException
-import org.jline.reader.LineReader
 import kotlin.random.Random
 
 sealed class ReplRoller(
