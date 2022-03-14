@@ -235,7 +235,7 @@ class Options :
                 ArgumentRoller(random, reporter, arguments)
             isInteractive() || testRepl ->
                 if (newRepl) NewReplRoller(random, reporter, this)
-                    .inject(commandLine, systemRegistry, lineReader)
+                    .inject(commandLine, terminal, systemRegistry, lineReader)
                 else OldReplRoller(random, reporter, this)
             else -> StdinRoller(random, reporter)
         }

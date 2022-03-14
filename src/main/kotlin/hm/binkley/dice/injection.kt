@@ -45,9 +45,11 @@ interface NeedsLineReader {
 @Generated
 fun <T> T.inject(
     commandLine: CommandLine,
+    terminal: Terminal,
     systemRegistry: SystemRegistry,
     lineReader: LineReader,
 ): T = apply {
+    if (this is NeedsTerminal) this.terminal = terminal
     if (this is NeedsCommandLine) this.commandLine = commandLine
     if (this is NeedsSystemRegistry)
         this.systemRegistry = systemRegistry
@@ -57,14 +59,15 @@ fun <T> T.inject(
 @Generated
 fun CommandLine.inject(
     commandLine: CommandLine,
+    terminal: Terminal,
     systemRegistry: SystemRegistry,
     lineReader: LineReader,
 ): CommandLine = apply {
     val command = getCommand<Any>()
-    command.inject(commandLine, systemRegistry, lineReader)
+    command.inject(commandLine, terminal, systemRegistry, lineReader)
 
     // Recur through subcommands
     subcommands.map { it.value }.forEach {
-        it.inject(commandLine, systemRegistry, lineReader)
+        it.inject(commandLine, terminal, systemRegistry, lineReader)
     }
 }

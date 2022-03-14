@@ -110,7 +110,7 @@ fun CommandLine.installNewRepl(
 ) {
     val (systemRegistry, parser) = systemRegistryAndParser(terminal)
     val lineReader = options.newLineReader(terminal, systemRegistry, parser)
-    inject(this, systemRegistry, lineReader)
+    inject(this, terminal, systemRegistry, lineReader)
 }
 
 private fun CommandLine.systemRegistryAndParser(
