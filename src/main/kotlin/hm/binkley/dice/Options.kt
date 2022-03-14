@@ -55,6 +55,8 @@ import kotlin.random.Random
      ROLL is too low for the NUMBER in the --minimum option.
   @|italic Exploding on <NUMBER> will never finish in dice expression '<EXPRESSION>'|@
      NUMBER is too low for the number of sides on the die.
+  @|italic History disabled because of the --no-history option|@
+     Read a history command ('!' first character) but option set for no history.
 
 @|bold,underline Exit codes:|@
   @|bold   0|@   Successful completion
@@ -234,7 +236,7 @@ class Options :
             isInteractive() || testRepl ->
                 if (newRepl) NewReplRoller(random, reporter, this)
                     .inject(commandLine, systemRegistry, lineReader)
-                else OldReplRoller(random, reporter, terminal,this)
+                else OldReplRoller(random, reporter, this)
             else -> StdinRoller(random, reporter)
         }
 
