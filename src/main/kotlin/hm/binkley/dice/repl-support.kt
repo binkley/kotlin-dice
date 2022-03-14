@@ -143,6 +143,7 @@ fun Options.testLineReader(terminal: Terminal): LineReader {
 /**
  * @todo No pipelines or am/or shell operators
  * @todo Alias "quit" to "exit"
+ * @todo Reconcile the *three* factory functions for two purposes
  */
 @Generated
 fun lineReader(
