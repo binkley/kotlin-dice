@@ -50,6 +50,8 @@ fun Options.commandLineAndTerminal(
         if (testRepl) dumbTerminal()
         else realTerminal()
 
+    this.terminal = terminal
+
     return commandLine to terminal
 }
 
@@ -104,6 +106,16 @@ fun Options.executionStrategy() =
     }
 
 @Generated
+fun CommandLine.installNewRepl(
+    options: Options,
+    terminal: Terminal,
+) {
+    val (parser, systemRegistry) = parserAndSystemRegistry(terminal)
+    val lineReader = options.newLineReader(terminal, systemRegistry, parser)
+    inject(this, systemRegistry, lineReader)
+}
+
+@Generated
 fun CommandLine.parserAndSystemRegistry(
     terminal: Terminal,
 ): Pair<Parser, SystemRegistryImpl> {
@@ -146,7 +158,7 @@ fun Options.testLineReader(terminal: Terminal): LineReader {
  * @todo Reconcile the *three* factory functions for two purposes
  */
 @Generated
-fun Options.lineReader(
+fun Options.newLineReader(
     terminal: Terminal,
     systemRegistry: SystemRegistry,
     parser: Parser,

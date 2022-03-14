@@ -10,9 +10,6 @@ import picocli.CommandLine.Model.OptionSpec
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.ParentCommand
 import java.util.Formatter
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction1
-import kotlin.reflect.typeOf
 
 @Command(
     name = "clear",
