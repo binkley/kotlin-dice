@@ -41,9 +41,8 @@ private val diceLike = Regex("^[1-9dz]", IGNORE_CASE)
 fun String.maybeDiceExpression() =
     diceLike.containsMatchIn(trimStart())
 
-fun Options.commandLineAndTerminal(
-    args: Array<String>,
-): Pair<CommandLine, Terminal> {
+fun Options.commandLineAndTerminal(vararg args: String)
+        : Pair<CommandLine, Terminal> {
     val commandLine = commandLine.apply { parseArgs(*args) }
     // Parse command line first to respect --test-repl option
     val terminal =
@@ -110,44 +109,35 @@ fun CommandLine.installNewRepl(
     options: Options,
     terminal: Terminal,
 ) {
-    val (parser, systemRegistry) = parserAndSystemRegistry(terminal)
+    val (systemRegistry, parser) = systemRegistryAndParser(terminal)
     val lineReader = options.newLineReader(terminal, systemRegistry, parser)
     inject(this, systemRegistry, lineReader)
 }
 
-@Generated
-fun CommandLine.parserAndSystemRegistry(
+private fun CommandLine.systemRegistryAndParser(
     terminal: Terminal,
-): Pair<Parser, SystemRegistryImpl> {
+): Pair<SystemRegistry, Parser> {
     val parser: Parser = DefaultParser()
     val systemRegistry = SystemRegistryImpl(parser, terminal, null, null)
         .groupCommandsInHelp(false)
     systemRegistry.setCommandRegistries(PicocliCommands(this))
 
-    return parser to systemRegistry
+    return systemRegistry to parser
 }
 
-fun Options.realLineReader(terminal: Terminal): LineReader {
+fun Options.oldLineReader(terminal: Terminal): LineReader {
     val builder = this.lineReaderBuilder(terminal)
 
-    // Save REPL rolls to ~/.roll_history
-    if (history) builder.variable(
-        HISTORY_FILE,
-        Path(System.getProperty("user.home"), HISTORY_FILE_NAME)
-    )
-
-    return builder.build()
-}
-
-/**
- * The terminal builder hands file descriptors for STDIN and STDOUT to the
- * constructor of dumb terminals, and provides no means for changing them.
- */
-fun Options.testLineReader(terminal: Terminal): LineReader {
-    val builder = this.lineReaderBuilder(terminal)
-
-    // Do not save test rolls to ~/.roll_history; delete after finishing
-    if (history) builder.variable(HISTORY_FILE, createTempFile(PROGRAM_NAME))
+    if (history)
+        if (testRepl) {
+            // Do not save test rolls to ~/.roll_history; delete after finishing
+            builder.variable(HISTORY_FILE, createTempFile(PROGRAM_NAME))
+        } else
+        // Save REPL rolls to ~/.roll_history
+            builder.variable(
+                HISTORY_FILE,
+                Path(System.getProperty("user.home"), HISTORY_FILE_NAME)
+            )
 
     return builder.build()
 }

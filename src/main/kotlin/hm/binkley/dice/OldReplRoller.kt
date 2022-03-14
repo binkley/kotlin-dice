@@ -10,10 +10,7 @@ class OldReplRoller(
     private val terminal: Terminal,
     private val options: Options,
 ) : MainRoller(random, reporter) {
-    // TODO: Get rid of logic in favor of injection
-    private val lineReader: LineReader =
-        if (options.testRepl) options.testLineReader(terminal)
-        else options.realLineReader(terminal)
+    private val lineReader: LineReader = options.oldLineReader(terminal)
 
     /** Note: closes (and resets) the terminal when done. */
     override fun rollAndReport() = terminal.use {

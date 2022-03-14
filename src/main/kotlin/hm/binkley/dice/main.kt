@@ -8,7 +8,7 @@ const val HISTORY_FILE_NAME = ".roll_history"
 
 fun main(args: Array<String>) {
     val options = Options()
-    val (commandLine, terminal) = options.commandLineAndTerminal(args)
+    val (commandLine, terminal) = options.commandLineAndTerminal(*args)
 
     // TODO: Why do tests complain about falling back on a dumb terminal?
     //       Somehow, even when --new-repl is false, is confusing
