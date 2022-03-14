@@ -20,7 +20,7 @@ class OldReplRoller(
         while (true) try {
             // TODO: Untested, and @Generated does compile for lambdas
             rollFromLines { lineReader.readLine(options.prompt) }
-        } catch (e: BadHistoryException) {
+        } catch (e: HistoryException) {
             e.printError()
         } catch (e: DiceException) {
             e.printError()

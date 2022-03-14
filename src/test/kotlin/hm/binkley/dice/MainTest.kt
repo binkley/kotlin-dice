@@ -396,7 +396,7 @@ $DIE_PROMPT${DIE_PROMPT}3d6!2 76
 $DIE_PROMPT
             """
             err shouldBeAfterTrimming """
-Unexpected '!' (at position 1) in dice expression '!!'                
+History disabled because of the --no-history option                
             """
         }
 

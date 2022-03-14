@@ -189,16 +189,26 @@ private class RollingExpander(
     private val options: Options,
 ) : DefaultExpander() {
     override fun expandHistory(history: History, line: String): String = try {
-        if (!options.history || line.maybeDiceExpression()) line
+        if (line.maybeDiceExpression()) line
+        else if (!options.history) throw HistoryDisabledException
         else super.expandHistory(history, line)
     } catch (e: IllegalArgumentException) {
         throw BadHistoryException(e)
     }
 }
 
+abstract class HistoryException(message: String) : Throwable(message)
+
+/**
+ * Extends `Throwable` so that it is neither an `Exception` nor an `Error`.
+ * This workaround defeats JLine3 from force-dumping a stack trace.
+ */
+object HistoryDisabledException :
+    HistoryException("History disabled because of the --no-history option")
+
 /**
  * Extends `Throwable` so that it is neither an `Exception` nor an `Error`.
  * This workaround defeats JLine3 from force-dumping a stack trace.
  */
 class BadHistoryException(cause: IllegalArgumentException) :
-    Throwable(cause.message)
+    HistoryException(cause.message!!)

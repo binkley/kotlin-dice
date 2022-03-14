@@ -26,7 +26,7 @@ class NewReplRoller(
             } finally {
                 systemRegistry.cleanUp()
             }
-        } catch (e: BadHistoryException) {
+        } catch (e: HistoryException) {
             e.printError()
         } catch (e: DiceException) {
             e.printError()
