@@ -12,6 +12,8 @@ sealed class ReplRoller(
     private val options: Options,
 ) : MainRoller(random, reporter),
     NeedsLineReader by DoNeedsLineReader() {
+    protected abstract fun String.maybeRoll()
+
     /**
      * Note: closes (and resets) the terminal when done.
      *
@@ -20,7 +22,7 @@ sealed class ReplRoller(
     final override fun rollAndReport() = options.terminal.use {
         while (true) {
             try {
-                rollSome()
+                readLine().maybeRoll()
             } catch (e: HistoryException) {
                 e.printError()
             } catch (e: DiceException) {
@@ -31,13 +33,12 @@ sealed class ReplRoller(
         }
     }
 
-    protected fun readLine(): String = lineReader.readLine(options.prompt)
+    /** @todo Undo the god-object anti-pattern */
+    private fun readLine() = lineReader.readLine(options.prompt)
 
     /** @todo Undo the god-object anti-pattern */
     private fun Throwable.printError() =
         options.commandLine.err.println(colorScheme.errorText(message))
-
-    protected abstract fun rollSome()
 }
 
 class OldReplRoller(
@@ -47,9 +48,8 @@ class OldReplRoller(
 ) : ReplRoller(random, reporter, options) {
     override var lineReader = options.oldLineReader(options.terminal)
 
-    override fun rollSome() {
-        val expression = readLine()
-        if (expression.isNotEmpty()) expression.roll()
+    override fun String.maybeRoll() {
+        if (isNotEmpty()) roll()
     }
 }
 
@@ -60,11 +60,10 @@ class NewReplRoller(
     options: Options,
 ) : ReplRoller(random, reporter, options),
     NeedsSystemRegistry by DoNeedsSystemRegistry() {
-    override fun rollSome() {
-        val line = readLine()
-        if (line.maybeDiceExpression()) line.roll()
+    override fun String.maybeRoll() {
+        if (maybeDiceExpression()) roll()
         else try {
-            systemRegistry.execute(line)
+            systemRegistry.execute(this)
         } finally {
             systemRegistry.cleanUp()
         }
