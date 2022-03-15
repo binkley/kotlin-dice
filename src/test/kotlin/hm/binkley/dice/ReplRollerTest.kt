@@ -20,19 +20,15 @@ internal class ReplRollerTest {
 
     @Test
     fun `should create new real REPL`() {
-        val options = Options()
-        val (commandLine, terminal) = options.commandLineAndTerminal(
+        Options().parseOptions(
             "--new-repl"
         )
-        commandLine.installNewRepl(options, terminal)
     }
 
     @Test
     fun `should create new real REPL without history`() {
-        val options = Options()
-        val (commandLine, terminal) = options.commandLineAndTerminal(
+        Options().parseOptions(
             "--no-history", "--new-repl"
         )
-        commandLine.installNewRepl(options, terminal)
     }
 }

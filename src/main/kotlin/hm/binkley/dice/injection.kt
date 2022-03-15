@@ -46,12 +46,14 @@ interface NeedsLineReader {
 fun <T> T.inject(
     commandLine: CommandLine,
     terminal: Terminal,
-    systemRegistry: SystemRegistry,
+    systemRegistry: SystemRegistry?,
     lineReader: LineReader,
 ): T = apply {
     if (this is NeedsTerminal) this.terminal = terminal
     if (this is NeedsCommandLine) this.commandLine = commandLine
-    if (this is NeedsSystemRegistry)
+    // TODO: Remove the null check when old REPL goes away (needed by Options)
+    // TODO: If options is manually set up ... why does injection happen?
+    if (null != systemRegistry && this is NeedsSystemRegistry)
         this.systemRegistry = systemRegistry
     if (this is NeedsLineReader) this.lineReader = lineReader
 }
@@ -60,7 +62,7 @@ fun <T> T.inject(
 fun CommandLine.inject(
     commandLine: CommandLine,
     terminal: Terminal,
-    systemRegistry: SystemRegistry,
+    systemRegistry: SystemRegistry?,
     lineReader: LineReader,
 ): CommandLine = apply {
     val command = getCommand<Any>()

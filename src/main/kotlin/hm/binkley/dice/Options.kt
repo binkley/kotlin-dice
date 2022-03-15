@@ -1,16 +1,15 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.NeedsCommandLine.DoNeedsCommandLine
 import hm.binkley.dice.NeedsLineReader.DoNeedsLineReader
 import hm.binkley.dice.NeedsSystemRegistry.DoNeedsSystemRegistry
 import hm.binkley.dice.NeedsTerminal.DoNeedsTerminal
-import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.Option
 import picocli.CommandLine.Option.NULL_VALUE
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
-import picocli.shell.jline3.PicocliCommands.PicocliCommandsFactory
 import kotlin.random.Random
 
 @Command(
@@ -81,20 +80,12 @@ import kotlin.random.Random
 )
 class Options :
     Runnable,
+    NeedsCommandLine by DoNeedsCommandLine(),
     NeedsTerminal by DoNeedsTerminal(),
     NeedsLineReader by DoNeedsLineReader(),
     NeedsSystemRegistry by DoNeedsSystemRegistry() {
     @Spec
     lateinit var commandSpec: CommandSpec
-
-    val commandLine: CommandLine =
-        CommandLine(this, PicocliCommandsFactory())
-            // Use the last setting for an option if it is repeated; needed
-            // testing which defaults to no color, but some tests will
-            // override the option to test color output
-            .setOverwrittenOptionsAllowed(true)
-            .setExecutionStrategy(executionStrategy())
-            .setExecutionExceptionHandler(exceptionHandler())
 
     // TODO: Temporary while cutting over to main main
     @Option(
@@ -209,27 +200,39 @@ class Options :
     var arguments: List<String> = emptyList()
 
     override fun run() {
-        if (newRepl) commandLine.err.println(
-            colorScheme.errorText(
-                "WARNING: the new REPL is EXPERIMENTAL".maybeGnuPrefix()
-            )
-        )
+        maybeWarnNewRepl()
 
         // Handle copyright first so we can return 0 quickly
         if (copyright) {
-            javaClass.classLoader
-                .getResourceAsStream("META-INF/LICENSE")!!
-                .copyTo(System.out)
+            printCopyright()
             return
         }
 
         if (debug) verbose = true
 
+        pickRoller().rollAndReport()
+    }
+
+    private fun maybeWarnNewRepl() {
+        if (newRepl) commandLine.err.println(
+            colorScheme.errorText(
+                "WARNING: the new REPL is EXPERIMENTAL".maybeGnuPrefix()
+            )
+        )
+    }
+
+    private fun printCopyright() {
+        javaClass.classLoader
+            .getResourceAsStream("META-INF/LICENSE")!!
+            .copyTo(System.out)
+    }
+
+    private fun pickRoller(): MainRoller {
         // TODO: Why does Kotlin require non-null assertion?
         val random = if (null == seed) Random else Random(seed!!)
         val reporter = MainReporter.new(minimum, verbose)
 
-        val roller = when {
+        return when {
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
                 ArgumentRoller(random, reporter, arguments)
@@ -239,7 +242,5 @@ class Options :
                 else OldReplRoller(random, reporter, this)
             else -> StdinRoller(random, reporter)
         }
-
-        roller.rollAndReport()
     }
 }

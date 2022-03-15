@@ -25,6 +25,7 @@ import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.RunLast
 import picocli.shell.jline3.PicocliCommands
+import picocli.shell.jline3.PicocliCommands.PicocliCommandsFactory
 import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.io.path.Path
 import kotlin.io.path.createTempFile
@@ -41,16 +42,24 @@ private val diceLike = Regex("^[1-9dz]", IGNORE_CASE)
 fun String.maybeDiceExpression() =
     diceLike.containsMatchIn(trimStart())
 
-fun Options.commandLineAndTerminal(vararg args: String): Pair<CommandLine, Terminal> {
-    val commandLine = commandLine.apply { parseArgs(*args) }
-    // Parse command line first to respect --test-repl option
-    val terminal =
+fun Options.parseOptions(vararg args: String): CommandLine {
+    // As Options bootstraps everything else, use setter rather than injection
+    commandLine = CommandLine(this, PicocliCommandsFactory())
+        // Use the last setting for an option if it is repeated; needed
+        // testing which defaults to no color, but some tests will
+        // override the option to test color output
+        .setOverwrittenOptionsAllowed(true)
+        .setExecutionStrategy(executionStrategy())
+        .setExecutionExceptionHandler(exceptionHandler())
+        .apply { parseArgs(*args) }
+    terminal =
         if (testRepl) dumbTerminal()
         else realTerminal()
 
-    this.terminal = terminal
+    // TODO: Restructure code ordering
+    prepareRepl(commandLine)
 
-    return commandLine to terminal
+    return commandLine
 }
 
 fun realTerminal(): Terminal = TerminalBuilder.builder()
@@ -103,14 +112,21 @@ fun Options.executionStrategy() =
         RunLast().execute(parseResult)
     }
 
-@Generated
-fun CommandLine.installNewRepl(
-    options: Options,
-    terminal: Terminal,
-) {
-    val (systemRegistry, parser) = systemRegistryAndParser(terminal)
-    val lineReader = options.newLineReader(terminal, systemRegistry, parser)
-    inject(this, terminal, systemRegistry, lineReader)
+private fun Options.prepareRepl(commandLine: CommandLine) {
+    if (newRepl) prepareNewRepl(commandLine)
+    else prepareOldRepl(commandLine)
+}
+
+private fun Options.prepareOldRepl(commandLine: CommandLine) {
+    val lineReader = oldLineReader(terminal)
+    commandLine.inject(commandLine, terminal, null, lineReader)
+}
+
+private fun Options.prepareNewRepl(commandLine: CommandLine) {
+    val (systemRegistry, parser) = commandLine
+        .systemRegistryAndParser(terminal)
+    val lineReader = newLineReader(terminal, systemRegistry, parser)
+    commandLine.inject(commandLine, terminal, systemRegistry, lineReader)
 }
 
 private fun CommandLine.systemRegistryAndParser(
@@ -125,7 +141,7 @@ private fun CommandLine.systemRegistryAndParser(
 }
 
 fun Options.oldLineReader(terminal: Terminal): LineReader {
-    val builder = this.lineReaderBuilder(terminal)
+    val builder = lineReaderBuilder(terminal)
 
     if (history)
         if (testRepl) {
