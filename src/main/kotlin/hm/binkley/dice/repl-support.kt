@@ -53,7 +53,7 @@ fun Options.parseOptions(vararg args: String): CommandLine {
         .setExecutionExceptionHandler(exceptionHandler())
         .apply { parseArgs(*args) }
     terminal =
-        if (testRepl) dumbTerminal()
+        if (!isInteractive() || testRepl) dumbTerminal()
         else realTerminal()
 
     // TODO: Restructure code ordering
