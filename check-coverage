@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+open=false
+while getopts oq opt; do
+    case $opt in
+    o ) open=true ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+./mvnw "$@" clean test jacoco:report jacoco:check || exit
+
+for f in target/jacoco.exec target/site/jacoco/index.html; do
+    [[ -f "$f" ]] || {
+        echo "$0: $f: No such file or directory" >&2
+        exit 1
+    }
+done
+
+$open && cd target/site/jacoco && open index.html

@@ -17,7 +17,7 @@
         <java.charset>UTF-8</java.charset>
         <!-- Java version is held back by parboiled -->
         <jdk.version>11</jdk.version>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.8-SNAPSHOT</jacoco-maven-plugin.version>
         <jansi.version>2.4.0</jansi.version>
         <jline.version>3.21.0</jline.version>
         <junit.version>5.8.2</junit.version>
@@ -47,6 +47,19 @@
         <system-lambda.version>1.2.1</system-lambda.version>
         <!-- @formatter:on -->
     </properties>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>sonatype-snapshots</id>
+            <name>Sonatype Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <dependency>
@@ -144,9 +157,6 @@
     </dependencies>
 
     <build>
-        <!-- When you type just `./mvnw`: -->
-        <defaultGoal>clean verify</defaultGoal>
-
         <!-- @formatter:off -->
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
@@ -246,11 +256,14 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <!--
-                    TODO: See https://github.com/stefanbirkner/system-lambda/issues/23#issuecomment-1007608124 
+                    TODO: See https://github.com/stefanbirkner/system-lambda/issues/23#issuecomment-1007608124
                     -->
                     <argLine>
-                        --add-opens java.base/java.lang=ALL-UNNAMED
-                        --add-opens java.base/java.util=ALL-UNNAMED
+                        <!-- TODO: *EITHER* of these breaks JaCoCo -->
+                        <!-- For mockk -->
+<!--                        &#45;&#45;add-opens java.base/java.lang=ALL-UNNAMED-->
+                        <!-- For system lambda withEnvironmentVariables -->
+<!--                        &#45;&#45;add-opens java.base/java.util=ALL-UNNAMED-->
                     </argLine>
                 </configuration>
                 <dependencies>
@@ -305,7 +318,7 @@
                                 <limit>
                                     <counter>BRANCH</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>94%</minimum>
+                                    <minimum>95%</minimum>
                                 </limit>
                                 <limit>
                                     <counter>INSTRUCTION</counter>

@@ -42,7 +42,6 @@ interface NeedsLineReader {
     }
 }
 
-@Generated
 fun <T> T.inject(
     commandLine: CommandLine,
     terminal: Terminal,
