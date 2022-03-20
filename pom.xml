@@ -369,7 +369,9 @@
                     <avoidCallsTo>
                         <avoidCallsTo>kotlin.jvm.internal</avoidCallsTo>
                     </avoidCallsTo>
+                    <exportLineCoverage>true</exportLineCoverage>
                     <mutationThreshold>${coverage.mutation}</mutationThreshold>
+                    <timestampedReports>false</timestampedReports>
                 </configuration>
                 <executions>
                     <execution>
