@@ -268,9 +268,8 @@ open class DiceParser(
         return true
     }
 
-    internal fun rollTheDice() = push(
-        Roller(random, reporter, toParsedDice()).rollDice()
-    )
+    internal fun rollTheDice() =
+        push(Roller(random, reporter, toParsedDice()).rollDice())
 
     @Generated // Lie to JaCoCo
     internal open fun maybeRollMore() = ZeroOrMore(
