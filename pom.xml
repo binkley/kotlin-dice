@@ -372,6 +372,7 @@
                     <exportLineCoverage>true</exportLineCoverage>
                     <mutationThreshold>${coverage.mutation}</mutationThreshold>
                     <timestampedReports>false</timestampedReports>
+                    <withHistory>true</withHistory>
                 </configuration>
                 <executions>
                     <execution>
