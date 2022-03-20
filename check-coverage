@@ -1,14 +1,53 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2214
+
+export PS4='+${BASH_SOURCE}:${LINENO}:${FUNCNAME[0]:+${FUNCNAME[0]}():} '
+
+set -e
+set -u
+set -o pipefail
+
+function print-help() {
+    cat <<EOH
+Usage: $0 [OPTIONS] [-- ARGUMENTS]
+Checks code coverage and optionally opens the report.
+
+OPTIONS:
+  -o, --open-report   open the coverage report in a web browser
+  -h, --help          print this help and exit
+
+ARGUMENTS:
+  All arguments are passed to ./mvnw as options.  The "--" is mandatory.
+EOH
+}
+
+function bad-option() {
+    local opt="$1"
+
+    cat <<EOM
+$0: invalid option -- '$opt'
+Try '$0 --help' for more information.
+EOM
+}
 
 open=false
-while getopts oq opt; do
+while getopts :ho-: opt; do
+    [[ $opt == - ]] && opt=${OPTARG%%=*} OPTARG=${OPTARG#*=}
     case $opt in
-    o ) open=true ;;
+    h | help)
+        print-help
+        exit 0
+        ;;
+    o | open-report) open=true ;;
+    *)
+        bad-option "$opt"
+        exit 2
+        ;;
     esac
 done
 shift $((OPTIND - 1))
 
-./mvnw "$@" clean test jacoco:report jacoco:check || exit
+./mvnw "$@" clean test jacoco:report jacoco:check
 
 for f in target/jacoco.exec target/site/jacoco/index.html; do
     [[ -f "$f" ]] || {
