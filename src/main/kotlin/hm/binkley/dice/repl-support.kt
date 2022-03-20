@@ -123,8 +123,8 @@ private fun Options.prepareOldRepl(commandLine: CommandLine) {
 }
 
 private fun Options.prepareNewRepl(commandLine: CommandLine) {
-    val (systemRegistry, parser) = commandLine
-        .systemRegistryAndParser(terminal)
+    val (systemRegistry, parser) =
+        commandLine.systemRegistryAndParser(terminal)
     val lineReader = newLineReader(terminal, systemRegistry, parser)
     commandLine.inject(commandLine, terminal, systemRegistry, lineReader)
 }
