@@ -12,6 +12,10 @@
     <properties>
         <!-- @formatter:off -->
         <atrium.version>0.17.0</atrium.version>
+        <coverage.branches>95</coverage.branches>
+        <coverage.instructions>97</coverage.instructions>
+        <coverage.lines>95</coverage.lines>
+        <coverage.mutation>90</coverage.mutation>
         <dependency-check-maven.version>7.0.0</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.19.1</detekt-maven-plugin.version>
         <java.charset>UTF-8</java.charset>
@@ -164,6 +168,7 @@
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${maven-enforcer-plugin.version}</version>
                 <configuration>
@@ -190,24 +195,28 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven-clean-plugin.version}</version>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>${maven-dependency-plugin.version}</version>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>${maven-resources-plugin.version}</version>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
             </plugin>
             <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
                 <!-- TODO: Fail on warnings when kapt behaves and stops
                            upsetting the compiler with dup source roots
@@ -275,6 +284,7 @@
                 </dependencies>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${maven-jar-plugin.version}</version>
             </plugin>
@@ -313,17 +323,17 @@
                                 <limit>
                                     <counter>LINE</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>98%</minimum>
+                                    <minimum>${coverage.lines}%</minimum>
                                 </limit>
                                 <limit>
                                     <counter>BRANCH</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>95%</minimum>
+                                    <minimum>${coverage.branches}%</minimum>
                                 </limit>
                                 <limit>
                                     <counter>INSTRUCTION</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>97%</minimum>
+                                    <minimum>${coverage.instructions}%</minimum>
                                 </limit>
                             </limits>
                         </rule>
@@ -359,12 +369,7 @@
                     <avoidCallsTo>
                         <avoidCallsTo>kotlin.jvm.internal</avoidCallsTo>
                     </avoidCallsTo>
-                    <excludedClasses>
-                        <excludedClass>hm.binkley.dice.MainKt
-                        </excludedClass>
-                    </excludedClasses>
-                    <!-- TODO: How to make mutation testing happy? -->
-                    <mutationThreshold>84</mutationThreshold>
+                    <mutationThreshold>${coverage.mutation}</mutationThreshold>
                 </configuration>
                 <executions>
                     <execution>

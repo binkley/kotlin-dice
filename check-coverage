@@ -15,8 +15,9 @@ Usage: $progname [OPTIONS] [-- ARGUMENTS]
 Checks code coverage and optionally opens the report.
 
 OPTIONS:
-  -o, --open-report   open the coverage report in a web browser
-  -h, --help          print this help and exit
+  -m, --with-mutation   also check mutation coverage
+  -o, --open-report     open the coverage report in a web browser
+  -h, --help            print this help and exit
 
 ARGUMENTS:
   All arguments are passed to ./mvnw as options.  The "--" is mandatory.
@@ -32,14 +33,16 @@ Try '$progname --help' for more information.
 EOM
 }
 
+targets='clean test jacoco:report jacoco:check'
 open=false
-while getopts :ho-: opt; do
+while getopts :hmo-: opt; do
     [[ $opt == - ]] && opt=${OPTARG%%=*} OPTARG=${OPTARG#*=}
     case $opt in
     h | help)
         print-help
         exit 0
         ;;
+    m | with-mutation) targets='clean verify' ;;
     o | open-report) open=true ;;
     *)
         bad-option "$OPTARG"
@@ -49,7 +52,8 @@ while getopts :ho-: opt; do
 done
 shift $((OPTIND - 1))
 
-./mvnw "$@" clean test jacoco:report jacoco:check
+# shellcheck disable=SC2086
+./mvnw "$@" $targets
 
 for f in target/jacoco.exec target/site/jacoco/index.html; do
     [[ -f "$f" ]] || {
@@ -58,4 +62,4 @@ for f in target/jacoco.exec target/site/jacoco/index.html; do
     }
 done
 
-$open && cd target/site/jacoco && open index.html
+$open && cd target/site/jacoco && open index.html || true
