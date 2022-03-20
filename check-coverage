@@ -7,9 +7,11 @@ set -e
 set -u
 set -o pipefail
 
+readonly progname="${0##*/}"
+
 function print-help() {
     cat <<EOH
-Usage: $0 [OPTIONS] [-- ARGUMENTS]
+Usage: $progname [OPTIONS] [-- ARGUMENTS]
 Checks code coverage and optionally opens the report.
 
 OPTIONS:
@@ -25,8 +27,8 @@ function bad-option() {
     local opt="$1"
 
     cat <<EOM
-$0: invalid option -- '$opt'
-Try '$0 --help' for more information.
+$progname: invalid option -- '$opt'
+Try '$progname --help' for more information.
 EOM
 }
 
@@ -40,7 +42,7 @@ while getopts :ho-: opt; do
         ;;
     o | open-report) open=true ;;
     *)
-        bad-option "$opt"
+        bad-option "$OPTARG"
         exit 2
         ;;
     esac
@@ -51,7 +53,7 @@ shift $((OPTIND - 1))
 
 for f in target/jacoco.exec target/site/jacoco/index.html; do
     [[ -f "$f" ]] || {
-        echo "$0: $f: No such file or directory" >&2
+        echo "$progname: $f: No such file or directory" >&2
         exit 1
     }
 done
