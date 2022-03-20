@@ -50,10 +50,11 @@ internal fun captureRun(main: () -> Unit): ShellOutcome {
         }
     }
 
-    if (2 == exitCode)
-        fail("BUG: Test using bad options for main()")
-
-    return ShellOutcome(exitCode, stdout, stderr)
+    return when (exitCode) {
+        0, 1 -> ShellOutcome(exitCode, stdout, stderr)
+        2 -> fail("BUG: Bad options for main()")
+        else -> fail("BUG: Unexpected exit code: $exitCode")
+    }
 }
 
 internal fun captureRunWithInput(
