@@ -20,7 +20,6 @@ import org.jline.terminal.Terminal.TYPE_DUMB_COLOR
 import org.jline.terminal.TerminalBuilder
 import org.jline.terminal.impl.DumbTerminal
 import picocli.CommandLine
-import picocli.CommandLine.Help.Ansi
 import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.RunLast
@@ -30,9 +29,6 @@ import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.io.path.Path
 import kotlin.io.path.createTempFile
 import kotlin.text.RegexOption.IGNORE_CASE
-
-fun isInteractive() = null != System.console()
-fun isColor() = Ansi.AUTO.enabled()
 
 /**
  * All dice expressions start either with a non-zero digit, or the letters

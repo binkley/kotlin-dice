@@ -4,6 +4,9 @@ import hm.binkley.dice.NeedsCommandLine.DoNeedsCommandLine
 import hm.binkley.dice.NeedsLineReader.DoNeedsLineReader
 import hm.binkley.dice.NeedsSystemRegistry.DoNeedsSystemRegistry
 import hm.binkley.dice.NeedsTerminal.DoNeedsTerminal
+import hm.binkley.dice.command.ClearScreenCommand
+import hm.binkley.dice.command.HistoryCommand
+import hm.binkley.dice.command.OptionsCommand
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.Option

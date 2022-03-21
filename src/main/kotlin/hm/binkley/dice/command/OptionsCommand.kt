@@ -1,53 +1,14 @@
-package hm.binkley.dice
+package hm.binkley.dice.command
 
+import hm.binkley.dice.NeedsCommandLine
 import hm.binkley.dice.NeedsCommandLine.DoNeedsCommandLine
-import hm.binkley.dice.NeedsLineReader.DoNeedsLineReader
+import hm.binkley.dice.Options
 import lombok.Generated
-import org.jline.reader.History
-import org.jline.utils.InfoCmp.Capability.clear_screen
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.OptionSpec
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.ParentCommand
 import java.util.Formatter
-
-@Command(
-    name = "clear",
-    description = ["clear the screen"],
-    mixinStandardHelpOptions = true,
-)
-@Generated
-class ClearScreenCommand :
-    Runnable,
-    NeedsLineReader by DoNeedsLineReader() {
-
-    override fun run() {
-        lineReader.terminal.puts(clear_screen)
-    }
-}
-
-@Command(
-    name = "history",
-    description = ["list command history excluding this command"],
-    mixinStandardHelpOptions = true,
-)
-@Generated
-class HistoryCommand :
-    Runnable,
-    NeedsCommandLine by DoNeedsCommandLine(),
-    NeedsLineReader by DoNeedsLineReader() {
-    @Parameters(
-        arity = "0..1",
-        paramLabel = "N"
-    )
-    var take: Int = 20
-
-    override fun run() = lineReader.history
-        .reversed()
-        .take(take + 1) // Do not count the history command itself
-        .reversed()
-        .forEach { commandLine.out.println(it.format()) }
-}
 
 @Command(
     name = "options",
@@ -91,16 +52,6 @@ class OptionsCommand :
         }
     }
 }
-
-/**
- * Formats history display the same as does JLine3, but fixes the
- * off-by-one bug in JLine3 for displaying executed lines.
- *
- * Note: [History.Entry.index] is 0-based, and shell history expansion is
- * 1-based.
- */
-@Generated
-private fun History.Entry.format() = "%5d  %s".format(index() + 1, line())
 
 /**
  * Formats the `OptionSpec` to appear as it would on the command line.
