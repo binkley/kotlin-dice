@@ -53,9 +53,11 @@ fun Options.parseOptions(vararg args: String): CommandLine {
         .setExecutionStrategy(executionStrategy())
         .setExecutionExceptionHandler(exceptionHandler())
         .apply { parseArgs(*args) }
-    terminal =
-        if (isInteractive() && !testRepl) forceRealTerminal()
-        else dumbTerminal()
+    terminal = when {
+        testRepl && newRepl -> realTerminal()
+        isInteractive() -> realTerminal()
+        else -> dumbTerminal()
+    }
 
     // TODO: Restructure code ordering
     prepareRepl(commandLine)
@@ -63,13 +65,13 @@ fun Options.parseOptions(vararg args: String): CommandLine {
     return commandLine
 }
 
-private fun forceRealTerminal(): Terminal = TerminalBuilder.builder()
+private fun Options.realTerminal(): Terminal = TerminalBuilder.builder()
     // Ask JLine3 to raise exception if it tries to fall back to dumb
     .dumb(false)
-    .name(PROGRAM_NAME)
-    // Force System streams rather than wrapped file streams
-    .streams(System.`in`, System.`out`)
-    .build()
+    .name(PROGRAM_NAME).apply {
+        // Force System streams rather than wrapped file streams
+        if (testRepl) streams(System.`in`, System.`out`)
+    }.build()
 
 private fun dumbTerminal() = DumbTerminal(
     PROGRAM_NAME,

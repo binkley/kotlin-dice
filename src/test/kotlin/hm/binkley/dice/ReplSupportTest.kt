@@ -31,7 +31,7 @@ internal class ReplSupportTest {
     fun `should create new real REPL`() {
         runWithEofConsole {
             Options().parseOptions(
-                "--new-repl"
+                "--new-repl", "--test-repl"
             )
         }
     }
@@ -40,7 +40,7 @@ internal class ReplSupportTest {
     fun `should create new real REPL without history`() {
         runWithEofConsole {
             Options().parseOptions(
-                "--no-history", "--new-repl"
+                "--no-history", "--new-repl", "--test-repl"
             )
         }
     }
