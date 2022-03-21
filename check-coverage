@@ -38,7 +38,7 @@ function require-file() {
     shift
     if [[ ! -f "$file" ]]; then
         echo "$progname: $file: No such file or directory" >&2
-        exit 1
+        return 1
     fi
 }
 
@@ -64,27 +64,33 @@ while getopts :hmox-: opt; do
 done
 shift $((OPTIND - 1))
 
+((rc = 0)) || true
 if $run; then
     if $mutation; then
-        targets='clean verify'
+        targets='-DwithHistory clean verify'
     else
         targets='clean test jacoco:report jacoco:check'
     fi
 
     # shellcheck disable=SC2086
-    ./mvnw "$@" $targets
-fi
-
-for file in target/jacoco.exec target/site/jacoco/index.html; do
-    require-file "$file"
-done
-if $mutation; then
-    require-file target/pit-reports/index.html
+    ./mvnw "$@" $targets || ((rc += $?)) || true
+else
+    # Refresh coverage report when editing limits in pom.xml without rebuild
+    ./mvnw "$@" jacoco:report jacoco:check || ((rc += $?)) || true
 fi
 
 if $open; then
-    (cd target/site/jacoco && open index.html)
-    if $mutation; then
+    if require-file target/site/jacoco/index.html; then
+        (cd target/site/jacoco && open index.html)
+    else
+        ((++rc))
+    fi
+    if $mutation && require-file target/pit-reports/index.html; then
         (cd target/pit-reports && open index.html)
+    else
+        ((++rc))
     fi
 fi
+
+# shellcheck disable=SC2086
+exit $rc
