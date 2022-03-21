@@ -551,8 +551,8 @@ roll: Result -1 is below the minimum result of 0
 
     @Nested
     inner class Experiments {
-        @Disabled("TODO: Blocks in infinite polling loop")
         @Test
+        @Disabled("https://github.com/binkley/kotlin-dice/issues/34")
         fun `should do nothing for new REPL with no input`() {
             runWithEofConsole {
                 val (exitCode, out, err) = captureRun {
@@ -561,7 +561,25 @@ roll: Result -1 is below the minimum result of 0
 
                 exitCode shouldBe 0
                 out.shouldBeEmpty()
-                err.shouldBeEmpty()
+                err shouldBeAfterTrimming """
+WARNING: the new REPL is EXPERIMENTAL                    
+                """
+            }
+        }
+
+        @Test
+        @Disabled("https://github.com/binkley/kotlin-dice/issues/34")
+        fun `should do nothing for new REPL with no input in color`() {
+            runWithEofConsole {
+                val (exitCode, out, err) = captureRun {
+                    mainWithFixedSeed("--test-repl", "--new-repl", "-C")
+                }
+
+                exitCode shouldBe 0
+                out.shouldBeEmpty()
+                err shouldBeAfterTrimming """
+@|bold,red WARNING: the new REPL is EXPERIMENTAL|@                    
+                """.colored
             }
         }
     }

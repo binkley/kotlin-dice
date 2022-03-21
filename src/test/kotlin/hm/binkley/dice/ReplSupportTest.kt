@@ -16,19 +16,19 @@ internal class ReplSupportTest {
     }
 
     @Test
-    fun `should create old real REPL`() {
+    fun `should create real old REPL`() {
         Options().parseOptions()
     }
 
     @Test
-    fun `should create old real REPL without history`() {
+    fun `should create real old REPL without history`() {
         Options().parseOptions(
             "--no-history"
         )
     }
 
     @Test
-    fun `should create new real REPL`() {
+    fun `should create real new REPL`() {
         runWithEofConsole {
             Options().parseOptions(
                 "--new-repl", "--test-repl"
@@ -37,7 +37,7 @@ internal class ReplSupportTest {
     }
 
     @Test
-    fun `should create new real REPL without history`() {
+    fun `should create real new REPL without history`() {
         runWithEofConsole {
             Options().parseOptions(
                 "--no-history", "--new-repl", "--test-repl"

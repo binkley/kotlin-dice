@@ -4,6 +4,7 @@ import hm.binkley.dice.command.ClearScreenCommand
 import hm.binkley.dice.command.HistoryCommand
 import hm.binkley.dice.command.OptionsCommand
 import org.jline.console.SystemRegistry
+import org.jline.reader.LineReader
 import org.jline.terminal.Terminal
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -83,10 +84,11 @@ import kotlin.random.Random
 class Options : Runnable {
     @Spec
     lateinit var commandSpec: CommandSpec
-    lateinit var terminal: Terminal
+
     lateinit var commandLine: CommandLine
+    lateinit var terminal: Terminal
     lateinit var systemRegistry: SystemRegistry
-    lateinit var lineReader: org.jline.reader.LineReader
+    lateinit var lineReader: LineReader
 
     // TODO: Temporary while cutting over to main main
     @Option(
@@ -237,7 +239,7 @@ class Options : Runnable {
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
                 ArgumentRoller(random, reporter, arguments)
-            isInteractive() || testRepl -> pickRepl(random, reporter)
+            isInteractive() || testRepl -> pickReplRoller(random, reporter)
             else -> StdinRoller(random, reporter)
         }
     }

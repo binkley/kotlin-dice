@@ -5,7 +5,7 @@ import org.jline.console.SystemRegistry
 import org.jline.console.impl.SystemRegistryImpl.UnknownCommandException
 import kotlin.random.Random
 
-fun Options.pickRepl(random: Random, reporter: MainReporter) =
+fun Options.pickReplRoller(random: Random, reporter: MainReporter) =
     if (newRepl) NewReplRoller(random, reporter, this, systemRegistry)
     else OldReplRoller(random, reporter, this)
 

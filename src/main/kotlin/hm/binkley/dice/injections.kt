@@ -22,23 +22,25 @@ interface NeedsLineReader {
     }
 }
 
-fun <T> T.inject(
-    commandLine: CommandLine,
-    lineReader: LineReader,
-): T = apply {
-    if (this is NeedsCommandLine) this.commandLine = commandLine
-    if (this is NeedsLineReader) this.lineReader = lineReader
-}
-
-@Generated
 fun CommandLine.inject(
     commandLine: CommandLine,
     lineReader: LineReader,
 ): CommandLine = apply {
+    // TODO: Why does these need injecting here?  Else it blows with an
+    //       exception when running the new REPL live.  And what does it mean
+    //       to call this on subcommands?
     getCommand<Options>().inject(commandLine, lineReader)
 
     // Recur through subcommands
     subcommands.map { it.value }.forEach {
         it.inject(commandLine, lineReader)
     }
+}
+
+private fun <T> T.inject(
+    commandLine: CommandLine,
+    lineReader: LineReader,
+): T = apply {
+    if (this is NeedsCommandLine) this.commandLine = commandLine
+    if (this is NeedsLineReader) this.lineReader = lineReader
 }
