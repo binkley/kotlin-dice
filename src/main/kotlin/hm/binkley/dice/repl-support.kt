@@ -40,6 +40,9 @@ fun String.maybeDiceExpression() =
     diceLike.containsMatchIn(trimStart())
 
 fun Options.parseOptions(vararg args: String): CommandLine {
+    // TODO: Restructure code ordering -- too much injection in random places
+    //       and hard to follow
+
     // As Options bootstraps everything else, use setter rather than injection
     commandLine = CommandLine(this, PicocliCommandsFactory())
         // Use the last setting for an option if it is repeated; needed
@@ -49,14 +52,29 @@ fun Options.parseOptions(vararg args: String): CommandLine {
         .setExecutionStrategy(executionStrategy())
         .setExecutionExceptionHandler(exceptionHandler())
         .apply { parseArgs(*args) }
+
     terminal = when {
         testRepl && newRepl -> realTerminal()
         isInteractive() -> realTerminal()
         else -> dumbTerminal()
     }
 
-    // TODO: Restructure code ordering
-    prepareRepl(commandLine)
+    val systemRegistry: SystemRegistry? = if (newRepl) {
+        systemRegistry = SystemRegistryImpl(
+            /* parser = */ DefaultParser(),
+            /* terminal = */ terminal,
+            /* workDir = */ null,
+            /* configPath = */ null)
+            .groupCommandsInHelp(false)
+        systemRegistry.setCommandRegistries(PicocliCommands(commandLine))
+        lineReader = newLineReader(DefaultParser())
+        systemRegistry
+    } else {
+        lineReader = oldLineReader()
+        null
+    }
+
+    commandLine.inject(commandLine, terminal, systemRegistry, lineReader)
 
     return commandLine
 }
@@ -115,34 +133,6 @@ fun Options.executionStrategy() =
         RunLast().execute(parseResult)
     }
 
-private fun Options.prepareRepl(commandLine: CommandLine) {
-    if (newRepl) prepareNewRepl(commandLine)
-    else prepareOldRepl(commandLine)
-}
-
-private fun Options.prepareOldRepl(commandLine: CommandLine) {
-    val lineReader = oldLineReader()
-    commandLine.inject(commandLine, terminal, null, lineReader)
-}
-
-private fun Options.prepareNewRepl(commandLine: CommandLine) {
-    val (systemRegistry, parser) =
-        commandLine.systemRegistryAndParser(terminal)
-    val lineReader = newLineReader(terminal, systemRegistry, parser)
-    commandLine.inject(commandLine, terminal, systemRegistry, lineReader)
-}
-
-private fun CommandLine.systemRegistryAndParser(
-    terminal: Terminal,
-): Pair<SystemRegistry, Parser> {
-    val parser: Parser = DefaultParser()
-    val systemRegistry = SystemRegistryImpl(parser, terminal, null, null)
-        .groupCommandsInHelp(false)
-    systemRegistry.setCommandRegistries(PicocliCommands(this))
-
-    return systemRegistry to parser
-}
-
 fun Options.oldLineReader(): LineReader {
     val builder = lineReaderBuilder(terminal)
 
@@ -169,17 +159,13 @@ fun Options.oldLineReader(): LineReader {
  * @todo Reconcile the *three* factory functions for two purposes
  */
 @Generated
-fun Options.newLineReader(
-    terminal: Terminal,
-    systemRegistry: SystemRegistry,
-    parser: Parser,
-): LineReader = lineReaderBuilder(terminal)
-    .completer(systemRegistry.completer())
-    .parser(parser)
-    .terminal(terminal)
-    .build().apply {
-        autosuggestion = COMPLETER
-    }
+fun Options.newLineReader(parser: Parser): LineReader =
+    lineReaderBuilder(terminal)
+        .completer(systemRegistry.completer())
+        .parser(parser)
+        .build().apply {
+            autosuggestion = COMPLETER
+        }
 
 private fun Options.lineReaderBuilder(
     terminal: Terminal,

@@ -248,4 +248,5 @@ class Options :
         if (newRepl) NewReplRoller(random, reporter, this)
             .inject(commandLine, terminal, systemRegistry, lineReader)
         else OldReplRoller(random, reporter, this)
+            .inject(commandLine, terminal, null, lineReader)
 }
