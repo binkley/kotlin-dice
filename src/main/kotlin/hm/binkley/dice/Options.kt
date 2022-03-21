@@ -236,11 +236,13 @@ class Options :
             demo -> DemoRoller(random, reporter)
             arguments.isNotEmpty() ->
                 ArgumentRoller(random, reporter, arguments)
-            isInteractive() || testRepl ->
-                if (newRepl) NewReplRoller(random, reporter, this)
-                    .inject(commandLine, terminal, systemRegistry, lineReader)
-                else OldReplRoller(random, reporter, this)
+            isInteractive() || testRepl -> pickRepl(random, reporter)
             else -> StdinRoller(random, reporter)
         }
     }
+
+    private fun pickRepl(random: Random, reporter: MainReporter) =
+        if (newRepl) NewReplRoller(random, reporter, this)
+            .inject(commandLine, terminal, systemRegistry, lineReader)
+        else OldReplRoller(random, reporter, this)
 }

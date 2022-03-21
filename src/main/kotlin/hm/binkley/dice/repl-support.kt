@@ -149,10 +149,13 @@ fun Options.oldLineReader(): LineReader {
     val builder = lineReaderBuilder(terminal)
 
     if (history)
-        if (testRepl) {
-            // Do not save test rolls to ~/.roll_history; delete after finishing
-            builder.variable(HISTORY_FILE, createTempFile(PROGRAM_NAME))
-        } else
+        if (testRepl)
+        // Do not save test rolls to ~/.roll_history; delete after finishing
+            builder.variable(
+                HISTORY_FILE,
+                createTempFile(PROGRAM_NAME)
+            )
+        else
         // Save REPL rolls to ~/.roll_history
             builder.variable(
                 HISTORY_FILE,
