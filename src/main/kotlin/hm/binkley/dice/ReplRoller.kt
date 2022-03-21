@@ -46,7 +46,7 @@ class OldReplRoller(
     reporter: MainReporter,
     options: Options,
 ) : ReplRoller(random, reporter, options) {
-    override var lineReader = options.oldLineReader(options.terminal)
+    override var lineReader = options.oldLineReader()
 
     override fun String.maybeRoll() {
         if (isNotEmpty()) roll()

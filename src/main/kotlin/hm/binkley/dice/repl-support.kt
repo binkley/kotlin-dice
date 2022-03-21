@@ -118,7 +118,7 @@ private fun Options.prepareRepl(commandLine: CommandLine) {
 }
 
 private fun Options.prepareOldRepl(commandLine: CommandLine) {
-    val lineReader = oldLineReader(terminal)
+    val lineReader = oldLineReader()
     commandLine.inject(commandLine, terminal, null, lineReader)
 }
 
@@ -140,7 +140,7 @@ private fun CommandLine.systemRegistryAndParser(
     return systemRegistry to parser
 }
 
-fun Options.oldLineReader(terminal: Terminal): LineReader {
+fun Options.oldLineReader(): LineReader {
     val builder = lineReaderBuilder(terminal)
 
     if (history)

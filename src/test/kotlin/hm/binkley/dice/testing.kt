@@ -7,7 +7,11 @@ import com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariabl
 import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
 import io.kotest.assertions.fail
 import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockk
 import picocli.CommandLine.Help.Ansi
+import java.io.Console
+import java.io.Reader
 import kotlin.random.Random
 
 internal const val FIXED_SEED = 1L
@@ -73,3 +77,11 @@ internal data class ShellOutcome(
     val stdout: String,
     val stderr: String,
 )
+
+internal fun eofConsole(): Console {
+    val eofConsole = mockk<Console>()
+    val eofReader = mockk<Reader>()
+    every { eofConsole.reader() } returns eofReader
+    every { eofReader.read() } returns -1
+    return eofConsole
+}

@@ -9,7 +9,6 @@ import io.kotest.matchers.string.shouldNotBeEmpty
 import io.kotest.matchers.string.shouldStartWith
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.mockkStatic
 import org.jline.reader.UserInterruptException
 import org.junit.jupiter.api.Disabled
@@ -17,8 +16,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.ParseResult
-import java.io.Console
-import java.io.Reader
 
 internal class MainTest {
     @Nested
@@ -560,7 +557,8 @@ roll: Result -1 is below the minimum result of 0
         @Test
         fun `should do nothing for new REPL with no input`() {
             mockkStatic(System::class) {
-                every { System.console() } returns eofConsole()
+                val eofConsole = eofConsole() // Do not inline -- confuses mockk
+                every { System.console() } returns eofConsole
 
                 val (exitCode, out, err) = captureRun {
                     mainWithFixedSeed("--test-repl", "--new-repl")
@@ -569,14 +567,6 @@ roll: Result -1 is below the minimum result of 0
                 out.shouldBeEmpty()
                 err.shouldBeEmpty()
             }
-        }
-
-        private fun eofConsole(): Console {
-            val eofConsole = mockk<Console>()
-            val eofReader = mockk<Reader>()
-            every { eofConsole.reader() } returns eofReader
-            every { eofReader.read() } returns -1
-            return eofConsole
         }
     }
 }
