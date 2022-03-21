@@ -1,17 +1,19 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.NeedsLineReader.DoNeedsLineReader
-import hm.binkley.dice.NeedsSystemRegistry.DoNeedsSystemRegistry
 import lombok.Generated
+import org.jline.console.SystemRegistry
 import org.jline.console.impl.SystemRegistryImpl.UnknownCommandException
 import kotlin.random.Random
+
+fun Options.pickRepl(random: Random, reporter: MainReporter) =
+    if (newRepl) NewReplRoller(random, reporter, this, systemRegistry)
+    else OldReplRoller(random, reporter, this)
 
 sealed class ReplRoller(
     random: Random,
     reporter: MainReporter,
     private val options: Options,
-) : MainRoller(random, reporter),
-    NeedsLineReader by DoNeedsLineReader() {
+) : MainRoller(random, reporter) {
     protected abstract fun String.maybeRoll()
 
     /**
@@ -34,7 +36,7 @@ sealed class ReplRoller(
     }
 
     /** @todo Undo the god-object anti-pattern */
-    private fun readLine() = lineReader.readLine(options.prompt)
+    private fun readLine() = options.lineReader.readLine(options.prompt)
 
     /** @todo Undo the god-object anti-pattern */
     private fun Throwable.printError() =
@@ -56,8 +58,8 @@ class NewReplRoller(
     random: Random,
     reporter: MainReporter,
     options: Options,
-) : ReplRoller(random, reporter, options),
-    NeedsSystemRegistry by DoNeedsSystemRegistry() {
+    private val systemRegistry: SystemRegistry,
+) : ReplRoller(random, reporter, options) {
     override fun String.maybeRoll() {
         if (maybeDiceExpression()) roll()
         else try {

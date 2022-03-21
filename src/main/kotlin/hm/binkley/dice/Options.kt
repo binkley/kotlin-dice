@@ -1,12 +1,11 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.NeedsCommandLine.DoNeedsCommandLine
-import hm.binkley.dice.NeedsLineReader.DoNeedsLineReader
-import hm.binkley.dice.NeedsSystemRegistry.DoNeedsSystemRegistry
-import hm.binkley.dice.NeedsTerminal.DoNeedsTerminal
 import hm.binkley.dice.command.ClearScreenCommand
 import hm.binkley.dice.command.HistoryCommand
 import hm.binkley.dice.command.OptionsCommand
+import org.jline.console.SystemRegistry
+import org.jline.terminal.Terminal
+import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
 import picocli.CommandLine.Option
@@ -81,14 +80,13 @@ import kotlin.random.Random
         OptionsCommand::class,
     ]
 )
-class Options :
-    Runnable,
-    NeedsCommandLine by DoNeedsCommandLine(),
-    NeedsTerminal by DoNeedsTerminal(),
-    NeedsLineReader by DoNeedsLineReader(),
-    NeedsSystemRegistry by DoNeedsSystemRegistry() {
+class Options : Runnable {
     @Spec
     lateinit var commandSpec: CommandSpec
+    lateinit var terminal: Terminal
+    lateinit var commandLine: CommandLine
+    lateinit var systemRegistry: SystemRegistry
+    lateinit var lineReader: org.jline.reader.LineReader
 
     // TODO: Temporary while cutting over to main main
     @Option(
@@ -243,10 +241,4 @@ class Options :
             else -> StdinRoller(random, reporter)
         }
     }
-
-    private fun pickRepl(random: Random, reporter: MainReporter) =
-        if (newRepl) NewReplRoller(random, reporter, this)
-            .inject(commandLine, terminal, systemRegistry, lineReader)
-        else OldReplRoller(random, reporter, this)
-            .inject(commandLine, terminal, null, lineReader)
 }

@@ -1,7 +1,6 @@
 package hm.binkley.dice
 
 import lombok.Generated
-import org.jline.console.SystemRegistry
 import org.jline.console.impl.SystemRegistryImpl
 import org.jline.reader.EndOfFileException
 import org.jline.reader.History
@@ -53,13 +52,14 @@ fun Options.parseOptions(vararg args: String): CommandLine {
         .setExecutionExceptionHandler(exceptionHandler())
         .apply { parseArgs(*args) }
 
+    // Parse command line (above) *before* picking terminal type
     terminal = when {
         testRepl && newRepl -> realTerminal()
         isInteractive() -> realTerminal()
         else -> dumbTerminal()
     }
 
-    val systemRegistry: SystemRegistry? = if (newRepl) {
+    if (newRepl) {
         systemRegistry = SystemRegistryImpl(
             /* parser = */ DefaultParser(),
             /* terminal = */ terminal,
@@ -68,13 +68,9 @@ fun Options.parseOptions(vararg args: String): CommandLine {
             .groupCommandsInHelp(false)
         systemRegistry.setCommandRegistries(PicocliCommands(commandLine))
         lineReader = newLineReader(DefaultParser())
-        systemRegistry
-    } else {
-        lineReader = oldLineReader()
-        null
-    }
+    } else lineReader = oldLineReader()
 
-    commandLine.inject(commandLine, terminal, systemRegistry, lineReader)
+    commandLine.inject(commandLine, lineReader)
 
     return commandLine
 }
@@ -90,6 +86,7 @@ private fun Options.realTerminal(): Terminal = TerminalBuilder.builder()
 private fun dumbTerminal() = DumbTerminal(
     PROGRAM_NAME,
     if (isColor()) TYPE_DUMB_COLOR else TYPE_DUMB,
+    // Force System streams rather than wrapped file streams
     System.`in`,
     System.out,
     UTF_8,
