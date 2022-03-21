@@ -9,8 +9,10 @@ import io.kotest.assertions.fail
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import picocli.CommandLine.Help.Ansi
 import java.io.Console
+import java.io.PrintWriter
 import java.io.Reader
 import kotlin.random.Random
 
@@ -80,8 +82,21 @@ internal data class ShellOutcome(
 
 internal fun eofConsole(): Console {
     val eofConsole = mockk<Console>()
+    val nullWriter = mockk<PrintWriter>()
+    every { eofConsole.writer() } returns nullWriter
+    every { nullWriter.flush() } returns Unit
     val eofReader = mockk<Reader>()
     every { eofConsole.reader() } returns eofReader
     every { eofReader.read() } returns -1
+    every { eofConsole.readLine(any(), *anyVararg()) } returns null
+    every { eofConsole.readPassword(any(), *anyVararg()) } returns null
     return eofConsole
+}
+
+internal fun runWithEofConsole(block: () -> Unit) {
+    mockkStatic(System::class) {
+        val eofConsole = eofConsole() // Do not inline -- confuses mockk
+        every { System.console() } returns eofConsole
+        block()
+    }
 }

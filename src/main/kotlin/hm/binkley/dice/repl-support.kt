@@ -32,6 +32,7 @@ import kotlin.io.path.createTempFile
 import kotlin.text.RegexOption.IGNORE_CASE
 
 fun isInteractive() = null != System.console()
+fun isColor() = Ansi.AUTO.enabled()
 
 /**
  * All dice expressions start either with a non-zero digit, or the letters
@@ -53,8 +54,8 @@ fun Options.parseOptions(vararg args: String): CommandLine {
         .setExecutionExceptionHandler(exceptionHandler())
         .apply { parseArgs(*args) }
     terminal =
-        if (!isInteractive() || testRepl) dumbTerminal()
-        else realTerminal()
+        if (isInteractive() && !testRepl) forceRealTerminal()
+        else dumbTerminal()
 
     // TODO: Restructure code ordering
     prepareRepl(commandLine)
@@ -62,13 +63,17 @@ fun Options.parseOptions(vararg args: String): CommandLine {
     return commandLine
 }
 
-fun realTerminal(): Terminal = TerminalBuilder.builder()
+private fun forceRealTerminal(): Terminal = TerminalBuilder.builder()
+    // Ask JLine3 to raise exception if it tries to fall back to dumb
+    .dumb(false)
     .name(PROGRAM_NAME)
+    // Force System streams rather than wrapped file streams
+    .streams(System.`in`, System.`out`)
     .build()
 
 private fun dumbTerminal() = DumbTerminal(
     PROGRAM_NAME,
-    if (Ansi.AUTO.enabled()) TYPE_DUMB_COLOR else TYPE_DUMB,
+    if (isColor()) TYPE_DUMB_COLOR else TYPE_DUMB,
     System.`in`,
     System.out,
     UTF_8,

@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2214
 
 export PS4='+${BASH_SOURCE}:${LINENO}:${FUNCNAME[0]:+${FUNCNAME[0]}():} '
 
@@ -15,9 +14,10 @@ Usage: $progname [OPTIONS] [-- ARGUMENTS]
 Checks code coverage and optionally opens the report.
 
 OPTIONS:
-  -m, --with-mutation   also check mutation coverage
-  -o, --open-report     open the coverage report in a web browser
   -h, --help            print this help and exit
+  -m, --with-mutation   also check mutation coverage
+  -o, --open-report     open coverage reports in a web browser
+  -x, --no-rerun        only open coverage reports, do not rerun build
 
 ARGUMENTS:
   All arguments are passed to ./mvnw as options.  The "--" is mandatory.
@@ -33,9 +33,20 @@ Try '$progname --help' for more information.
 EOM
 }
 
+function require-file() {
+    local file="$1"
+    shift
+    if [[ ! -f "$file" ]]; then
+        echo "$progname: $file: No such file or directory" >&2
+        exit 1
+    fi
+}
+
 mutation=false
 open=false
-while getopts :hmo-: opt; do
+run=true
+# shellcheck disable=SC2214
+while getopts :hmox-: opt; do
     [[ $opt == - ]] && opt=${OPTARG%%=*} OPTARG=${OPTARG#*=}
     case $opt in
     h | help)
@@ -44,6 +55,7 @@ while getopts :hmo-: opt; do
         ;;
     m | with-mutation) mutation=true ;;
     o | open-report) open=true ;;
+    x | no-rerun) open=true run=false ;;
     *)
         bad-option "$OPTARG"
         exit 2
@@ -52,16 +64,27 @@ while getopts :hmo-: opt; do
 done
 shift $((OPTIND - 1))
 
-$mutation && targets='clean verify' || targets='clean test jacoco:report jacoco:check'
-# shellcheck disable=SC2086
-./mvnw "$@" $targets
+if $run; then
+    if $mutation; then
+        targets='clean verify'
+    else
+        targets='clean test jacoco:report jacoco:check'
+    fi
 
-for f in target/jacoco.exec target/site/jacoco/index.html; do
-    [[ -f "$f" ]] || {
-        echo "$progname: $f: No such file or directory" >&2
-        exit 1
-    }
+    # shellcheck disable=SC2086
+    ./mvnw "$@" $targets
+fi
+
+for file in target/jacoco.exec target/site/jacoco/index.html; do
+    require-file "$file"
 done
+if $mutation; then
+    require-file target/pit-reports/index.html
+fi
 
-$open && (cd target/site/jacoco && open index.html) || true
-$open && $mutation && (cd target/pit-reports && open index.html) || true
+if $open; then
+    (cd target/site/jacoco && open index.html)
+    if $mutation; then
+        (cd target/pit-reports && open index.html)
+    fi
+fi

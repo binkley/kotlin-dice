@@ -12,16 +12,16 @@
     <properties>
         <!-- @formatter:off -->
         <atrium.version>0.17.0</atrium.version>
-        <coverage.branches>95</coverage.branches>
+        <coverage.branches>96</coverage.branches>
         <coverage.instructions>97</coverage.instructions>
-        <coverage.lines>95</coverage.lines>
-        <coverage.mutation>90</coverage.mutation>
+        <coverage.lines>99</coverage.lines>
+        <coverage.mutation>89</coverage.mutation>
         <dependency-check-maven.version>7.0.0</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.19.1</detekt-maven-plugin.version>
         <java.charset>UTF-8</java.charset>
         <!-- Java version is held back by parboiled -->
         <jdk.version>11</jdk.version>
-        <jacoco-maven-plugin.version>0.8.8-SNAPSHOT</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <jansi.version>2.4.0</jansi.version>
         <jline.version>3.21.0</jline.version>
         <junit.version>5.8.2</junit.version>

@@ -1,10 +1,7 @@
 package hm.binkley.dice
 
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
-import java.lang.System.console
 
 internal class ReplSupportTest {
     @Test
@@ -12,10 +9,7 @@ internal class ReplSupportTest {
         null.maybeGnuPrefix() shouldBe "roll: "
         "Cool".maybeGnuPrefix() shouldBe "roll: Cool"
 
-        mockkStatic(System::class) {
-            val eofConsole = eofConsole() // Do not inline -- confuses mockk
-            every { console() } returns eofConsole
-
+        runWithEofConsole {
             null.maybeGnuPrefix() shouldBe ""
             "Cool".maybeGnuPrefix() shouldBe "Cool"
         }
@@ -23,8 +17,7 @@ internal class ReplSupportTest {
 
     @Test
     fun `should create old real REPL`() {
-        Options().parseOptions(
-        )
+        Options().parseOptions()
     }
 
     @Test
@@ -36,10 +29,7 @@ internal class ReplSupportTest {
 
     @Test
     fun `should create new real REPL`() {
-        mockkStatic(System::class) {
-            val eofConsole = eofConsole() // Do not inline -- confuses mockk
-            every { console() } returns eofConsole
-
+        runWithEofConsole {
             Options().parseOptions(
                 "--new-repl"
             )
@@ -48,10 +38,7 @@ internal class ReplSupportTest {
 
     @Test
     fun `should create new real REPL without history`() {
-        mockkStatic(System::class) {
-            val eofConsole = eofConsole() // Do not inline -- confuses mockk
-            every { console() } returns eofConsole
-
+        runWithEofConsole {
             Options().parseOptions(
                 "--no-history", "--new-repl"
             )

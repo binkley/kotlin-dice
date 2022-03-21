@@ -8,8 +8,6 @@ import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotBeEmpty
 import io.kotest.matchers.string.shouldStartWith
 import io.kotest.matchers.types.shouldBeSameInstanceAs
-import io.mockk.every
-import io.mockk.mockkStatic
 import org.jline.reader.UserInterruptException
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
@@ -553,16 +551,14 @@ roll: Result -1 is below the minimum result of 0
 
     @Nested
     inner class Experiments {
-        @Disabled("https://github.com/mockk/mockk/issues/658#issuecomment-1066111465")
+        @Disabled("TODO: Blocks in infinite polling loop")
         @Test
         fun `should do nothing for new REPL with no input`() {
-            mockkStatic(System::class) {
-                val eofConsole = eofConsole() // Do not inline -- confuses mockk
-                every { System.console() } returns eofConsole
-
+            runWithEofConsole {
                 val (exitCode, out, err) = captureRun {
                     mainWithFixedSeed("--test-repl", "--new-repl")
                 }
+
                 exitCode shouldBe 0
                 out.shouldBeEmpty()
                 err.shouldBeEmpty()
