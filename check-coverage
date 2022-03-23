@@ -14,6 +14,7 @@ Usage: $progname [OPTIONS] [-- ARGUMENTS]
 Checks code coverage and optionally opens the report.
 
 OPTIONS:
+  -f, --full-coverage   check with 100% coverage to find failures
   -h, --help            print this help and exit
   -m, --with-mutation   also check mutation coverage
   -o, --open-report     open coverage reports in a web browser
@@ -42,13 +43,15 @@ function require-file() {
     fi
 }
 
+full=false
 mutation=false
 open=false
 run=true
 # shellcheck disable=SC2214
-while getopts :hmox-: opt; do
+while getopts :fhmox-: opt; do
     [[ $opt == - ]] && opt=${OPTARG%%=*} OPTARG=${OPTARG#*=}
     case $opt in
+    f | full-coverage) full=true ;;
     h | help)
         print-help
         exit 0
@@ -64,6 +67,12 @@ while getopts :hmox-: opt; do
 done
 shift $((OPTIND - 1))
 
+if $full; then
+    flags='-Dcoverage.lines=100 -Dcoverage.branches=100 -Dcoverage.instructions=100 -Dcoverage.mutation=100'
+else
+    flags=''
+fi
+
 ((rc = 0)) || true
 if $run; then
     if $mutation; then
@@ -73,10 +82,10 @@ if $run; then
     fi
 
     # shellcheck disable=SC2086
-    ./mvnw "$@" $targets || ((rc += $?)) || true
+    ./mvnw $flags "$@" $targets || ((rc += $?)) || true
 else
     # Refresh coverage report when editing limits in pom.xml without rebuild
-    ./mvnw "$@" jacoco:report jacoco:check || ((rc += $?)) || true
+    ./mvnw $flags "$@" jacoco:report jacoco:check || ((rc += $?)) || true
 fi
 
 if $open; then
