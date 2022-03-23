@@ -1,4 +1,4 @@
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
 interface DiceExpression {
     /** The original dice expression input. */

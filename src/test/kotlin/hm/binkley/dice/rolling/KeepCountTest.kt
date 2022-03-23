@@ -1,6 +1,6 @@
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
-import hm.binkley.dice.KeepCount.Companion.keep
+import hm.binkley.dice.rolling.KeepCount.Companion.keep
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe

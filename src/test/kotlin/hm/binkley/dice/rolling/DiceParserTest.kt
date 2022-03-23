@@ -1,6 +1,8 @@
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
-import hm.binkley.dice.DiceParser.Companion.dice
+import hm.binkley.dice.demoExpressions
+import hm.binkley.dice.rolling.DiceParser.Companion.dice
+import hm.binkley.dice.stableSeedForTesting
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeEmpty

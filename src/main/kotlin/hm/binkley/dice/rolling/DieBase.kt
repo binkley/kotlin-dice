@@ -1,4 +1,4 @@
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
 /**
  * The lowest pip on a die.

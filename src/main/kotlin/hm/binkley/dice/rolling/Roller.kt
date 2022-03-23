@@ -1,6 +1,6 @@
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
-import hm.binkley.dice.KeepCount.Companion.keep
+import hm.binkley.dice.rolling.KeepCount.Companion.keep
 import kotlin.random.Random
 
 private typealias ReportType = (DiceExpression, Int) -> RolledDice

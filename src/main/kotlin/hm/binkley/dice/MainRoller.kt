@@ -1,6 +1,7 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.DiceParser.Companion.dice
+import hm.binkley.dice.rolling.DiceException
+import hm.binkley.dice.rolling.DiceParser.Companion.dice
 import picocli.CommandLine.Help.Ansi.AUTO
 import picocli.CommandLine.Help.defaultColorScheme
 import java.lang.System.err

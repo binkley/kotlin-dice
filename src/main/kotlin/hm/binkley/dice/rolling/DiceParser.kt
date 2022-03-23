@@ -1,10 +1,10 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
-import hm.binkley.dice.DiceParser.Companion.dice
-import hm.binkley.dice.DieBase.ONE
-import hm.binkley.dice.DieBase.ZERO
+import hm.binkley.dice.rolling.DiceParser.Companion.dice
+import hm.binkley.dice.rolling.DieBase.ONE
+import hm.binkley.dice.rolling.DieBase.ZERO
 import lombok.Generated
 import org.parboiled.BaseParser
 import org.parboiled.Parboiled.createParser
@@ -25,8 +25,8 @@ import kotlin.random.Random
  *
  * @todo Several parse methods use `@Generated`: they are actually covered,
  *       but JaCoCo doesn't see through Parboiled's proxying and reflection,
- *       and use of ASM to transform bytecode does not improve this. Which
- *       functions need `@Generated` seems hit or miss
+ *       and use of ASM to transform bytecode does not improve this.
+ *       Which functions need `@Generated` seems hit or miss
  */
 @BuildParseTree
 open class DiceParser(
@@ -46,8 +46,9 @@ open class DiceParser(
         ) = createParser(DiceParser::class.java, random, reporter)!!
     }
 
-    // These properties define the current roll expression.  They are mutable
-    // as the parser processes the input expression a piece at a time
+    // These properties define the current roll expression.
+    // They are mutable as the parser processes the input expression a
+    // piece at a time
     private var expression: String? = null
     private var dieBase: DieBase? = null
     private var dieSides: Int? = null
@@ -77,8 +78,9 @@ open class DiceParser(
     /**
      * This is equivalent to `build()` in builder patterns.
      *
-     * @todo How do unassigned parse data have a value?  This is hard to
-     *       follow: default values are from deep in the parsing functions
+     * @todo How do unassigned parse data have a value?
+     *       This is hard to follow: default values are from deep in the
+     *       parsing functions.
      *       Use of `!!` is not needed if the code were more explicit on
      *       builder pattern
      */

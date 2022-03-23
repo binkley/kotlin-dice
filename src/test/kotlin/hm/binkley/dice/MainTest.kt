@@ -202,8 +202,8 @@ roll(d6) -> 5
             // TODO: assertion is sensitive to MainReporter line numbers
             err.shouldStartWith(
                 """
-hm.binkley.dice.BadExpressionException: Incomplete dice expression '3d'
-	at hm.binkley.dice.MainReporter.display(MainReporter.kt:14)
+hm.binkley.dice.rolling.BadExpressionException: Incomplete dice expression '3d'
+	at hm.binkley.dice.MainReporter.display(MainReporter.kt:23)
                 """.trimIndent()
             )
         }

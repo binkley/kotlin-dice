@@ -205,7 +205,7 @@ class Options : Runnable {
     override fun run() {
         maybeWarnNewRepl()
 
-        // Handle copyright first so we can return 0 quickly
+        // Handle copyright first to return 0 quickly
         if (copyright) {
             printCopyright()
             return

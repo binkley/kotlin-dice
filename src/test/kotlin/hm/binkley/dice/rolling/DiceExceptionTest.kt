@@ -1,4 +1,4 @@
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test

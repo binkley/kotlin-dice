@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.rolling.DiceException
 import lombok.Generated
 import org.jline.console.impl.SystemRegistryImpl
 import org.jline.reader.EndOfFileException
@@ -33,7 +34,8 @@ import kotlin.text.RegexOption.IGNORE_CASE
 
 /**
  * All dice expressions start either with a non-zero digit, or the letters
- * 'd' or 'z'.  No commands start with 'd' or 'z'.
+ * 'd' or 'z'.
+ * No commands start with 'd' or 'z'.
  */
 private val diceLike = Regex("^[1-9dz]", IGNORE_CASE)
 

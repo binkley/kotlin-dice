@@ -1,8 +1,8 @@
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
 /**
  * Tracing for each individual die rolled.
- * For example, the dice expression "2d20h1", given a RNG seeded with 1,
+ * For example, the dice expression "2d20h1", given an RNG seeded with 1,
  * yields these traces:
  *  - [PlainRoll] of "d20" with result 6
  *  - [PlainRoll] of "d20" with result 17

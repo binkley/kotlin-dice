@@ -1,6 +1,7 @@
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
-import hm.binkley.dice.DieBase.ONE
+import hm.binkley.dice.rolling.DieBase.ONE
+import hm.binkley.dice.stableSeedForTesting
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 

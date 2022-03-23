@@ -26,9 +26,9 @@ fun CommandLine.inject(
     commandLine: CommandLine,
     lineReader: LineReader,
 ): CommandLine = apply {
-    // TODO: Why does these need injecting here?  Else it blows with an
-    //       exception when running the new REPL live.  And what does it mean
-    //       to call this on subcommands?
+    // TODO: Why does these need injecting here?
+    //       Else it blows with an exception when running the new REPL live.
+    //       And what does it mean to call this on subcommands?
     getCommand<Options>().inject(commandLine, lineReader)
 
     // Recur through subcommands

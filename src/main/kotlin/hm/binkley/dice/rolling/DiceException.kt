@@ -1,4 +1,4 @@
-package hm.binkley.dice
+package hm.binkley.dice.rolling
 
 import org.parboiled.errors.ErrorUtils.printParseError
 import org.parboiled.errors.InvalidInputError

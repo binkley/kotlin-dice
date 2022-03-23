@@ -15,13 +15,14 @@ A complete dice expression has these parts:
 - An optional adjustment, added/subtracted at the end
 
 The smallest dice expression is just a die type, eg, `d6` meaning roll a 
-single, regular 6-sided die.  See
-[_Dice Expression Syntax_](#dice-expression-syntax) and
+single, regular 6-sided die.
+See [_Dice Expression Syntax_](#dice-expression-syntax) and
 [_Examples_](#examples), below, for more interesting expressions.
 
 Try `./roll --demo` for a demonstration, or `./roll --demo --verbose` to
-see more in how dice expressions work. Running `./roll` presents you an 
-interactive prompt for entering and evaluating dice expressions.
+see more in how dice expressions work.
+Running `./roll` presents an interactive prompt for entering and evaluating
+dice expressions.
 
 ## Table of contents
 
@@ -47,14 +48,15 @@ for Kotlin
 vulnerabilities
 
 Use `./mvnw` (Maven) or `./batect build` (Batect) to build, run tests, and
-create a demo program.  Use `./roll` or `./batect demo` to run the demo.
+create a demo program.
+Use `./roll` or `./batect demo` to run the demo.
 
-CI uses [Batect](https://batect.dev/) to verify the build and behavior, so 
+CI uses [Batect](https://batect.dev/) to verify builds and behavior, so 
 an easy way for you to check your changes before pushing to GitHub.
 
 ## Dice expression syntax
 
-Parsing dice expressions turn out to be an interesting programming problem.
+Parsing dice expressions turns out to be an interesting programming problem.
 This project implements a mashup of several dice expression syntaxes, 
 drawing inspiration from:
 
@@ -68,19 +70,19 @@ This project supports these types of expressions:
 [N]'B'D['r'R]['h'[K]|'m'[K]|'n'[K]|'l'[K]][!|!Z]['x'M|'*'M][+EXP|-EXP...][+A|-A]
 ```
 
-- N - number of dice, default roll 1
-- B - either a literal `d` (dice are 1 to D) or `z` (dice are 0 to D-1)
-- D - sides on the die, or `%` for percentile dice (100-sided dice)
-- R - reroll dice this or lower, eg, reroll 1s
-- K - keep dice, discard rest, default keep 1 
+- N &mdash; number of dice, default roll 1
+- B &mdash; either a literal `d` (dice are 1 to D) or `z` (dice are 0 to D-1)
+- D &mdash; sides on the die, or `%` for percentile dice (100-sided dice)
+- R &mdash; reroll dice this or lower, eg, reroll 1s
+- K &mdash; keep dice, discard rest, default keep 1 
   - highest rolls (`h`)
   - high middle rolls (`n`)
   - low middle rolls (`m`)
   - lowest rolls (`l`)
-- ! - explode the dice, default explosion is on a max roll
-- M - multiple result
-- EXP - add/subtract more dice expressions
-- A - add/subtract this fixed amount to the result
+- ! &mdash; explode the dice, default explosion is on a max roll
+- M &mdash; multiple result
+- EXP &mdash; add/subtract more dice expressions
+- A &mdash; add/subtract this fixed amount to the result
 
 For example, in _D&amp;D_ a d20 roll with advantage is "2d20h" and with 
 disadvantage is "2d20l", and in _Star Wars_ an exploding d6 roll is "d6!". 
@@ -137,13 +139,13 @@ The code falls into two halves:
 ### Library
 
 The key method is `dice(random, reporter)` in the companion object of
-[`DiceParser`](./src/main/kotlin/hm/binkley/dice/DiceParser.kt).  This 
-creates a reuseable parser and roller.
+[`DiceParser`](./src/main/kotlin/hm/binkley/dice/rolling/DiceParser.kt).
+This creates a reuseable parser and roller.
 
 The `random` parameter is a Kotlin `Random`, and defaults to the system RNG.
 The `reporter` parameter is a
-[`RollReporter`](./src/main/kotlin/hm/binkley/dice/RollReporter.kt) and 
-defaults to "do nothing" (_ie_, no reporting).
+[`RollReporter`](./src/main/kotlin/hm/binkley/dice/rolling/RollReporter.kt) 
+and defaults to "do nothing" (_ie_, no reporting).
 
 The simplest example is:
 
@@ -187,8 +189,8 @@ result is 17
 ## Code conventions
 
 At each top-level part of a dice expression parse (eg, die sides), the parser 
-saves a local value internally.  By the end of the dice expression, this
-includes:
+saves a local value internally.
+By the end of the dice expression, this includes:
 
 - Die sides, ie, number of sides on a die (ex: d4)
 - Roll count, or 1 if none specified; ie, number of dice to roll

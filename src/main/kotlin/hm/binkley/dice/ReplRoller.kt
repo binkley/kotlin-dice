@@ -1,5 +1,6 @@
 package hm.binkley.dice
 
+import hm.binkley.dice.rolling.DiceException
 import lombok.Generated
 import org.jline.console.SystemRegistry
 import org.jline.console.impl.SystemRegistryImpl.UnknownCommandException

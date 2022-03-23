@@ -1,7 +1,16 @@
 package hm.binkley.dice
 
-import hm.binkley.dice.DieBase.ONE
-import hm.binkley.dice.DieBase.ZERO
+import hm.binkley.dice.rolling.BadExpressionException
+import hm.binkley.dice.rolling.DieBase.ONE
+import hm.binkley.dice.rolling.DieBase.ZERO
+import hm.binkley.dice.rolling.DroppedRoll
+import hm.binkley.dice.rolling.ExplodedReroll
+import hm.binkley.dice.rolling.ExplodedRoll
+import hm.binkley.dice.rolling.PlainReroll
+import hm.binkley.dice.rolling.PlainRoll
+import hm.binkley.dice.rolling.ResultTooLowException
+import hm.binkley.dice.rolling.RollReporter
+import hm.binkley.dice.rolling.RolledDice
 import org.parboiled.buffers.InputBufferUtils.collectContent
 import org.parboiled.support.ParsingResult
 
