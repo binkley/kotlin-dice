@@ -16,32 +16,22 @@ internal class ReplSupportTest {
     }
 
     @Test
-    fun `should create real old REPL`() {
-        Options().parseOptions()
+    fun `should run real new REPL`() {
+        runNewReplLive("--new-repl", "--test-repl")
     }
 
     @Test
-    fun `should create real old REPL without history`() {
-        Options().parseOptions(
-            "--no-history"
-        )
+    fun `should run real new REPL without history`() {
+        runNewReplLive("--no-history", "--new-repl", "--test-repl")
     }
 
-    @Test
-    fun `should create real new REPL`() {
+    private fun runNewReplLive(vararg args: String) {
         runWithEofConsole {
-            Options().parseOptions(
-                "--new-repl", "--test-repl"
-            )
-        }
-    }
-
-    @Test
-    fun `should create real new REPL without history`() {
-        runWithEofConsole {
-            Options().parseOptions(
-                "--no-history", "--new-repl", "--test-repl"
-            )
+            val options = Options()
+            val commandLine = options.parseOptions(*args)
+            options.terminal.pause()
+            commandLine.execute()
+            options.terminal.resume()
         }
     }
 }

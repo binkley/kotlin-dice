@@ -25,8 +25,8 @@ import picocli.CommandLine.IExecutionStrategy
 import picocli.CommandLine.RunLast
 import picocli.shell.jline3.PicocliCommands
 import picocli.shell.jline3.PicocliCommands.PicocliCommandsFactory
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.InputStream
 import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.io.path.Path
 import kotlin.io.path.createTempFile
@@ -88,7 +88,7 @@ private fun Options.realTerminal(): Terminal {
         .name(PROGRAM_NAME)
 
     // Testing the real terminal assumes `</dev/null` and `>/dev/null`
-    if (testRepl) builder.streams(EmptyInputStream, DumpingBitbucket)
+    if (testRepl) builder.streams(DevNullIn, DevNullOut)
 
     val terminal = builder.build()
 
@@ -97,37 +97,11 @@ private fun Options.realTerminal(): Terminal {
     return terminal
 }
 
-@Generated // Test-only
-private object EmptyInputStream : InputStream() {
-    override fun read(): Int {
-        "IN READ EOF".dump()
-        return -1
-    }
+/** Could be inlined, but more explanatory to name explicity. */
+private object DevNullIn : ByteArrayInputStream(byteArrayOf())
 
-    override fun close() {
-        "IN CLOSE".dump()
-        super.close()
-    }
-}
-
-@Generated // Test-only
-private object DumpingBitbucket : ByteArrayOutputStream() {
-    override fun write(b: Int) {
-        if (b in 32..127) "OUT WRITE: '${b.toChar()}'".dump()
-        else "OUT WRITE: $b".dump()
-        super.write(b)
-    }
-
-    override fun flush() {
-        "OUT FLUSH".dump()
-        super.flush()
-    }
-
-    override fun close() {
-        "OUT CLOSE".dump()
-        super.close()
-    }
-}
+/** Could be inlined, but more explanatory to name explicity. */
+private object DevNullOut : ByteArrayOutputStream()
 
 private fun dumbTerminal() = DumbTerminal(
     PROGRAM_NAME,
@@ -236,5 +210,3 @@ private class RollingExpander(
         throw BadHistoryException(e)
     }
 }
-
-private fun String.dump() = if (dump) System.err.println(this) else Unit

@@ -12,11 +12,10 @@
     <properties>
         <!-- @formatter:off -->
         <atrium.version>0.17.0</atrium.version>
-        <coverage.branches>93</coverage.branches>
+        <coverage.branches>94</coverage.branches>
         <coverage.instructions>97</coverage.instructions>
         <coverage.lines>99</coverage.lines>
-        <!-- TODO: issue #34 is leading to mutation 90~91, not simply 91 -->
-        <coverage.mutation>90</coverage.mutation>
+        <coverage.mutation>91</coverage.mutation>
         <dependency-check-maven.version>7.0.0</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.19.1</detekt-maven-plugin.version>
         <java.charset>UTF-8</java.charset>
