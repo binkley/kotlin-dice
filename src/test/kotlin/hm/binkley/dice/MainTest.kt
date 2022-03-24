@@ -263,7 +263,7 @@ roll: Incomplete dice expression '3d'
     }
 
     @Nested
-    inner class Repl {
+    inner class PlainRepl {
         private val options = Options()
         private val commandLine = picocli.CommandLine(options)
         private val parseResult = ParseResult.builder(CommandSpec.create())
@@ -426,6 +426,39 @@ $DIE_PROMPT$DIE_PROMPT
     }
 
     @Nested
+    inner class FancyRepl {
+        @Test
+        fun `should do nothing for new REPL with no input`() {
+            runWithEofConsole {
+                val (exitCode, out, err) = captureExecute {
+                    mainWithFixedSeed("--test-repl", "--new-repl")
+                }
+
+                exitCode shouldBe 0
+                out.shouldBeEmpty()
+                err shouldBeAfterTrimming """
+WARNING: the new REPL is EXPERIMENTAL                    
+                """
+            }
+        }
+
+        @Test
+        fun `should do nothing for new REPL with no input in color`() {
+            runWithEofConsole {
+                val (exitCode, out, err) = captureExecute {
+                    mainWithFixedSeed("--test-repl", "--new-repl", "-C")
+                }
+
+                exitCode shouldBe 0
+                out.shouldBeEmpty()
+                err shouldBeAfterTrimming """
+@|red,bold WARNING: the new REPL is EXPERIMENTAL|@                    
+                """.colored
+            }
+        }
+    }
+
+    @Nested
     inner class Demo {
         @Test
         fun `should run demo`() {
@@ -545,39 +578,6 @@ roll(d1) -> 1
             err shouldBeAfterTrimming """
 roll: Result -1 is below the minimum result of 0
             """
-        }
-    }
-
-    @Nested
-    inner class Experiments {
-        @Test
-        fun `should do nothing for new REPL with no input`() {
-            runWithEofConsole {
-                val (exitCode, out, err) = captureExecute {
-                    mainWithFixedSeed("--test-repl", "--new-repl")
-                }
-
-                exitCode shouldBe 0
-                out.shouldBeEmpty()
-                err shouldBeAfterTrimming """
-WARNING: the new REPL is EXPERIMENTAL                    
-                """
-            }
-        }
-
-        @Test
-        fun `should do nothing for new REPL with no input in color`() {
-            runWithEofConsole {
-                val (exitCode, out, err) = captureExecute {
-                    mainWithFixedSeed("--test-repl", "--new-repl", "-C")
-                }
-
-                exitCode shouldBe 0
-                out.shouldBeEmpty()
-                err shouldBeAfterTrimming """
-@|red,bold WARNING: the new REPL is EXPERIMENTAL|@                    
-                """.colored
-            }
         }
     }
 }
