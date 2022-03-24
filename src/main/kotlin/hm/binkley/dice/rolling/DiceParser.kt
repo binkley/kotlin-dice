@@ -270,8 +270,14 @@ open class DiceParser(
         return true
     }
 
-    internal fun rollTheDice() =
+    /**
+     * Reflect that [push] always returns `true`, and help mutation
+     * testing.
+     */
+    internal fun rollTheDice(): Boolean {
         push(Roller(random, reporter, toParsedDice()).rollDice())
+        return true
+    }
 
     @Generated // Lie to JaCoCo
     internal open fun maybeRollMore() = ZeroOrMore(
