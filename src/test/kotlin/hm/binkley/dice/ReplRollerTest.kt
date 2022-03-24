@@ -1,11 +1,10 @@
 package hm.binkley.dice
 
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrAndOut
-import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
 import io.kotest.matchers.booleans.shouldBeTrue
 import org.jline.reader.EndOfFileException
 import org.jline.terminal.impl.AbstractTerminal
 import org.junit.jupiter.api.Test
+import kotlin.system.exitProcess
 
 internal class ReplRollerTest {
     @Test
@@ -14,20 +13,19 @@ internal class ReplRollerTest {
 
         var closed = false
 
-        withTextFromSystemIn().execute {
-            tapSystemErrAndOut {
-                options.parseOptions("--test-repl")
-                (options.terminal as AbstractTerminal).setOnClose {
-                    closed = true
-                }
-                try {
-                    options.pickReplRoller(
-                        stableSeedForTesting(),
-                        MainReporter.new(options.minimum, options.verbose)
-                    ).rollAndReport()
-                } catch (ignored: EndOfFileException) {
-                }
+        captureExecuteWithInput {
+            options.parseOptions("--test-repl")
+            (options.terminal as AbstractTerminal).setOnClose {
+                closed = true
             }
+            try {
+                options.pickReplRoller(
+                    stableSeedForTesting(),
+                    MainReporter.new(options.minimum, options.verbose)
+                ).rollAndReport()
+            } catch (ignored: EndOfFileException) {
+            }
+            exitProcess(0)
         }
 
         closed.shouldBeTrue()

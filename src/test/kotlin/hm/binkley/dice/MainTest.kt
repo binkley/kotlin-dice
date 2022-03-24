@@ -20,7 +20,7 @@ internal class MainTest {
     inner class BasicOptions {
         @Test
         fun `should show help`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--help")
             }
 
@@ -31,7 +31,7 @@ internal class MainTest {
 
         @Test
         fun `should show help in color when forced`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--color=always", "--help")
             }
 
@@ -42,7 +42,7 @@ internal class MainTest {
 
         @Test
         fun `should show software version`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--version")
             }
 
@@ -53,7 +53,7 @@ internal class MainTest {
 
         @Test
         fun `should show copyright`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--copyright")
             }
 
@@ -67,7 +67,7 @@ internal class MainTest {
     inner class DefaultMain {
         @Test
         fun `should roll dice with a default RNG`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 main(arrayOf("3d6")) // Avoid the testing seed
             }
 
@@ -81,7 +81,7 @@ internal class MainTest {
     inner class Arguments {
         @Test
         fun `should roll dice from command line`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("3d6")
             }
 
@@ -94,7 +94,7 @@ internal class MainTest {
 
         @Test
         fun `should roll dice from command line in color`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 // Force color with option parameter
                 mainWithFixedSeed("--color=always", "3d6")
             }
@@ -108,7 +108,7 @@ internal class MainTest {
 
         @Test
         fun `should roll dice from command line verbosely and in color`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 // Force color with fallback 'always' parameter value
                 mainWithFixedSeed("-C", "--verbose", "3d6")
             }
@@ -129,7 +129,7 @@ internal class MainTest {
     inner class Errors {
         @Test
         fun `should fail gnuishly with 1-liner for bad expression`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("3d6", "3dd")
             }
 
@@ -144,7 +144,7 @@ roll: Unexpected 'd' (at position 3) in dice expression '3dd'
 
         @Test
         fun `should fail gnuishly with 1-liner for incomplete expression`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("3d")
             }
 
@@ -157,7 +157,7 @@ roll: Incomplete dice expression '3d'
 
         @Test
         fun `should fail gnuishly with 1-liner for exploding too low`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("d1!")
             }
 
@@ -170,7 +170,7 @@ roll: Exploding on 1 will never finish in dice expression 'd1!'
 
         @Test
         fun `should fail in color`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--color=always", "3d6", "3d")
             }
 
@@ -186,7 +186,7 @@ roll: Exploding on 1 will never finish in dice expression 'd1!'
 
         @Test
         fun `should fail debuggingly with stack trace`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--debug", "3d6", "3d")
             }
 
@@ -213,7 +213,7 @@ hm.binkley.dice.rolling.BadExpressionException: Incomplete dice expression '3d'
     inner class Stdin {
         @Test
         fun `should roll dice from STDIN`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 "3d6"
             ) { mainWithFixedSeed() }
 
@@ -226,7 +226,7 @@ hm.binkley.dice.rolling.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should do nothing if STDIN is empty`() {
-            val (exitCode, out, err) = captureRunWithInput {
+            val (exitCode, out, err) = captureExecuteWithInput {
                 mainWithFixedSeed()
             }
 
@@ -237,7 +237,7 @@ hm.binkley.dice.rolling.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should do nothing if STDIN is just a blank line`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 ""
             ) { mainWithFixedSeed() }
 
@@ -248,7 +248,7 @@ hm.binkley.dice.rolling.BadExpressionException: Incomplete dice expression '3d'
 
         @Test
         fun `should fail gnuishly for STDIN`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 "3d6",
                 "3d",
             ) { mainWithFixedSeed() }
@@ -284,7 +284,7 @@ roll: Incomplete dice expression '3d'
 
         @Test
         fun `should roll dice from REPL`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 "3d6"
             ) { mainWithFixedSeed("--test-repl") }
 
@@ -298,7 +298,7 @@ $DIE_PROMPT
 
         @Test
         fun `should do nothing if REPL is just a blank line`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 ""
             ) {
                 mainWithFixedSeed("--test-repl")
@@ -314,7 +314,7 @@ $DIE_PROMPT$DIE_PROMPT
 
         @Test
         fun `should roll dice from REPL in color`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 "3d6"
             ) { mainWithFixedSeed("--test-repl", "--color=always") }
 
@@ -328,7 +328,7 @@ $DIE_PROMPT
 
         @Test
         fun `should change prompt for REPL`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 "3d6"
             ) { mainWithFixedSeed("--test-repl", "--prompt", ">") }
 
@@ -342,7 +342,7 @@ $DIE_PROMPT
 
         @Test
         fun `should fail for REPL`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 "3d6",
                 "3d",
             ) { mainWithFixedSeed("--test-repl") }
@@ -360,7 +360,7 @@ Incomplete dice expression '3d'
 
         @Test
         fun `should expand history in the REPL`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 "3d6",
                 "!!",
                 "3d6!2",
@@ -378,7 +378,7 @@ $DIE_PROMPT
 
         @Test
         fun `should not expand history in the REPL`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 "3d6",
                 "!!",
                 "3d6!2",
@@ -397,7 +397,7 @@ History disabled because of the --no-history option
 
         @Test
         fun `should fail for bad history expansion`() {
-            val (exitCode, out, err) = captureRunWithInput(
+            val (exitCode, out, err) = captureExecuteWithInput(
                 "!!",
             ) { mainWithFixedSeed("--test-repl") }
 
@@ -430,7 +430,7 @@ $DIE_PROMPT$DIE_PROMPT
     inner class Demo {
         @Test
         fun `should run demo`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--demo")
             }
 
@@ -441,7 +441,7 @@ $DIE_PROMPT$DIE_PROMPT
 
         @Test
         fun `should run demo verbosely`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--demo", "--verbose")
             }
 
@@ -452,7 +452,7 @@ $DIE_PROMPT$DIE_PROMPT
 
         @Test
         fun `should run demo in color`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 // Force color with option parameter
                 mainWithFixedSeed("--demo", "--color=always")
             }
@@ -464,7 +464,7 @@ $DIE_PROMPT$DIE_PROMPT
 
         @Test
         fun `should run demo verbosely and in color`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 // Force color with fallback 'always' parameter value
                 mainWithFixedSeed("-C", "--demo", "--verbose")
             }
@@ -479,7 +479,7 @@ $DIE_PROMPT$DIE_PROMPT
     inner class Outputs {
         @Test
         fun `should normalize result output`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed(
                     "3d6+1",
                     " 3d6+1",
@@ -506,7 +506,7 @@ $DIE_PROMPT$DIE_PROMPT
 
         @Test
         fun `should not normalize result output when verbose`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--verbose", " 1d1 + 1 ")
             }
 
@@ -524,7 +524,7 @@ roll(d1) -> 1
     inner class MinimalRolls {
         @Test
         fun `should roll below 0`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("1z1-1")
             }
 
@@ -537,7 +537,7 @@ roll(d1) -> 1
 
         @Test
         fun `should fail below 0`() {
-            val (exitCode, out, err) = captureRun {
+            val (exitCode, out, err) = captureExecute {
                 mainWithFixedSeed("--minimum=0", "1z1-1")
             }
 
@@ -555,7 +555,7 @@ roll: Result -1 is below the minimum result of 0
         @Test
         fun `should do nothing for new REPL with no input`() {
             runWithEofConsole {
-                val (exitCode, out, err) = captureRun {
+                val (exitCode, out, err) = captureExecute {
                     mainWithFixedSeed("--test-repl", "--new-repl")
                 }
 
@@ -571,7 +571,7 @@ WARNING: the new REPL is EXPERIMENTAL
         @Test
         fun `should do nothing for new REPL with no input in color`() {
             runWithEofConsole {
-                val (exitCode, out, err) = captureRun {
+                val (exitCode, out, err) = captureExecute {
                     mainWithFixedSeed("--test-repl", "--new-repl", "-C")
                 }
 

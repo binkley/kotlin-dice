@@ -44,7 +44,7 @@ internal infix fun String.shouldBeAfterTrimming(expected: String) =
  * _before_ trapping `System.exit`.; otherwise the exit bubbles out, and the
  * stream assertions do not run
  */
-internal fun captureRun(main: () -> Unit): ShellOutcome {
+internal fun captureExecute(main: () -> Unit): ShellOutcome {
     var exitCode = -1
     var stdout = "BUG in test method"
     val stderr: String = tapSystemErrNormalized {
@@ -63,13 +63,13 @@ internal fun captureRun(main: () -> Unit): ShellOutcome {
     }
 }
 
-internal fun captureRunWithInput(
+internal fun captureExecuteWithInput(
     vararg lines: String,
     main: () -> Unit,
 ): ShellOutcome {
     var outcome = ShellOutcome(-1, "BUG", "BUG")
     withTextFromSystemIn(*lines).execute {
-        outcome = captureRun(main)
+        outcome = captureExecute(main)
     }
     return outcome
 }
