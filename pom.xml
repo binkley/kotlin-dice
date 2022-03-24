@@ -12,7 +12,7 @@
     <properties>
         <!-- @formatter:off -->
         <atrium.version>0.17.0</atrium.version>
-        <coverage.branches>93</coverage.branches>
+        <coverage.branches>94</coverage.branches>
         <coverage.instructions>97</coverage.instructions>
         <coverage.lines>99</coverage.lines>
         <coverage.mutation>90</coverage.mutation>

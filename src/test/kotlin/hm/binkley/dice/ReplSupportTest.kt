@@ -1,9 +1,10 @@
 package hm.binkley.dice
 
 import io.kotest.matchers.shouldBe
+import org.jline.terminal.Terminal
+import org.jline.terminal.impl.PosixPtyTerminal
 import org.junit.jupiter.api.Test
-
-private const val JLINE3_RACE_CONDITION = true
+import java.io.FileInputStream
 
 internal class ReplSupportTest {
     @Test
@@ -32,10 +33,29 @@ internal class ReplSupportTest {
         runWithEofConsole {
             val options = Options()
             val commandLine = options.parseOptions(*args)
-            if (JLINE3_RACE_CONDITION) return@runWithEofConsole
-            options.terminal.pause()
+            val terminal = options.terminal
+            terminal.pause()
             commandLine.execute()
-            options.terminal.resume()
+            terminal.maybeResume()
         }
     }
+}
+
+/**
+ * @todo Strongly a hack to work around JLine3 raciness with Pty stream
+ *       handling.
+ */
+private fun Terminal.maybeResume() {
+    if (this !is PosixPtyTerminal) {
+        System.err.println(
+            "@|bold,red WARNING: NOT A POSIX PTY TERMINAL|@".colored
+        )
+        return
+    }
+    // Assume `masterInput` is a `FileInputStream`: true for the JNA and
+    // JANSI implementations (the Exec implementation raises unimplemented).
+    // Assume invalid STDIN means closed and does not mean currupted
+    if (!(pty.masterInput as FileInputStream).fd.valid()) return
+
+    resume()
 }
