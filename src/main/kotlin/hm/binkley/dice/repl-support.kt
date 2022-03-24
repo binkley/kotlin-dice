@@ -80,7 +80,6 @@ fun Options.parseOptions(vararg args: String): CommandLine {
     return commandLine
 }
 
-private const val dump = false
 private fun Options.realTerminal(): Terminal {
     val builder = TerminalBuilder.builder()
         // Ask JLine3 to raise exception if it tries to fall back to dumb
@@ -101,7 +100,7 @@ private fun Options.realTerminal(): Terminal {
 private object DevNullIn : ByteArrayInputStream(byteArrayOf())
 
 /** Could be inlined, but more explanatory to name explicity. */
-private object DevNullOut : ByteArrayOutputStream()
+private object DevNullOut : ByteArrayOutputStream(0)
 
 private fun dumbTerminal() = DumbTerminal(
     PROGRAM_NAME,

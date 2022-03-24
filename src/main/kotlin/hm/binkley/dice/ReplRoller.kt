@@ -4,6 +4,7 @@ import hm.binkley.dice.rolling.DiceException
 import lombok.Generated
 import org.jline.console.SystemRegistry
 import org.jline.console.impl.SystemRegistryImpl.UnknownCommandException
+import org.jline.reader.EndOfFileException
 import kotlin.random.Random
 
 fun Options.pickReplRoller(random: Random, reporter: MainReporter) =
@@ -17,11 +18,7 @@ sealed class ReplRoller(
 ) : MainRoller(random, reporter) {
     protected abstract fun String.maybeRoll()
 
-    /**
-     * Note: closes (and resets) the terminal when done.
-     *
-     * @todo Undo the god-object anti-pattern
-     */
+    /** Note: closes (and resets) the terminal when done. */
     final override fun rollAndReport() = options.terminal.use {
         while (true) {
             try {
@@ -32,6 +29,9 @@ sealed class ReplRoller(
                 e.printError()
             } catch (e: UnknownCommandException) {
                 e.printError()
+            } catch (e: EndOfFileException) {
+                // Handled by CommandLine -- catch/rethrow to document
+                throw e
             }
         }
     }

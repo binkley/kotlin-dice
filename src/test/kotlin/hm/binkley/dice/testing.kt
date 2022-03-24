@@ -27,7 +27,7 @@ internal fun stableSeedForTesting() = Random(FIXED_SEED)
 
 internal fun mainWithFixedSeed(vararg cmdLine: String) = main(
     arrayOf(
-        "--color=never", // Force color off for testing
+        "--color=never", // Default no color; enable explicitly in tests
         "--seed=$FIXED_SEED", // Hard-coded for reproducibility
         *cmdLine,
     )

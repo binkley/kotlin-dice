@@ -551,8 +551,8 @@ roll: Result -1 is below the minimum result of 0
 
     @Nested
     inner class Experiments {
-        @Test
         @Disabled("https://github.com/binkley/kotlin-dice/issues/34")
+        @Test
         fun `should do nothing for new REPL with no input`() {
             runWithEofConsole {
                 val (exitCode, out, err) = captureRun {
@@ -567,8 +567,8 @@ WARNING: the new REPL is EXPERIMENTAL
             }
         }
 
-        @Test
         @Disabled("https://github.com/binkley/kotlin-dice/issues/34")
+        @Test
         fun `should do nothing for new REPL with no input in color`() {
             runWithEofConsole {
                 val (exitCode, out, err) = captureRun {
