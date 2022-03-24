@@ -18,7 +18,9 @@ import org.jline.terminal.Terminal
 import org.jline.terminal.Terminal.TYPE_DUMB
 import org.jline.terminal.Terminal.TYPE_DUMB_COLOR
 import org.jline.terminal.TerminalBuilder
+import org.jline.terminal.impl.AbstractTerminal
 import org.jline.terminal.impl.DumbTerminal
+import org.jline.terminal.impl.PosixPtyTerminal
 import picocli.CommandLine
 import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.IExecutionStrategy
@@ -27,6 +29,7 @@ import picocli.shell.jline3.PicocliCommands
 import picocli.shell.jline3.PicocliCommands.PicocliCommandsFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.FileInputStream
 import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.io.path.Path
 import kotlin.io.path.createTempFile
@@ -41,6 +44,14 @@ private val diceLike = Regex("^[1-9dz]", IGNORE_CASE)
 
 fun String.maybeDiceExpression() =
     diceLike.containsMatchIn(trimStart())
+
+fun Options.execute(vararg args: String): Int {
+    val commandLine = parseOptions(*args)
+    terminal.pause()
+    val exitCode = commandLine.execute(*args)
+    terminal.maybeResume()
+    return exitCode
+}
 
 fun Options.parseOptions(vararg args: String): CommandLine {
     // TODO: Restructure code ordering -- too much injection in random places
@@ -80,7 +91,7 @@ fun Options.parseOptions(vararg args: String): CommandLine {
     return commandLine
 }
 
-private fun Options.realTerminal(): Terminal {
+private fun Options.realTerminal(): AbstractTerminal {
     val builder = TerminalBuilder.builder()
         // Ask JLine3 to raise exception if it tries to fall back to dumb
         .dumb(false)
@@ -93,7 +104,21 @@ private fun Options.realTerminal(): Terminal {
 
     if (testRepl) terminal.enterRawMode() // Not available to builder
 
-    return terminal
+    return terminal as AbstractTerminal
+}
+
+/**
+ * @todo Strongly a hack to work around JLine3 raciness with Pty stream
+ *       handling.
+ * @todo How to behave for Windows or other non-POSIX?
+ */
+fun Terminal.maybeResume() {
+    if (this !is PosixPtyTerminal) return
+    // Assume `masterInput` is a `FileInputStream`: true for the JNA and
+    // JANSI implementations (the Exec implementation raises unimplemented).
+    if (!(pty.masterInput as FileInputStream).fd.valid()) return
+
+    resume()
 }
 
 /** Could be inlined, but more explanatory to name explicity. */

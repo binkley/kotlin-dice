@@ -9,7 +9,6 @@ import io.kotest.matchers.string.shouldNotBeEmpty
 import io.kotest.matchers.string.shouldStartWith
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.jline.reader.UserInterruptException
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import picocli.CommandLine.Model.CommandSpec
@@ -551,7 +550,6 @@ roll: Result -1 is below the minimum result of 0
 
     @Nested
     inner class Experiments {
-        @Disabled("https://github.com/binkley/kotlin-dice/issues/34")
         @Test
         fun `should do nothing for new REPL with no input`() {
             runWithEofConsole {
@@ -567,7 +565,6 @@ WARNING: the new REPL is EXPERIMENTAL
             }
         }
 
-        @Disabled("https://github.com/binkley/kotlin-dice/issues/34")
         @Test
         fun `should do nothing for new REPL with no input in color`() {
             runWithEofConsole {
@@ -578,7 +575,7 @@ WARNING: the new REPL is EXPERIMENTAL
                 exitCode shouldBe 0
                 out.shouldBeEmpty()
                 err shouldBeAfterTrimming """
-@|bold,red WARNING: the new REPL is EXPERIMENTAL|@                    
+@|red,bold WARNING: the new REPL is EXPERIMENTAL|@                    
                 """.colored
             }
         }

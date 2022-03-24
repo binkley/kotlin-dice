@@ -5,7 +5,7 @@ import hm.binkley.dice.command.HistoryCommand
 import hm.binkley.dice.command.OptionsCommand
 import org.jline.console.SystemRegistry
 import org.jline.reader.LineReader
-import org.jline.terminal.Terminal
+import org.jline.terminal.impl.AbstractTerminal
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Model.CommandSpec
@@ -86,7 +86,9 @@ class Options : Runnable {
     lateinit var commandSpec: CommandSpec
 
     lateinit var commandLine: CommandLine
-    lateinit var terminal: Terminal
+    // Leaky abstraction in JLine3: useful methods (`onClose`, etc) in the
+    // base class not exposed in interface
+    lateinit var terminal: AbstractTerminal
     lateinit var systemRegistry: SystemRegistry
     lateinit var lineReader: LineReader
 

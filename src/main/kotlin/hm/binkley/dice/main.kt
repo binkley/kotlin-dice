@@ -7,7 +7,7 @@ const val DIE_PROMPT = "\uD83C\uDFB2 "
 const val HISTORY_FILE_NAME = ".roll_history"
 
 fun main(args: Array<String>) {
-    exitProcess(Options().parseOptions(*args).execute(*args))
+    exitProcess(Options().execute(*args))
 }
 
 /**

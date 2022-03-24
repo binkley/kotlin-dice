@@ -210,11 +210,6 @@
                 <version>${maven-resources-plugin.version}</version>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-            </plugin>
-            <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
@@ -258,6 +253,12 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <!-- TODO: Disable Javac -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -368,6 +369,7 @@
                 <configuration>
                     <avoidCallsTo>
                         <avoidCallsTo>kotlin.jvm.internal</avoidCallsTo>
+                        <avoidCallsTo>org.jline.terminal.spi.Pty</avoidCallsTo>
                     </avoidCallsTo>
                     <exportLineCoverage>true</exportLineCoverage>
                     <mutationThreshold>${coverage.mutation}</mutationThreshold>
