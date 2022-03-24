@@ -196,7 +196,7 @@ roll(d6) -> 4
 roll(d6) -> 1
 roll(d6) -> 5
 3d6 -> 10
----                
+---
             """
             // TODO: assertion is sensitive to MainReporter line numbers
             err.shouldStartWith(
@@ -390,7 +390,7 @@ $DIE_PROMPT${DIE_PROMPT}3d6!2 76
 $DIE_PROMPT
             """
             err shouldBeAfterTrimming """
-History disabled because of the --no-history option                
+History disabled because of the --no-history option
             """
         }
 
@@ -437,7 +437,7 @@ $DIE_PROMPT$DIE_PROMPT
                 exitCode shouldBe 0
                 out.shouldBeEmpty()
                 err shouldBeAfterTrimming """
-WARNING: the new REPL is EXPERIMENTAL                    
+WARNING: the new REPL is EXPERIMENTAL
                 """
             }
         }
@@ -452,7 +452,7 @@ WARNING: the new REPL is EXPERIMENTAL
                 exitCode shouldBe 0
                 out.shouldBeEmpty()
                 err shouldBeAfterTrimming """
-@|red,bold WARNING: the new REPL is EXPERIMENTAL|@                    
+@|red,bold WARNING: the new REPL is EXPERIMENTAL|@
                 """.colored
             }
         }
