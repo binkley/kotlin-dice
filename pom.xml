@@ -21,7 +21,7 @@
         <java.charset>UTF-8</java.charset>
         <!-- Java version is held back by parboiled -->
         <jdk.version>11</jdk.version>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <jansi.version>2.4.0</jansi.version>
         <jline.version>3.21.0</jline.version>
         <junit.version>5.8.2</junit.version>
