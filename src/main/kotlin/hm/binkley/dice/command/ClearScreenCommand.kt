@@ -15,7 +15,6 @@ import picocli.CommandLine.Command
 class ClearScreenCommand :
     Runnable,
     NeedsLineReader by DoNeedsLineReader() {
-
     override fun run() {
         lineReader.terminal.puts(clear_screen)
     }

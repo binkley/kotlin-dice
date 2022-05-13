@@ -33,11 +33,11 @@ class HistoryCommand :
 }
 
 /**
- * Formats history display the same as does JLine3, but fixes the
+ * Formats history display the same as JLine3 does, but fixes the
  * off-by-one bug in JLine3 for displaying executed lines.
  *
- * Note: [History.Entry.index] is 0-based, and shell history expansion is
- * 1-based.
+ * **NB** &mdash; [History.Entry.index] is 0-based, and shell history
+ * expansion is 1-based.
  */
 @Generated
 private fun History.Entry.format() = "%5d  %s".format(index() + 1, line())

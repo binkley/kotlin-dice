@@ -39,8 +39,7 @@ class OptionsCommand :
                 // Skip "take an action" flags
                 it.longestName() in listOf("--copyright", "--demo")
             }.onEach {
-// DEBUGGERY
-//                if ((parentCommand as Options).debug) it.dump()
+// DEBUGGERY -- if ((parentCommand as Options).debug) it.dump()
             }.map {
                 it.format()
             }.forEach {
