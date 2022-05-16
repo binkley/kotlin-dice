@@ -15,10 +15,9 @@ internal class DiceParserTest {
     fun `should parse and roll`() {
         for ((expression, expected, description) in demoExpressions)
             withClue("$expression ($description)") {
-                // Recreate each time to reset the seed each time
-                val dice = dice(stableSeedForTesting())
                 try {
-                    val result = dice.roll(expression)
+                    // Recreate each time to reset the seed each time
+                    val result = dice(stableSeedForTesting()).roll(expression)
 
                     result.resultValue shouldBe expected
 
