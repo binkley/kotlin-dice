@@ -2,13 +2,16 @@ package hm.binkley.dice.rolling
 
 import hm.binkley.dice.rolling.DieBase.ONE
 import hm.binkley.dice.stableSeedForTesting
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 internal class RollerTest {
     @Test
     fun `should report roll details`() {
+        var assertionExecuted = false
         val assertOnRoll = RollReporter {
+            assertionExecuted = true
             it.expression shouldBe "7d6r2h3!4x2"
             it.dieSides shouldBe 6
             it.dieBase shouldBe ONE
@@ -33,5 +36,7 @@ internal class RollerTest {
                 multiply = 2,
             )
         ).rollDice()
+
+        assertionExecuted.shouldBeTrue()
     }
 }
