@@ -50,4 +50,10 @@ interface DiceExpression {
      * The default is to multiply by one (no change).
      */
     val multiply: Int
+
+    /** The least roll of [dieSides]. */
+    val minRoll: Int get() = dieBase.minRoll(dieSides)
+
+    /** The greatest roll of [dieSides]. */
+    val maxRoll: Int get() = dieBase.maxRoll(dieSides)
 }

@@ -12,4 +12,13 @@ enum class DieBase(private val value: Int) {
     operator fun plus(other: Int) = value + other
     operator fun minus(other: Int) = value - other
     operator fun compareTo(other: Int) = value.compareTo(other)
+
+    /**
+     * The least roll of [dieSides]. (`dieSides` is not used, but provides
+     * symmetry to [maxRoll].)
+     */
+    fun minRoll(@Suppress("UNUSED_PARAMETER") dieSides: Int) = value
+
+    /** The greatest roll of [dieSides]. */
+    fun maxRoll(dieSides: Int) = value + dieSides - 1
 }

@@ -63,6 +63,7 @@ val demoExpressions = arrayOf(
     "10d3!x2" to 40 to "double after exploding",
     "100d3r1h99!+100d3r1l99!3-17" to 919 to "complex",
     "d1!" to null to "explosion too low",
+    "d2!1" to null to "explosion too low",
     "blah" to null to "syntax error",
 )
 

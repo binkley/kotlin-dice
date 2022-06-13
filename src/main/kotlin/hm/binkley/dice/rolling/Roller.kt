@@ -20,7 +20,7 @@ data class Roller(
     private val parsed: DiceExpression,
 ) {
     fun rollDice() = with(parsed) {
-        if (dieBase >= explodeHigh)
+        if (minRoll >= explodeHigh)
             throw ExplodingForeverException(expression, explodeHigh)
 
         val rolls = generateSequence {
