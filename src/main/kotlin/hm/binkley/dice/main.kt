@@ -62,6 +62,7 @@ val demoExpressions = arrayOf(
     "3d3r1h2!" to 10 to "explode with reroll and keep high",
     "10d3!x2" to 40 to "double after exploding",
     "100d3r1h99!+100d3r1l99!3-17" to 919 to "complex",
+    "q1" to null to "not a die base: q",
     "d1!" to null to "explosion too low",
     "d2!1" to null to "explosion too low",
     "blah" to null to "syntax error",
