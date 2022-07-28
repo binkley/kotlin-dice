@@ -15,7 +15,7 @@
         <coverage.branches>94</coverage.branches>
         <coverage.instructions>97</coverage.instructions>
         <coverage.lines>98</coverage.lines>
-        <coverage.mutation>90</coverage.mutation>
+        <coverage.mutation>87</coverage.mutation>
         <dependency-check-maven.version>7.1.1</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.21.0</detekt-maven-plugin.version>
         <java.charset>UTF-8</java.charset>
