@@ -14,7 +14,7 @@ A complete dice expression has these parts:
 - 1 or more individual dice expressions, added/subtracted together
 - An optional adjustment, added/subtracted at the end
 
-The smallest dice expression is just a die type, eg, `d6` meaning roll a 
+The smallest dice expression is just a die type, eg, `d6` meaning roll a
 single, regular 6-sided die.
 See [_Dice Expression Syntax_](#dice-expression-syntax) and
 [_Examples_](#examples), below, for more interesting expressions.
@@ -37,32 +37,36 @@ dice expressions.
 
 ## Build
 
+**Note** &mdash; CI presently consistently fails owing to troubles with
+command line interations for features like tab completion.
+
 * [DependencyCheck](https://github.com/jeremylong/DependencyCheck) scans
-for dependency security issues
+  for dependency security issues
 * [detekt](https://github.com/arturbosch/detekt) runs static code analysis
-for Kotlin
+  for Kotlin
 * [JUnit](https://github.com/junit-team/junit5) runs tests
 * [JaCoCo](https://github.com/jacoco/jacoco) measures code coverage
 * [ktlint](https://github.com/pinterest/ktlint) keeps code tidy
 * [snyk](https://snyk.io/test/github/binkley/kotlin-dice) looks for
-vulnerabilities
+  vulnerabilities
 
 Use `./mvnw` (Maven) or `./batect build` (Batect) to build, run tests, and
 create a demo program.
 Use `./roll` or `./batect demo` to run the demo.
 
-CI uses [Batect](https://batect.dev/) to verify builds and behavior, so 
+CI uses [Batect](https://batect.dev/) to verify builds and behavior, so
 an easy way for you to check your changes before pushing to GitHub.
 
 ## Dice expression syntax
 
 Parsing dice expressions turns out to be an interesting programming problem.
-This project implements a mashup of several dice expression syntaxes, 
+This project implements a mashup of several dice expression syntaxes,
 drawing inspiration from:
 
 - [_Dice Expressions_](https://wiki.rptools.info/index.php/Dice_Expressions)
 - [_Dice notation_](https://en.wikipedia.org/wiki/Dice_notation)
-- [_Sophie's Dice_](https://sophiehoulden.com/dice/documentation/notation.html)
+- [_Sophie's
+  Dice_](https://sophiehoulden.com/dice/documentation/notation.html)
 
 This project supports these types of expressions:
 
@@ -74,27 +78,29 @@ This project supports these types of expressions:
 - B &mdash; either a literal `d` (dice are 1 to D) or `z` (dice are 0 to D-1)
 - D &mdash; sides on the die, or `%` for percentile dice (100-sided dice)
 - R &mdash; reroll dice this or lower, eg, reroll 1s
-- K &mdash; keep dice, discard rest, default keep 1 
-  - highest rolls (`h`)
-  - high middle rolls (`n`)
-  - low middle rolls (`m`)
-  - lowest rolls (`l`)
+- K &mdash; keep dice, discard rest, default keep 1
+    - highest rolls (`h`)
+    - high middle rolls (`n`)
+    - low middle rolls (`m`)
+    - lowest rolls (`l`)
 - ! &mdash; explode the dice, default explosion is on a max roll
 - M &mdash; multiple result
 - EXP &mdash; add/subtract more dice expressions
 - A &mdash; add/subtract this fixed amount to the result
 
-For example, in _D&amp;D_ a d20 roll with advantage is "2d20h" and with 
-disadvantage is "2d20l", and in _Star Wars_ an exploding d6 roll is "d6!". 
+For example, in _D&amp;D_ a d20 roll with advantage is "2d20h" and with
+disadvantage is "2d20l", and in _Star Wars_ an exploding d6 roll is "d6!".
 
-All characters are _case-insensitive_, eg, `d6` and `D6` are the same 
+All characters are _case-insensitive_, eg, `d6` and `D6` are the same
 expression.
 
 Whitespace is supported **only**:
+
 - At start or end of the complete expression
 - Around the `+` and `-` operators between single dice expressions
 
 Notes:
+
 - This is _not_ a general calculator so `1 + 2` does not work
 - Picking too low an explosion (1 for 'd' or 0 or 'z' dice) does not work
 
@@ -104,7 +110,7 @@ See [TODO](#todo) for further improvements.
 
 - `d6` -- roll 1 6-sided die; "dD" is the minimal possible expression
 - `d6x2` -- roll 1 6-sided die, double the result
-- `z6` -- roll 1 6-sided die zero-based (0-5); "zD" is the minimal possible 
+- `z6` -- roll 1 6-sided die zero-based (0-5); "zD" is the minimal possible
   expression
 - `2d%+1` -- roll percentile dice 2 times, sum, and add 1 to the result
 - `3d6r1!` -- roll 3 6-sided dice, rerolling 1s, "explode" on 6s
@@ -112,15 +118,15 @@ See [TODO](#todo) for further improvements.
 - `2d4+2d6h1` -- roll 2 4-sided dice, sum; roll 2 6-sided dice keeping the
   highest roll; add both results
 
-The [demo examples](./src/main/kotlin/hm/binkley/dice/main.kt) (look at 
+The [demo examples](./src/main/kotlin/hm/binkley/dice/main.kt) (look at
 `demoExpressions`) cover all supported examples.
 
 ## REPL
 
 Running [`./roll`](./roll) with arguments or input starts an interactive REPL
 (read-evaluate-print loop).
-The REPL includes many features, courtesy of 
-[Picocli](https://picocli.info/) and [JLine3](https://jline.github.io/), 
+The REPL includes many features, courtesy of
+[Picocli](https://picocli.info/) and [JLine3](https://jline.github.io/),
 including:
 
 - Rich command-line color and formatting
@@ -144,7 +150,7 @@ This creates a reuseable parser and roller.
 
 The `random` parameter is a Kotlin `Random`, and defaults to the system RNG.
 The `reporter` parameter is a
-[`RollReporter`](./src/main/kotlin/hm/binkley/dice/rolling/RollReporter.kt) 
+[`RollReporter`](./src/main/kotlin/hm/binkley/dice/rolling/RollReporter.kt)
 and defaults to "do nothing" (_ie_, no reporting).
 
 The simplest example is:
@@ -178,7 +184,9 @@ val result = dice.roll("2d20h")
 // Above tracing prints here
 println("result is ${result.resultValue}")
 ```
+
 And would output:
+
 ```
 rolled d20 was 6
 rolled d20 was 17
@@ -188,13 +196,13 @@ result is 17
 
 ## Code conventions
 
-At each top-level part of a dice expression parse (eg, die sides), the parser 
+At each top-level part of a dice expression parse (eg, die sides), the parser
 saves a local value internally.
 By the end of the dice expression, this includes:
 
 - Die sides, ie, number of sides on a die (ex: d4)
 - Roll count, or 1 if none specified; ie, number of dice to roll
-- Reroll low, or the value of the lowest face on a die if no value is 
+- Reroll low, or the value of the lowest face on a die if no value is
   provided: rolls of this value or lower are rerolled
 - Dice to keep, or "roll count" if none specified; a positive number is
   keep highest, a negative number is keep lowest
@@ -219,7 +227,7 @@ Multiple modes of operation:
 - Use of color and formatting unless requested not to do so
 - Simple output (the default) or verbose output as dice roll
 
-Remember to distinguish STDOUT and STDERR, helpful when using `./roll` in 
+Remember to distinguish STDOUT and STDERR, helpful when using `./roll` in
 scripts.
 
 ## TODO
