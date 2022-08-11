@@ -25,7 +25,7 @@
         <jansi.version>2.4.0</jansi.version>
         <jline.version>3.21.0</jline.version>
         <junit.version>5.9.0</junit.version>
-        <kotest.version>5.4.1</kotest.version>
+        <kotest.version>5.4.2</kotest.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>${jdk.version}</kotlin.compiler.jvmTarget>
         <kotlin.version>1.7.20-Beta</kotlin.version>
