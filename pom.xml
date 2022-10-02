@@ -24,12 +24,12 @@
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <jansi.version>2.4.0</jansi.version>
         <jline.version>3.21.0</jline.version>
-        <junit.version>5.9.0</junit.version>
+        <junit.version>5.9.1</junit.version>
         <kotest.version>5.4.2</kotest.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>${jdk.version}</kotlin.compiler.jvmTarget>
         <kotlin.version>1.7.20</kotlin.version>
-        <ktlint-maven-plugin.version>1.15.1</ktlint-maven-plugin.version>
+        <ktlint-maven-plugin.version>1.15.2</ktlint-maven-plugin.version>
         <lombok.version>1.18.24</lombok.version>
         <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
@@ -41,10 +41,10 @@
         <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
         <maven-versions-plugin.version>2.12.0</maven-versions-plugin.version>
         <main.class>hm.binkley.dice.MainKt</main.class>
-        <mockk.version>1.12.5</mockk.version>
+        <mockk.version>1.13.2</mockk.version>
         <parboiled.version>1.4.1</parboiled.version>
         <picocli.version>4.6.3</picocli.version>
-        <pitest-junit5-plugin.version>1.0.0</pitest-junit5-plugin.version>
+        <pitest-junit5-plugin.version>1.1.0</pitest-junit5-plugin.version>
         <pitest-maven.version>1.9.5</pitest-maven.version>
         <project.build.sourceEncoding>${java.charset}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${java.charset}</project.reporting.outputEncoding>
