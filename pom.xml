@@ -45,7 +45,7 @@
         <parboiled.version>1.4.1</parboiled.version>
         <picocli.version>4.7.0</picocli.version>
         <pitest-junit5-plugin.version>1.1.0</pitest-junit5-plugin.version>
-        <pitest-maven.version>1.9.9</pitest-maven.version>
+        <pitest-maven.version>1.9.10</pitest-maven.version>
         <project.build.sourceEncoding>${java.charset}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${java.charset}</project.reporting.outputEncoding>
         <system-lambda.version>1.2.1</system-lambda.version>
