@@ -27,6 +27,7 @@ dice expressions.
 ## Table of contents
 
 * [Build](#build)
+* [Command line](#command-line)
 * [Dice expression syntax](#dice-expression-syntax)
 * [Examples](#examples)
 * [REPL](#repl)
@@ -56,6 +57,90 @@ Use `./roll` or `./batect demo` to run the demo.
 
 CI uses [Batect](https://batect.dev/) to verify builds and behavior, so
 an easy way for you to check your changes before pushing to GitHub.
+
+## Command line
+
+Try `./roll --help` to see this help on the command line:
+
+```
+Usage:
+roll [-hvV] [--copyright] [--demo] [--no-history] [-C[=WHEN]] [-m=MINIMUM]
+[-P=PROMPT] [-s=SEED] [--] [@<filename>...] [EXPRESSION(s)...] [COMMAND]
+
+Description:
+Roll dice expressions.
+
+Parameters:
+[@<filename>...]     One or more argument files containing options.
+[EXPRESSION(s)...]   Dice expressions to roll.
+
+Options:
+-C, --color[=WHEN]       Choose color output (always, yes, force, auto, tty,
+if-tty, never, no, none).
+Default with no option is 'auto'.
+Default with option but no WHEN is 'always'.
+--copyright          Show the copyright and exit.
+--demo               Run the demo and exit.
+-h, --help               Show this help message and exit.
+-m, --minimum=MINIMUM    Fail roll results below MINIMUM.
+Default with no option is no minimum.
+--no-history         Do not save history from the REPL.
+-P, --prompt=PROMPT      Change the REPL prompt from '🎲 '.
+-s, --seed=SEED          Fix RNG seed to SEED for repeatable roll results.
+-v, --verbose            Show die rolls as they happens.
+-V, --version            Print version information and exit.
+--                       This option can be used to separate command-line
+options from the list of positional parameters.
+
+Commands:
+clear    clear the screen
+history  list command history excluding this command
+options  view or change options
+
+Input modes:
+roll
+Run the REPL.
+roll <expression(s)>
+Show roll results of dice expression(s) and exit.
+echo <expression(s)> | roll
+Show roll result of dice expression(s) read from STDIN and exit.
+
+Output examples:
+roll --seed=1 2d4 2d4 (normal)
+2d4 4
+2d4 7
+roll --seed=1 --verbose 2d4 2d4 (verbose)
+---
+roll(d4) -> 1
+roll(d4) -> 3
+2d4 -> 4
+---
+roll(d4) -> 4
+roll(d4) -> 3
+2d4 -> 7
+
+Files:
+~/.roll_history
+This file preserves input history across runs of the REPL.
+
+Error messages:
+Incomplete dice expression '<EXPRESSION>'
+More characters were expected at the end of EXPRESSION.
+Unexpected '<CHAR>' (at position <POS>) in dice expression '<EXPRESSION>'
+CHAR was not expected in EXPRESSION at position POS (starting from 1).
+Result <ROLL> is below the minimum result of <NUMBER>
+ROLL is too low for the NUMBER in the --minimum option.
+Exploding on <NUMBER> will never finish in dice expression '<EXPRESSION>'
+NUMBER is too low for the number of sides on the die.
+History disabled because of the --no-history option
+Read a history command ('!' first character) but option set for no history.
+
+Exit codes:
+0   Successful completion
+1   Bad dice expression
+2   Bad program usage
+130   REPL interrupted (SIGINT)
+```
 
 ## Dice expression syntax
 
