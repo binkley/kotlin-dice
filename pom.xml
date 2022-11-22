@@ -17,7 +17,7 @@
         <coverage.lines>98</coverage.lines>
         <coverage.mutation>87</coverage.mutation>
         <dependency-check-maven.version>7.3.0</dependency-check-maven.version>
-        <detekt-maven-plugin.version>1.21.0.1</detekt-maven-plugin.version>
+        <detekt-maven-plugin.version>1.22.0</detekt-maven-plugin.version>
         <java.charset>UTF-8</java.charset>
         <!-- Java version is held back by parboiled -->
         <jdk.version>11</jdk.version>
