@@ -16,7 +16,7 @@
         <coverage.instructions>97</coverage.instructions>
         <coverage.lines>98</coverage.lines>
         <coverage.mutation>87</coverage.mutation>
-        <dependency-check-maven.version>7.3.2</dependency-check-maven.version>
+        <dependency-check-maven.version>7.4.1</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.22.0</detekt-maven-plugin.version>
         <java.charset>UTF-8</java.charset>
         <!-- Java version is held back by parboiled -->
@@ -28,7 +28,7 @@
         <kotest.version>5.5.4</kotest.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>${jdk.version}</kotlin.compiler.jvmTarget>
-        <kotlin.version>1.8.0-Beta</kotlin.version>
+        <kotlin.version>1.8.0-RC</kotlin.version>
         <ktlint-maven-plugin.version>1.15.2</ktlint-maven-plugin.version>
         <lombok.version>1.18.24</lombok.version>
         <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
@@ -45,7 +45,7 @@
         <parboiled.version>1.4.1</parboiled.version>
         <picocli.version>4.7.0</picocli.version>
         <pitest-junit5-plugin.version>1.1.0</pitest-junit5-plugin.version>
-        <pitest-maven.version>1.10.1</pitest-maven.version>
+        <pitest-maven.version>1.10.3</pitest-maven.version>
         <project.build.sourceEncoding>${java.charset}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${java.charset}</project.reporting.outputEncoding>
         <system-lambda.version>1.2.1</system-lambda.version>
