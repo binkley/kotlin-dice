@@ -321,7 +321,7 @@ scripts.
 Much gratitude to the authors of these libraries:
 
 - [Jansi](https://github.com/fusesource/jansi)
-- [Jline](https://jline.github.io/)
+- [JLine](https://github.com/jline/jline3)
 - [Parboiled](https://github.com/sirthias/parboiled)
 - [Picocli](https://github.com/remkop/picocli)
 - [System Lambda](https://github.com/stefanbirkner/system-lambda)
