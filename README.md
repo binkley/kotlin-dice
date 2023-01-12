@@ -33,6 +33,7 @@ dice expressions.
 * [REPL](#repl)
 * [API](#api)
 * [Code conventions](#code-conventions)
+* [Key dependencies](#key-dependencies)
 * [TODO](#todo)
 * [References](#references)
 
@@ -314,6 +315,17 @@ Multiple modes of operation:
 
 Remember to distinguish STDOUT and STDERR, helpful when using `./roll` in
 scripts.
+
+## Key dependencies
+
+Much gratitude to the authors of these libraries:
+
+- [Jansi](https://github.com/fusesource/jansi)
+- [Jline](https://jline.github.io/)
+- [Parboiled](https://github.com/sirthias/parboiled)
+- [Picocli](https://github.com/remkop/picocli)
+- [System Lambda](https://github.com/stefanbirkner/system-lambda)
+
 
 ## TODO
 
