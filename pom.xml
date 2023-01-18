@@ -23,7 +23,7 @@
         <jdk.version>11</jdk.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <jansi.version>2.4.0</jansi.version>
-        <jline.version>3.21.0</jline.version>
+        <jline.version>3.22.0</jline.version>
         <junit.version>5.9.2</junit.version>
         <kotest.version>5.5.4</kotest.version>
         <kotlin.code.style>official</kotlin.code.style>
