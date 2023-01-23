@@ -1,21 +1,24 @@
-name: build
+name: Build
 
 on:
   push:
     paths-ignore:
-      - README.md
+      - '*.md'
   pull_request:
     paths-ignore:
-      - README.md
+      - '*.md'
 
 jobs:
-  build-maven:
-    name: Builds and tests for Maven under Batect
+  build:
+    name: Builds and tests under Batect
     runs-on: ubuntu-latest
 
     steps:
       - name: Clone repository
         uses: actions/checkout@master
+
+      - name: Validate Batect wrapper scripts
+        uses: batect/batect-wrapper-validation-action@v0.4.0
 
       - name: Restore Batect caches
         uses: actions/cache@master
@@ -44,8 +47,8 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: Build and test with Maven under Batect
+      - name: Build and test under Batect
         run: ./batect build
 
-      - name: Exercise the run script
+      - name: Execute run script
         run: ./batect -o quiet demo
