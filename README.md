@@ -220,6 +220,23 @@ including:
 - Traditional shell key bindings such as `Ctrl-A` or up/down arrow
 - Command history (saved to `~/.roll_history`) and expansion (`!!`)
 
+In a terminal, output is colorized.
+In a `README.md` it looks like:
+
+```
+$ ./roll
+🎲 3d6
+3d6 8
+$ ./roll --verbose
+🎲 3d6
+---
+roll(d6) -> 4
+roll(d6) -> 2
+roll(d6) -> 1
+3d6 -> 7
+🎲
+```
+
 ## API
 
 The code falls into two halves:
