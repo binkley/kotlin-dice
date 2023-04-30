@@ -21,7 +21,7 @@
         <java.charset>UTF-8</java.charset>
         <!-- Java version is held back by parboiled -->
         <jdk.version>11</jdk.version>
-        <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <jansi.version>2.4.0</jansi.version>
         <jline.version>3.23.0</jline.version>
         <junit.version>5.9.3</junit.version>
@@ -42,7 +42,7 @@
         <maven-versions-plugin.version>2.15.0</maven-versions-plugin.version>
         <maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
         <main.class>hm.binkley.dice.MainKt</main.class>
-        <mockk.version>1.13.4</mockk.version>
+        <mockk.version>1.13.5</mockk.version>
         <parboiled.version>1.4.1</parboiled.version>
         <picocli.version>4.7.3</picocli.version>
         <pitest-junit5-plugin.version>1.1.2</pitest-junit5-plugin.version>
