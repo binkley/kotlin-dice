@@ -18,11 +18,11 @@
         <coverage.mutation>87</coverage.mutation>
         <dependency-check-maven.version>8.2.1</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.22.0</detekt-maven-plugin.version>
-        <java.charset>UTF-8</java.charset>
-        <!-- Java version is held back by parboiled -->
-        <jdk.version>11</jdk.version>
         <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <jansi.version>2.4.0</jansi.version>
+        <java.charset>UTF-8</java.charset>
+        <!-- Java version held back by parboiled -->
+        <jdk.version>11</jdk.version>
         <jline.version>3.23.0</jline.version>
         <junit.version>5.9.3</junit.version>
         <kotest.version>5.5.5</kotest.version>
@@ -31,6 +31,7 @@
         <kotlin.version>1.8.21</kotlin.version>
         <ktlint-maven-plugin.version>1.16.0</ktlint-maven-plugin.version>
         <lombok.version>1.18.26</lombok.version>
+        <main.class>hm.binkley.dice.MainKt</main.class>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
@@ -41,7 +42,7 @@
         <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
         <maven-versions-plugin.version>2.15.0</maven-versions-plugin.version>
         <maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
-        <main.class>hm.binkley.dice.MainKt</main.class>
+        <maven.version>3.8.4</maven.version>
         <mockk.version>1.13.5</mockk.version>
         <parboiled.version>1.4.1</parboiled.version>
         <picocli.version>4.7.3</picocli.version>
@@ -65,6 +66,18 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -122,17 +135,23 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>io.kotest</groupId>
             <artifactId>kotest-runner-junit5-jvm</artifactId>
@@ -145,6 +164,7 @@
             <version>${kotest.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.github.stefanbirkner</groupId>
             <artifactId>system-lambda</artifactId>
@@ -157,17 +177,6 @@
             <groupId>io.mockk</groupId>
             <artifactId>mockk</artifactId>
             <version>${mockk.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
-            <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -345,9 +354,9 @@
                     <argLine>
                         <!-- TODO: *EITHER* of these breaks JaCoCo -->
                         <!-- For mockk -->
-<!--                        &#45;&#45;add-opens java.base/java.lang=ALL-UNNAMED-->
+                        <!--                        &#45;&#45;add-opens java.base/java.lang=ALL-UNNAMED-->
                         <!-- For system lambda withEnvironmentVariables -->
-<!--                        &#45;&#45;add-opens java.base/java.util=ALL-UNNAMED-->
+                        <!--                        &#45;&#45;add-opens java.base/java.util=ALL-UNNAMED-->
                     </argLine>
                 </configuration>
                 <dependencies>
