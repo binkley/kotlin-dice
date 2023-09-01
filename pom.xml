@@ -45,7 +45,7 @@
         <maven.version>3.8.4</maven.version>
         <mockk.version>1.13.7</mockk.version>
         <parboiled.version>1.4.1</parboiled.version>
-        <picocli.version>4.7.4</picocli.version>
+        <picocli.version>4.7.5</picocli.version>
         <pitest-junit5-plugin.version>1.2.0</pitest-junit5-plugin.version>
         <pitest-maven.version>1.14.4</pitest-maven.version>
         <project.build.sourceEncoding>${java.charset}</project.build.sourceEncoding>
