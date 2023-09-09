@@ -10,7 +10,7 @@ internal class ReplRollerTest {
     fun `should close terminal when done`() {
         var closed = false
 
-        captureExecuteWithInput {
+        captureWithInput {
             val options = Options()
             // Parse first so `terminal` exists (lateinit)
             options.parseOptions("--test-repl")

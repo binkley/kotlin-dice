@@ -22,7 +22,7 @@ internal const val FIXED_SEED = 1L
  */
 internal fun stableSeedForTesting() = Random(FIXED_SEED)
 
-internal fun mainWithFixedSeed(vararg cmdLine: String) = main(
+internal fun withFixedDiceRolls(vararg cmdLine: String) = main(
     arrayOf(
         "--color=never", // Default no color; enable explicitly in tests
         "--seed=$FIXED_SEED", // Hard-coded for reproducibility
@@ -41,14 +41,14 @@ internal infix fun String.shouldBeAfterTrimming(expected: String) =
  * _before_ trapping `System.exit`.; otherwise the exit bubbles out, and the
  * stream assertions do not run
  */
-internal fun captureExecute(main: () -> Unit): ShellOutcome {
+internal fun capture(block: () -> Unit): ShellOutcome {
     var exitCode = -1
     var stdout = "BUG in test method"
     val stderr: String = tapSystemErrNormalized {
         stdout = tapSystemOutNormalized {
             // Undo any fiddling with color between tests
             withEnvironmentVariable("picocli.ansi", null).execute {
-                exitCode = catchSystemExit(main)
+                exitCode = catchSystemExit(block)
             }
         }
     }
@@ -60,13 +60,13 @@ internal fun captureExecute(main: () -> Unit): ShellOutcome {
     }
 }
 
-internal fun captureExecuteWithInput(
+internal fun captureWithInput(
     vararg lines: String,
-    main: () -> Unit,
+    block: () -> Unit,
 ): ShellOutcome {
     var outcome = ShellOutcome(-1, "BUG", "BUG")
     withTextFromSystemIn(*lines).execute {
-        outcome = captureExecute(main)
+        outcome = capture(block)
     }
     return outcome
 }
