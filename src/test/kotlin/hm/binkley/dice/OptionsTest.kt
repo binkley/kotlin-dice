@@ -16,7 +16,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set new REPL`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::newRepl,
             false,
             true,
@@ -26,7 +26,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set color with long option`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::color,
             ColorOption.auto,
             ColorOption.none,
@@ -36,7 +36,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set color with short option`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::color,
             ColorOption.auto,
             ColorOption.none,
@@ -46,7 +46,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set color with fallback`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::color,
             ColorOption.auto,
             ColorOption.always,
@@ -56,7 +56,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set debug`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::debug,
             false,
             true,
@@ -66,7 +66,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set copyright`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::copyright,
             false,
             true,
@@ -76,7 +76,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set demo`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::demo,
             false,
             true,
@@ -86,7 +86,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set history`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::history,
             true,
             false,
@@ -96,7 +96,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set minimum with long option`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::minimum,
             Int.MIN_VALUE,
             1,
@@ -106,7 +106,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set minimum with short option`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::minimum,
             Int.MIN_VALUE,
             1,
@@ -116,7 +116,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set prompt with long option`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::prompt,
             DIE_PROMPT,
             "> ",
@@ -126,7 +126,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set prompt with short option`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::prompt,
             DIE_PROMPT,
             "> ",
@@ -136,7 +136,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set seed with long option`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::seed,
             null,
             1,
@@ -146,7 +146,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set test repl`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::testRepl,
             false,
             true,
@@ -156,7 +156,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set verbose with long option`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::verbose,
             false,
             true,
@@ -166,7 +166,7 @@ internal class OptionsTest {
 
     @Test
     fun `should set verbose with short option`() {
-        shouldDefaultThenUpdate(
+        shouldDefaultThenApplyArguments(
             Options::verbose,
             false,
             true,
@@ -185,7 +185,7 @@ internal class OptionsTest {
     }
 }
 
-private fun <T> shouldDefaultThenUpdate(
+private fun <T> shouldDefaultThenApplyArguments(
     prop: KMutableProperty1<Options, T>,
     defaultValue: T,
     updatedValue: T,
