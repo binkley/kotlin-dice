@@ -79,15 +79,14 @@ internal data class ShellOutcome(
 
 internal fun runWithEofConsole(block: () -> Unit) {
     mockkStatic(System::class) {
-        val eofConsole = eofConsole() // Do not inline -- confuses mockk
         every { System.console() } returns eofConsole
         block()
     }
 }
 
-private fun eofConsole(): Console {
-    val eofConsole = mockk<Console>()
-    every { eofConsole.reader() } returns nullReader()
-    every { eofConsole.writer() } returns PrintWriter(nullWriter())
-    return eofConsole
+private val eofConsole = run {
+    val mockConsole = mockk<Console>()
+    every { mockConsole.reader() } returns nullReader()
+    every { mockConsole.writer() } returns PrintWriter(nullWriter())
+    mockConsole
 }
