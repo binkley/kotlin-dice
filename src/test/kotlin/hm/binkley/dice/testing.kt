@@ -10,6 +10,7 @@ import picocli.CommandLine.Help.Ansi
 import java.io.Console
 import java.io.PrintWriter
 import java.io.Reader.nullReader
+import java.io.Writer.nullWriter
 import kotlin.random.Random
 
 internal const val FIXED_SEED = 1L
@@ -78,13 +79,8 @@ internal data class ShellOutcome(
 
 internal fun eofConsole(): Console {
     val eofConsole = mockk<Console>()
-    val nullWriter = mockk<PrintWriter>()
-    every { eofConsole.writer() } returns nullWriter
-    every { nullWriter.flush() } returns Unit
-    val eofReader = nullReader()
-    every { eofConsole.reader() } returns eofReader
-    every { eofConsole.readLine(any(), *anyVararg()) } returns null
-    every { eofConsole.readPassword(any(), *anyVararg()) } returns null
+    every { eofConsole.reader() } returns nullReader()
+    every { eofConsole.writer() } returns PrintWriter(nullWriter())
     return eofConsole
 }
 
