@@ -1,10 +1,6 @@
 package hm.binkley.dice
 
-import com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrNormalized
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
-import com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable
-import com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn
+import com.github.stefanbirkner.systemlambda.SystemLambda.*
 import io.kotest.assertions.fail
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -13,7 +9,7 @@ import io.mockk.mockkStatic
 import picocli.CommandLine.Help.Ansi
 import java.io.Console
 import java.io.PrintWriter
-import java.io.Reader
+import java.io.Reader.nullReader
 import kotlin.random.Random
 
 internal const val FIXED_SEED = 1L
@@ -85,9 +81,8 @@ internal fun eofConsole(): Console {
     val nullWriter = mockk<PrintWriter>()
     every { eofConsole.writer() } returns nullWriter
     every { nullWriter.flush() } returns Unit
-    val eofReader = mockk<Reader>()
+    val eofReader = nullReader()
     every { eofConsole.reader() } returns eofReader
-    every { eofReader.read() } returns -1
     every { eofConsole.readLine(any(), *anyVararg()) } returns null
     every { eofConsole.readPassword(any(), *anyVararg()) } returns null
     return eofConsole
