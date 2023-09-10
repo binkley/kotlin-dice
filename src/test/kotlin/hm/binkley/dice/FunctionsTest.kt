@@ -11,7 +11,7 @@ internal class FunctionsTest {
     }
 
     @Test
-    fun `should be interactive in mocks`() {
+    fun `should be interactive in test mocks when required`() {
         runWithEofConsole {
             isInteractive().shouldBeTrue()
         }
