@@ -19,7 +19,7 @@
         <dependency-check-maven.version>8.4.0</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.23.1</detekt-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
-        <jansi.version>2.4.0</jansi.version>
+        <jansi.version>2.4.1</jansi.version>
         <java.charset>UTF-8</java.charset>
         <!-- Java version held back by parboiled -->
         <jdk.version>11</jdk.version>
