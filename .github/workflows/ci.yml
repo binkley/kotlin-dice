@@ -47,6 +47,8 @@ jobs:
             ${{ runner.os }}-
 
       - name: Build and test under Batect
+        env:
+          COLORTERM: truecolor
         run: ./batect build
 
       - name: Execute run script
