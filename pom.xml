@@ -16,14 +16,14 @@
         <coverage.instructions>97</coverage.instructions>
         <coverage.lines>98</coverage.lines>
         <coverage.mutation>87</coverage.mutation>
-        <dependency-check-maven.version>8.4.0</dependency-check-maven.version>
-        <detekt-maven-plugin.version>1.23.1</detekt-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
-        <jansi.version>2.4.0</jansi.version>
+        <dependency-check-maven.version>8.4.2</dependency-check-maven.version>
+        <detekt-maven-plugin.version>1.23.3</detekt-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
+        <jansi.version>2.4.1</jansi.version>
         <java.charset>UTF-8</java.charset>
         <!-- Java version held back by parboiled -->
         <jdk.version>11</jdk.version>
-        <jline.version>3.23.0</jline.version>
+        <jline.version>3.24.1</jline.version>
         <junit.version>5.10.0</junit.version>
         <kotest.version>5.5.5</kotest.version>
         <kotlin.code.style>official</kotlin.code.style>
@@ -33,21 +33,21 @@
         <lombok.version>1.18.30</lombok.version>
         <main.class>hm.binkley.dice.MainKt</main.class>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
-        <maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
+        <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-        <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
-        <maven-enforcer-plugin.version>3.4.0</maven-enforcer-plugin.version>
+        <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
+        <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.2.1</maven-surefire-plugin.version>
         <maven-versions-plugin.version>2.16.1</maven-versions-plugin.version>
         <maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
         <maven.version>3.9.5</maven.version>
         <mockk.version>1.13.8</mockk.version>
         <parboiled.version>1.4.1</parboiled.version>
         <picocli.version>4.7.5</picocli.version>
-        <pitest-junit5-plugin.version>1.2.0</pitest-junit5-plugin.version>
-        <pitest-maven.version>1.14.4</pitest-maven.version>
+        <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
+        <pitest-maven.version>1.15.3</pitest-maven.version>
         <project.build.sourceEncoding>${java.charset}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${java.charset}</project.reporting.outputEncoding>
         <system-lambda.version>1.2.1</system-lambda.version>
