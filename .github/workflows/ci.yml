@@ -49,7 +49,8 @@ jobs:
       - name: Build and test under Batect
         env:
           COLORTERM: truecolor
-        run: ./batect build
+        # Cut Batect out to see why JAnsi cannot find "openpty" symbol
+        run: ./mvnw --no-transfer-progress -Dpitest.skip=true clean verify
 
       - name: Execute run script
         run: ./batect -o quiet demo
