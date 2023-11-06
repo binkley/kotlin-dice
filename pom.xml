@@ -24,7 +24,7 @@
         <!-- Java version held back by parboiled -->
         <jdk.version>11</jdk.version>
         <jline.version>3.24.1</jline.version>
-        <junit.version>5.10.0</junit.version>
+        <junit.version>5.10.1</junit.version>
         <kotest.version>5.5.5</kotest.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>${jdk.version}</kotlin.compiler.jvmTarget>
