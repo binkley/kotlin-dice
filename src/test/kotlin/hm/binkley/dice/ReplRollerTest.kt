@@ -20,7 +20,7 @@ internal class ReplRollerTest {
             try {
                 options.pickReplRoller(
                     stableSeedForTesting(),
-                    MainReporter.new(options.minimum, options.verbose)
+                    MainReporter.new(options.minimum, options.showResultOnly, options.verbose)
                 ).rollAndReport()
             } catch (ignored: EndOfFileException) {
             }

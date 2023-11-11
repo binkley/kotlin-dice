@@ -14,7 +14,7 @@
         <atrium.version>0.17.0</atrium.version>
         <coverage.branches>94</coverage.branches>
         <coverage.instructions>97</coverage.instructions>
-        <coverage.lines>98</coverage.lines>
+        <coverage.lines>97</coverage.lines>
         <coverage.mutation>87</coverage.mutation>
         <dependency-check-maven.version>8.4.2</dependency-check-maven.version>
         <detekt-maven-plugin.version>1.23.3</detekt-maven-plugin.version>

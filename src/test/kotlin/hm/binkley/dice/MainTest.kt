@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.*
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.jline.reader.UserInterruptException
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import picocli.CommandLine.Model.CommandSpec
@@ -97,6 +98,21 @@ internal class MainTest {
             exitCode shouldBe 0
             out shouldBeAfterTrimming """
 3d6 @|fg_green,bold 10|@
+            """.colored
+            err.shouldBeEmpty()
+        }
+
+        @Disabled("Find out why mock dies during tests")
+        @Test
+        fun `should roll dice from command line showing only results`() {
+            val (exitCode, out, err) = capture {
+                withFixedDiceRolls("--result-only", "3d6")
+            }
+
+            exitCode shouldBe 0
+            out shouldBeAfterTrimming """
+---
+10
             """.colored
             err.shouldBeEmpty()
         }

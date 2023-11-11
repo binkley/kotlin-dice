@@ -30,14 +30,23 @@ sealed class MainReporter(
     }
 
     companion object {
-        fun new(minimum: Int, verbose: Boolean) =
-            if (verbose) VerboseReporter(minimum)
+        fun new(minimum: Int, showResultOnly: Boolean, verbose: Boolean) =
+            if (showResultOnly) ResultOnlyReporter(minimum)
+            else if (verbose) VerboseReporter(minimum)
             else PlainReporter(minimum)
     }
 
     abstract fun preRoll()
 
     protected abstract fun toDisplay(expression: String, roll: Int): String
+}
+
+class ResultOnlyReporter(minimum: Int) :
+    MainReporter(minimum, false) {
+    override fun onRoll(dice: RolledDice) = Unit
+    override fun preRoll() = Unit
+
+    override fun toDisplay(expression: String, roll: Int) = "$roll"
 }
 
 class PlainReporter(minimum: Int) :

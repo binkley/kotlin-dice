@@ -170,6 +170,14 @@ class Options : Runnable {
     var prompt = DIE_PROMPT
 
     @Option(
+        description = [
+            "Show only roll results."
+        ],
+        names = ["-r", "--result-only"],
+    )
+    var showResultOnly = false
+
+    @Option(
         defaultValue = NULL_VALUE,
         description = [
             "Fix RNG seed to SEED for repeatable roll results."
@@ -235,7 +243,12 @@ class Options : Runnable {
     private fun pickRoller(): MainRoller {
         // TODO: Why does Kotlin require non-null assertion?
         val random = if (null == seed) Random else Random(seed!!)
-        val reporter = MainReporter.new(minimum, verbose)
+        // TODO: Pass myself rather than unpack 3 args?
+        val reporter = MainReporter.new(
+            minimum = minimum,
+            showResultOnly = showResultOnly,
+            verbose = verbose
+        )
 
         return when {
             demo -> DemoRoller(random, reporter)
