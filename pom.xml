@@ -40,7 +40,7 @@
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
-        <maven-versions-plugin.version>2.16.1</maven-versions-plugin.version>
+        <maven-versions-plugin.version>2.16.2</maven-versions-plugin.version>
         <maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
         <maven.version>3.9.5</maven.version>
         <mockk.version>1.13.8</mockk.version>
