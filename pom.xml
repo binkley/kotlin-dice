@@ -23,7 +23,7 @@
         <java.charset>UTF-8</java.charset>
         <!-- Java version held back by parboiled -->
         <jdk.version>11</jdk.version>
-        <jline.version>3.24.1</jline.version>
+        <jline.version>3.25.0</jline.version>
         <junit.version>5.10.1</junit.version>
         <kotest.version>5.5.5</kotest.version>
         <kotlin.code.style>official</kotlin.code.style>
