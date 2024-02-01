@@ -17,7 +17,7 @@
         <coverage.lines>97</coverage.lines>
         <coverage.mutation>87</coverage.mutation>
         <dependency-check-maven.version>8.4.3</dependency-check-maven.version>
-        <detekt-maven-plugin.version>1.23.3</detekt-maven-plugin.version>
+        <detekt-maven-plugin.version>1.23.5</detekt-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
         <jansi.version>2.4.1</jansi.version>
         <java.charset>UTF-8</java.charset>
