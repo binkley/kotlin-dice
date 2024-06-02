@@ -5,7 +5,7 @@ align="right" width="20%" height="auto"/>
 
 # Kotlin Dice Parser
 
-[![build](https://github.com/binkley/kotlin-dice/workflows/build/badge.svg)](https://github.com/binkley/kotlin-dice/actions)
+[![build](https://github.com/binkley/kotlin-dice/actions/workflows/ci.yml/badge.svg)](https://github.com/binkley/kotlin-dice/actions)
 [![pull requests](https://img.shields.io/github/issues-pr/binkley/kotlin-dice.svg)](https://github.com/binkley/kotlin-dice/pulls)
 [![issues](https://img.shields.io/github/issues/binkley/kotlin-dice.svg)](https://github.com/binkley/kotlin-dice/issues/)
 [![vulnerabilities](https://snyk.io/test/github/binkley/kotlin-dice/badge.svg)](https://snyk.io/test/github/binkley/kotlin-dice)
